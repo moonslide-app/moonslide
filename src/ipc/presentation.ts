@@ -5,13 +5,16 @@ const presentation = {
         presentationFilePath: string,
         templateFolderPath: string,
         outputFolderPath: string
-    ): Promise<void> {
+    ): Promise<string> {
         return await ipcRenderer.invoke(
-            'save:exportPresentation',
+            'exportPresentation',
             presentationFilePath,
             templateFolderPath,
             outputFolderPath
         )
+    },
+    async movePresentation(presentationFilePath: string, templateFolderPath: string): Promise<string> {
+        return await ipcRenderer.invoke('movePresentation', presentationFilePath, templateFolderPath)
     },
 } as const
 

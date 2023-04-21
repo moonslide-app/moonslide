@@ -18,6 +18,7 @@ const createWindow = (): void => {
         width: 800,
         webPreferences: {
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+            webSecurity: false,
         },
     })
 
@@ -28,6 +29,12 @@ const createWindow = (): void => {
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools()
+
+    // Allow the opening of a preview window.
+    mainWindow.webContents.setWindowOpenHandler(details => {
+        console.log(details)
+        return { action: 'allow' }
+    })
 }
 
 // This method will be called when Electron has finished

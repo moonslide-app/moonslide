@@ -90,4 +90,6 @@ typings/
 
 # Electron-Forge
 out/
-presentation
+
+# Temporary Test Directory
+presentation/

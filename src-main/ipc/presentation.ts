@@ -19,7 +19,7 @@ export async function exportPresentation(
     presentationFilePath: string,
     templateFolderPath: string,
     outputFolderPath: string
-): Promise<void> {
+): Promise<string> {
     const baseFilePath = resolve(templateFolderPath, BASE_FILE_NAME)
 
     console.log(`Using presentation file: '${relative(__dirname, presentationFilePath)}'.`)
@@ -74,4 +74,5 @@ export async function exportPresentation(
     await writeFile(presentationOutFile, htmlDoc)
 
     console.log(`Presentation export successful.`)
+    return presentationOutFile
 }
