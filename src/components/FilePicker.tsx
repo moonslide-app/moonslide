@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 export function FilePicker() {
     const [markdownFile, setMarkdownFile] = useState<string | undefined>(
@@ -10,6 +10,8 @@ export function FilePicker() {
     const [outputFolder, setOutputFolder] = useState<string>()
 
     const [previewUrl, setPreviewUrl] = useState<string>()
+    const frameRef = useRef<HTMLIFrameElement | null>(null)
+    const [testKey, setTestKey] = useState(0)
 
     const selectMarkdownFile = () => window.ipc.files.selectFile().then(setMarkdownFile)
     const selectTemplateFolder = () => window.ipc.files.selectFolder().then(setTemplateFolder)
@@ -30,7 +32,8 @@ export function FilePicker() {
     const showPreview = async () => {
         if (markdownFile && templateFolder) {
             await window.ipc.presentation.preparePresentation(markdownFile, templateFolder)
-            setPreviewUrl('reveal://presentation/')
+            setPreviewUrl('reveal://preview/')
+            setTestKey(count => count + 1)
         }
     }
 
@@ -46,7 +49,7 @@ export function FilePicker() {
             <p>{`Selected Output Folder: ${outputFolder || 'None'}`}</p>
             <button onClick={letsGo}>Let's goo</button>
 
-            {previewUrl && <iframe src={previewUrl} width="600" height="300" />}
+            {previewUrl && <iframe ref={frameRef} key={testKey} src={previewUrl} width="600" height="300" />}
         </div>
     )
 }
