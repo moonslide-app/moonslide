@@ -1,9 +1,15 @@
 import { useState } from 'react'
 
 export function FilePicker() {
-    const [markdownFile, setMarkdownFile] = useState<string>()
-    const [templateFolder, setTemplateFolder] = useState<string>()
+    const [markdownFile, setMarkdownFile] = useState<string | undefined>(
+        '/Users/timo/Developer/Studium/23_FS/BA/reveal-editor/presentation/presentation.md'
+    )
+    const [templateFolder, setTemplateFolder] = useState<string | undefined>(
+        '/Users/timo/Developer/Studium/23_FS/BA/reveal-editor/presentation/template/'
+    )
     const [outputFolder, setOutputFolder] = useState<string>()
+
+    const [previewUrl, setPreviewUrl] = useState<string>()
 
     const selectMarkdownFile = () => window.ipc.files.selectFile().then(setMarkdownFile)
     const selectTemplateFolder = () => window.ipc.files.selectFolder().then(setTemplateFolder)
@@ -16,9 +22,15 @@ export function FilePicker() {
 
     const openInWindow = async () => {
         if (markdownFile && templateFolder) {
-            const path = await window.ipc.presentation.movePresentation(markdownFile, templateFolder)
-            console.log(`Now we should open a new tab and show the file: ${path}`)
-            window.open(`file://${path}`, '_blank')
+            await window.ipc.presentation.preparePresentation(markdownFile, templateFolder)
+            window.open('reveal://presentation/', '_blank')
+        }
+    }
+
+    const showPreview = async () => {
+        if (markdownFile && templateFolder) {
+            await window.ipc.presentation.preparePresentation(markdownFile, templateFolder)
+            setPreviewUrl('reveal://presentation/')
         }
     }
 
@@ -29,9 +41,12 @@ export function FilePicker() {
             <button onClick={selectTemplateFolder}>Select Template Folder</button>
             <p>{`Selected Template Folder: ${templateFolder || 'None'}`}</p>
             <button onClick={openInWindow}>Open in new Window</button>
+            <button onClick={showPreview}>Show Preview</button>
             <button onClick={selectOutputFolder}>Select Output Folder</button>
             <p>{`Selected Output Folder: ${outputFolder || 'None'}`}</p>
             <button onClick={letsGo}>Let's goo</button>
+
+            {previewUrl && <iframe src={previewUrl} width="600" height="300" />}
         </div>
     )
 }

@@ -13,8 +13,8 @@ const presentation = {
             outputFolderPath
         )
     },
-    async movePresentation(presentationFilePath: string, templateFolderPath: string): Promise<string> {
-        return await ipcRenderer.invoke('movePresentation', presentationFilePath, templateFolderPath)
+    async preparePresentation(presentationFilePath: string, templateFolderPath: string): Promise<string> {
+        return await ipcRenderer.invoke('preparePresentation', presentationFilePath, templateFolderPath)
     },
 } as const
 
