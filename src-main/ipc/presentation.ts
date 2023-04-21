@@ -79,10 +79,10 @@ export async function exportPresentation(
     return presentationOutFile
 }
 
-export async function preparePresentation(presentationFilePath: string, templateFolderPath: string): Promise<void> {
+export async function preparePresentation(presentationContent: string, templateFolderPath: string): Promise<void> {
     const baseFilePath = resolve(templateFolderPath, BASE_FILE_NAME)
 
-    console.log(`Using presentation file: '${relative(__dirname, presentationFilePath)}'.`)
+    console.log(`Using parsed HTML input to create presentation: ${presentationContent}`)
     console.log(`Using template dir: '${relative(__dirname, templateFolderPath)}'.`)
 
     const configFilePath = resolve(templateFolderPath, CONFIG_FILE_NAME)
@@ -100,8 +100,6 @@ export async function preparePresentation(presentationFilePath: string, template
         .reduce((prev, curr) => `${prev}\n${curr}`)
 
     htmlDoc = htmlDoc.replace(STYLESHEETS_TOKEN, styleSheets)
-
-    const presentationContent = (await readFile(presentationFilePath)).toString()
 
     const slidePath = resolve(configFilePath, '..', parsedConfig['slide'])
     const slideFileContent = (await readFile(slidePath)).toString()

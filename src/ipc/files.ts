@@ -14,6 +14,13 @@ const files = {
         const result = await ipcRenderer.invoke('dialog:selectOuputFolder')
         return z.string().optional().parse(result)
     },
+    getFileContent: async (filePath: string) => {
+        const result = await ipcRenderer.invoke('file:getContent', filePath)
+        return z.string().optional().parse(result)
+    },
+    saveFile: async (filePath: string, content: string) => {
+        await ipcRenderer.invoke('file:save', filePath, content)
+    },
 } as const
 
 export default files

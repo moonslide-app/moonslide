@@ -1,13 +1,16 @@
 import { useRef, useState } from 'react'
+import { useEditorStore } from '../store/editor'
+import { useEventListener } from 'usehooks-ts'
+import { useParserStore } from '../store/parser'
 
 export function FilePicker() {
-    const [markdownFile, setMarkdownFile] = useState<string | undefined>(
-        '/Users/timo/Developer/Studium/23_FS/BA/reveal-editor/presentation/presentation.md'
-    )
+    const [markdownFile, setMarkdownFile] = useEditorStore(state => [state.editingFilePath, state.changeEditingFile])
+    const saveFile = useEditorStore(state => state.saveContentToEditingFile)
+    const parsedContent = useParserStore(state => state.htmlString)
+
     const [templateFolder, setTemplateFolder] = useState<string | undefined>(
         '/Users/timo/Developer/Studium/23_FS/BA/reveal-editor/presentation/template/'
     )
-    const [outputFolder, setOutputFolder] = useState<string>()
 
     const [previewUrl, setPreviewUrl] = useState<string>()
     const frameRef = useRef<HTMLIFrameElement | null>(null)
@@ -15,16 +18,10 @@ export function FilePicker() {
 
     const selectMarkdownFile = () => window.ipc.files.selectFile().then(setMarkdownFile)
     const selectTemplateFolder = () => window.ipc.files.selectFolder().then(setTemplateFolder)
-    const selectOutputFolder = () => window.ipc.files.selectFolder().then(setOutputFolder)
-    const letsGo = () =>
-        markdownFile &&
-        templateFolder &&
-        outputFolder &&
-        window.ipc.presentation.exportPresentation(markdownFile, templateFolder, outputFolder)
 
     const openInWindow = async () => {
         if (markdownFile && templateFolder) {
-            await window.ipc.presentation.preparePresentation(markdownFile, templateFolder)
+            await window.ipc.presentation.preparePresentation(parsedContent(), templateFolder)
             window.open('reveal://presentation/', '_blank')
         }
     }
@@ -37,6 +34,16 @@ export function FilePicker() {
         }
     }
 
+    useEventListener('keydown', event => {
+        const isMac = /Mac/.test(navigator.userAgent)
+        const cmdSOnMac = isMac && event.metaKey && event.key === 's'
+        const ctrlSOnOther = !isMac && event.ctrlKey && event.key === 's'
+        if (cmdSOnMac || ctrlSOnOther) {
+            event.preventDefault()
+            saveFile()
+        }
+    })
+
     return (
         <div>
             <button onClick={selectMarkdownFile}>Select Markdown File</button>
@@ -45,9 +52,7 @@ export function FilePicker() {
             <p>{`Selected Template Folder: ${templateFolder || 'None'}`}</p>
             <button onClick={openInWindow}>Open in new Window</button>
             <button onClick={showPreview}>Show Preview</button>
-            <button onClick={selectOutputFolder}>Select Output Folder</button>
-            <p>{`Selected Output Folder: ${outputFolder || 'None'}`}</p>
-            <button onClick={letsGo}>Let's goo</button>
+            <button onClick={saveFile}>Save File</button>
 
             {previewUrl && <iframe ref={frameRef} key={testKey} src={previewUrl} width="600" height="300" />}
         </div>
