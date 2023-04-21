@@ -4,6 +4,7 @@ import { parse } from 'yaml'
 import { copy } from 'fs-extra'
 import { app } from 'electron'
 import { existsSync } from 'fs'
+import { parseConfig } from '../helpers/config'
 
 // base.html
 const SLIDE_TOKEN = '@@slide@@'
@@ -29,7 +30,7 @@ export async function exportPresentation(
 
     const configFilePath = resolve(templateFolderPath, CONFIG_FILE_NAME)
     const configFileContent = (await readFile(configFilePath)).toString()
-    const parsedConfig = parse(configFileContent)
+    const parsedConfig = parseConfig(configFileContent)
 
     console.log(`Generating HTML Presentation...`)
 
@@ -37,7 +38,7 @@ export async function exportPresentation(
     htmlDoc = htmlDoc.replace(AUTHOR_TOKEN, parsedConfig.meta?.author ?? '')
     htmlDoc = htmlDoc.replace(TITLE_TOKEN, parsedConfig.meta?.title ?? '')
 
-    const styleSheets = parsedConfig['stylesheets']
+    const styleSheets = parsedConfig.stylesheets
         .map(styleSheetPath => `<link rel="stylesheet" href="${styleSheetPath}">`)
         .reduce((prev, curr) => `${prev}\n${curr}`)
 
@@ -45,13 +46,13 @@ export async function exportPresentation(
 
     const presentationContent = (await readFile(presentationFilePath)).toString()
 
-    const slidePath = resolve(configFilePath, '..', parsedConfig['slide'])
+    const slidePath = resolve(configFilePath, '..', parsedConfig.slide)
     const slideFileContent = (await readFile(slidePath)).toString()
     const slide = slideFileContent.replace(CONTENT_TOKEN, presentationContent)
 
     htmlDoc = htmlDoc.replace(SLIDE_TOKEN, slide)
 
-    const scripts = [...parsedConfig['plugins'], parsedConfig['entry']]
+    const scripts = [...parsedConfig.plugins, parsedConfig.entry]
         .map(script => `<script src="${script}"></script>`)
         .reduce((prev, curr) => `${prev}\n${curr}`)
 
@@ -69,7 +70,7 @@ export async function exportPresentation(
     console.log(`Removing unneeded template files in output folder...`)
     await rm(resolve(presentationOutputPath, BASE_FILE_NAME))
     await rm(resolve(presentationOutputPath, CONFIG_FILE_NAME))
-    await rm(resolve(presentationOutputPath, parsedConfig['slide']))
+    await rm(resolve(presentationOutputPath, parsedConfig.slide))
 
     console.log(`Saving generated HTML presentation to output folder...`)
     const presentationOutFile = resolve(presentationOutputPath, 'presentation.html')
@@ -87,7 +88,7 @@ export async function preparePresentation(presentationContent: string, templateF
 
     const configFilePath = resolve(templateFolderPath, CONFIG_FILE_NAME)
     const configFileContent = (await readFile(configFilePath)).toString()
-    const parsedConfig = parse(configFileContent)
+    const parsedConfig = parseConfig(configFileContent)
 
     console.log(`Generating HTML Presentation...`)
 
@@ -101,13 +102,13 @@ export async function preparePresentation(presentationContent: string, templateF
 
     htmlDoc = htmlDoc.replace(STYLESHEETS_TOKEN, styleSheets)
 
-    const slidePath = resolve(configFilePath, '..', parsedConfig['slide'])
+    const slidePath = resolve(configFilePath, '..', parsedConfig.slide)
     const slideFileContent = (await readFile(slidePath)).toString()
     const slide = slideFileContent.replace(CONTENT_TOKEN, presentationContent)
 
     htmlDoc = htmlDoc.replace(SLIDE_TOKEN, slide)
 
-    const scripts = [...parsedConfig['plugins'], parsedConfig['entry']]
+    const scripts = [...parsedConfig.plugins, parsedConfig.entry]
         .map(script => `<script src="${script}"></script>`)
         .reduce((prev, curr) => `${prev}\n${curr}`)
 
@@ -127,7 +128,7 @@ export async function preparePresentation(presentationContent: string, templateF
     console.log(`Removing unneeded template files in output folder...`)
     await rm(resolve(presentationOutputPath, BASE_FILE_NAME))
     await rm(resolve(presentationOutputPath, CONFIG_FILE_NAME))
-    await rm(resolve(presentationOutputPath, parsedConfig['slide']))
+    await rm(resolve(presentationOutputPath, parsedConfig.slide))
 
     console.log(`Saving generated HTML presentation to output folder...`)
     const presentationOutFile = resolve(presentationOutputPath, 'presentation.html')
