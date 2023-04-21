@@ -8,6 +8,11 @@ export function FilePicker() {
     const selectMarkdownFile = () => window.ipc.files.selectFile().then(setMarkdownFile)
     const selectTemplateFolder = () => window.ipc.files.selectFolder().then(setTemplateFolder)
     const selectOutputFolder = () => window.ipc.files.selectFolder().then(setOutputFolder)
+    const letsGo = () =>
+        markdownFile &&
+        templateFolder &&
+        outputFolder &&
+        window.ipc.presentation.exportPresentation(markdownFile, templateFolder, outputFolder)
 
     return (
         <div>
@@ -17,6 +22,7 @@ export function FilePicker() {
             <p>{`Selected Template Folder: ${templateFolder || 'None'}`}</p>
             <button onClick={selectOutputFolder}>Select Output Folder</button>
             <p>{`Selected Output Folder: ${outputFolder || 'None'}`}</p>
+            <button onClick={letsGo}>Let's goo</button>
         </div>
     )
 }
