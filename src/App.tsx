@@ -1,10 +1,10 @@
-function App() {
-    const openFilePicker = () => window.ipc.files.selectMarkdownFile().then(res => console.log(res))
+import { FilePicker } from './components/FilePicker'
 
+function App() {
     return (
         <div>
             <h1>Hello World</h1>
-            <button onClick={openFilePicker}>Open File Picker</button>
+            <FilePicker />
         </div>
     )
 }
