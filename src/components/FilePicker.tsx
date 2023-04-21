@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useEditorStore } from '../store/editor'
 import { useEventListener } from 'usehooks-ts'
 import { useParserStore } from '../store/parser'
@@ -26,9 +26,13 @@ export function FilePicker() {
         }
     }
 
+    useEffect(() => {
+        showPreview()
+    }, [parsedContent()])
+
     const showPreview = async () => {
         if (markdownFile && templateFolder) {
-            await window.ipc.presentation.preparePresentation(markdownFile, templateFolder)
+            await window.ipc.presentation.preparePresentation(parsedContent(), templateFolder)
             setPreviewUrl('reveal://preview/')
             setTestKey(count => count + 1)
         }
