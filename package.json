@@ -27,6 +27,8 @@
         "@electron-forge/maker-squirrel": "^6.1.1",
         "@electron-forge/maker-zip": "^6.1.1",
         "@electron-forge/plugin-webpack": "^6.1.1",
+        "@types/dompurify": "^3.0.2",
+        "@types/marked": "^4.0.8",
         "@types/react": "^18.0.35",
         "@types/react-dom": "^18.0.11",
         "@typescript-eslint/eslint-plugin": "^5.58.0",

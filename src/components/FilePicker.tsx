@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { useEditorStore } from '../store/editor'
+import { useRef, useState } from 'react'
+import { useEditorStore } from '../store'
 import { useEventListener } from 'usehooks-ts'
-import { useParserStore } from '../store/parser'
 
 export function FilePicker() {
     const [markdownFile, setMarkdownFile] = useEditorStore(state => [state.editingFilePath, state.changeEditingFile])
     const saveFile = useEditorStore(state => state.saveContentToEditingFile)
-    const parsedContent = useParserStore(state => state.htmlString)
+    const parsedContent = useEditorStore(state => state.parsedContent)
 
     const [templateFolder, setTemplateFolder] = useState<string | undefined>(
         '/Users/timo/Developer/Studium/23_FS/BA/reveal-editor/presentation/template/'
@@ -21,18 +20,14 @@ export function FilePicker() {
 
     const openInWindow = async () => {
         if (markdownFile && templateFolder) {
-            await window.ipc.presentation.preparePresentation(parsedContent(), templateFolder)
+            await window.ipc.presentation.preparePresentation(parsedContent?.htmlString ?? '', templateFolder)
             window.open('reveal://presentation/', '_blank')
         }
     }
 
-    useEffect(() => {
-        showPreview()
-    }, [parsedContent()])
-
     const showPreview = async () => {
         if (markdownFile && templateFolder) {
-            await window.ipc.presentation.preparePresentation(parsedContent(), templateFolder)
+            await window.ipc.presentation.preparePresentation(parsedContent?.htmlString ?? '', templateFolder)
             setPreviewUrl('reveal://preview/')
             setTestKey(count => count + 1)
         }

@@ -2,15 +2,13 @@ import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin } from '@codemirror/view'
 import { useEffect, useRef, useState } from 'react'
 import { useEffectOnce } from 'usehooks-ts'
-import { useEditorStore } from '../store/editor'
+import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { markdown } from '@codemirror/lang-markdown'
-import { useParserStore } from '../store/parser'
 
 export function CodeMirrorEditor() {
     const [content, setContent] = useEditorStore(state => [state.content, state.setContent])
     const editingFilePath = useEditorStore(state => state.editingFilePath)
-    const setParserMarkdown = useParserStore(state => state.setMarkdown)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
     const [editor, setEditor] = useState<EditorView>()
@@ -39,11 +37,7 @@ export function CodeMirrorEditor() {
         })
 
         const updatePlugin = ViewPlugin.define(() => ({
-            update: viewUpdate => {
-                const newContent = viewUpdate.state.doc.sliceString(0)
-                setContent(newContent)
-                setParserMarkdown(newContent)
-            },
+            update: viewUpdate => setContent(viewUpdate.state.doc.sliceString(0)),
         }))
 
         const state = EditorState.create({
