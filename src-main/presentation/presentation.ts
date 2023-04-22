@@ -3,8 +3,7 @@ import { readFile, writeFile, mkdir, rm } from 'fs/promises'
 import { copy } from 'fs-extra'
 import { app } from 'electron'
 import { existsSync } from 'fs'
-import { parseConfig } from '../helpers/config'
-import { ParsedContent } from '../../src-shared/entities/ParsedContent'
+import { parseConfig } from './config'
 
 // base.html
 const SLIDE_TOKEN = '@@slide@@'
@@ -23,7 +22,6 @@ const previewScriptFile = 'preview.js'
 const presentationScriptFile = 'presentation.js'
 
 export async function preparePresentation(presentationContent: string, templateFolderPath: string): Promise<void> {
-    const parsedContent: ParsedContent | undefined = undefined
     const baseFilePath = resolve(baseFolderPath, BASE_FILE_NAME)
 
     console.log(`Using parsed HTML input to create presentation: ${presentationContent}`)

@@ -92,4 +92,4 @@ typings/
 out/
 
 # Temporary Test Directory
-presentation/
+/presentation/
