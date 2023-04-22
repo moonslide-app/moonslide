@@ -1,7 +1,7 @@
 import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin } from '@codemirror/view'
 import { useEffect, useRef, useState } from 'react'
-import { useEffectOnce } from 'usehooks-ts'
+import { useDebounce, useEffectOnce } from 'usehooks-ts'
 import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { markdown } from '@codemirror/lang-markdown'
@@ -11,11 +11,17 @@ export type CodeMirrorEditorProps = {
 }
 
 export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
-    const [content, setContent] = useEditorStore(state => [state.content, state.setContent])
     const editingFilePath = useEditorStore(state => state.editingFilePath)
+    const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
+    const [editingContent, setEditingContent] = useState<string>()
+    const debouncedContent = useDebounce(editingContent, 500)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
     const [editor, setEditor] = useState<EditorView>()
+
+    useEffect(() => {
+        updateContent(debouncedContent)
+    }, [debouncedContent])
 
     // This hook is and should only be called when the editing file changes
     useEffect(() => {
@@ -29,6 +35,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
                 },
             })
             editor.update([transaction])
+            setEditingContent(content)
         }
     }, [editingFilePath])
 
@@ -41,7 +48,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         })
 
         const updatePlugin = ViewPlugin.define(() => ({
-            update: viewUpdate => setContent(viewUpdate.state.doc.sliceString(0)),
+            update: viewUpdate => setEditingContent(viewUpdate.state.doc.sliceString(0)),
         }))
 
         const state = EditorState.create({

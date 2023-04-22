@@ -2,8 +2,8 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { ParsedContent } from '../../src-shared/entities/ParsedContent'
 
-export function parseMarkdown(markdownContent: string): ParsedContent {
-    const markdownSlides = markdownContent.split('---')
+export function parseMarkdown(markdownContent: string | undefined): ParsedContent {
+    const markdownSlides = !markdownContent || !markdownContent.trim() ? [] : markdownContent.split('---')
     const htmlSlides = markdownSlides.map(page => {
         const parsed = marked.parse(page)
         const sanitized = DOMPurify.sanitize(parsed)

@@ -1,37 +1,14 @@
-import { useRef, useState } from 'react'
 import { useEditorStore } from '../store'
 import { useEventListener } from 'usehooks-ts'
 
 export function FilePicker() {
-    const [markdownFile, setMarkdownFile] = useEditorStore(state => [state.editingFilePath, state.changeEditingFile])
-    const saveFile = useEditorStore(state => state.saveContentToEditingFile)
-    const parsedContent = useEditorStore(state => state.parsedContent)
+    const { editingFilePath, changeEditingFile, templateFolderPath, setTemplateFolderPath, saveContentToEditingFile } =
+        useEditorStore()
 
-    const [templateFolder, setTemplateFolder] = useState<string | undefined>(
-        '/Users/timo/Developer/Studium/23_FS/BA/reveal-editor/presentation/template/'
-    )
+    const selectMarkdownFile = () => window.ipc.files.selectFile().then(changeEditingFile)
+    const selectTemplateFolder = () => window.ipc.files.selectFolder().then(setTemplateFolderPath)
 
-    const [previewUrl, setPreviewUrl] = useState<string>()
-    const frameRef = useRef<HTMLIFrameElement | null>(null)
-    const [testKey, setTestKey] = useState(0)
-
-    const selectMarkdownFile = () => window.ipc.files.selectFile().then(setMarkdownFile)
-    const selectTemplateFolder = () => window.ipc.files.selectFolder().then(setTemplateFolder)
-
-    const openInWindow = async () => {
-        if (markdownFile && templateFolder) {
-            await window.ipc.presentation.preparePresentation(parsedContent?.htmlString ?? '', templateFolder)
-            window.open('reveal://presentation/', '_blank')
-        }
-    }
-
-    const showPreview = async () => {
-        if (markdownFile && templateFolder) {
-            await window.ipc.presentation.preparePresentation(parsedContent?.htmlString ?? '', templateFolder)
-            setPreviewUrl('reveal://preview/#/1')
-            setTestKey(count => count + 1)
-        }
-    }
+    const openInWindow = () => window.open('reveal://presentation/', '_blank')
 
     useEventListener('keydown', event => {
         const isMac = /Mac/.test(navigator.userAgent)
@@ -39,21 +16,37 @@ export function FilePicker() {
         const ctrlSOnOther = !isMac && event.ctrlKey && event.key === 's'
         if (cmdSOnMac || ctrlSOnOther) {
             event.preventDefault()
-            saveFile()
+            saveContentToEditingFile()
         }
     })
 
     return (
-        <div>
-            <button onClick={selectMarkdownFile}>Select Markdown File</button>
-            <p>{`Selected Markdown File: ${markdownFile || 'None'}`}</p>
-            <button onClick={selectTemplateFolder}>Select Template Folder</button>
-            <p>{`Selected Template Folder: ${templateFolder || 'None'}`}</p>
-            <button onClick={openInWindow}>Open in new Window</button>
-            <button onClick={showPreview}>Show Preview</button>
-            <button onClick={saveFile}>Save File</button>
+        <div className="space-y-2 mb-4">
+            <div className="flex space-x-2 items-baseline">
+                <button onClick={selectMarkdownFile} className="text-violet-500 font-medium">
+                    Select Markdown File
+                </button>
+                <span className="text-xs">{`${editingFilePath || 'None'}`}</span>
+            </div>
 
-            {/* {previewUrl && <iframe ref={frameRef} key={testKey} src={previewUrl} width="600" height="300" />} */}
+            <div className="flex space-x-2 items-baseline">
+                <button onClick={selectTemplateFolder} className="text-violet-500 font-medium">
+                    Select Template Folder
+                </button>
+                <span className="text-xs">{`${templateFolderPath || 'None'}`}</span>
+            </div>
+
+            <div>
+                <button onClick={openInWindow} className="text-violet-500 font-medium">
+                    Open Presentation Window
+                </button>
+            </div>
+
+            <div>
+                <button onClick={saveContentToEditingFile} className="text-violet-500 font-medium">
+                    Save File (cmd + s)
+                </button>
+            </div>
         </div>
     )
 }

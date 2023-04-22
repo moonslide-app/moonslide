@@ -24,7 +24,7 @@ const presentationScriptFile = 'presentation.js'
 export async function preparePresentation(presentationContent: string, templateFolderPath: string): Promise<void> {
     const baseFilePath = resolve(baseFolderPath, BASE_FILE_NAME)
 
-    console.log(`Using parsed HTML input to create presentation: ${presentationContent}`)
+    console.log(`Using parsed HTML input to create presentation.`)
     console.log(`Using template dir: '${relative(__dirname, templateFolderPath)}'.`)
 
     const configFilePath = resolve(templateFolderPath, CONFIG_FILE_NAME)
