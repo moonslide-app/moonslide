@@ -28,7 +28,7 @@ export function FilePicker() {
     const showPreview = async () => {
         if (markdownFile && templateFolder) {
             await window.ipc.presentation.preparePresentation(parsedContent?.htmlString ?? '', templateFolder)
-            setPreviewUrl('reveal://preview/')
+            setPreviewUrl('reveal://preview/#/1')
             setTestKey(count => count + 1)
         }
     }
@@ -53,7 +53,7 @@ export function FilePicker() {
             <button onClick={showPreview}>Show Preview</button>
             <button onClick={saveFile}>Save File</button>
 
-            {previewUrl && <iframe ref={frameRef} key={testKey} src={previewUrl} width="600" height="300" />}
+            {/* {previewUrl && <iframe ref={frameRef} key={testKey} src={previewUrl} width="600" height="300" />} */}
         </div>
     )
 }

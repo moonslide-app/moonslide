@@ -1,5 +1,6 @@
 import { CodeMirrorEditor } from './components/CodeMirrorEditor'
 import { FilePicker } from './components/FilePicker'
+import { PreviewSlides } from './components/PreviewSlides'
 
 function App() {
     return (
@@ -7,6 +8,7 @@ function App() {
             <h1>Hello World</h1>
             <FilePicker />
             <CodeMirrorEditor />
+            <PreviewSlides />
         </div>
     )
 }

@@ -3,12 +3,13 @@ import DOMPurify from 'dompurify'
 import { ParsedContent } from '../../src-shared/entities/ParsedContent'
 
 export function parseMarkdown(markdownContent: string): ParsedContent {
-    const markdownPages = markdownContent.split('---')
-    const htmlPages = markdownPages.map(page => {
+    const markdownSlides = markdownContent.split('---')
+    const htmlSlides = markdownSlides.map(page => {
         const parsed = marked.parse(page)
         const sanitized = DOMPurify.sanitize(parsed)
         return `<section>${sanitized}</section>`
     })
-    const htmlString = htmlPages.length === 0 ? '' : htmlPages.reduce((prev, next) => `${prev}\n${next}`)
-    return { markdownPages, htmlPages, htmlString }
+    const htmlString = htmlSlides.length === 0 ? '' : htmlSlides.reduce((prev, next) => `${prev}\n${next}`)
+    const slideNumbers = htmlSlides.map((val, idx) => idx)
+    return { markdownSlides, htmlSlides, slideNumbers, htmlString }
 }

@@ -1,5 +1,6 @@
 export type ParsedContent = {
-    markdownPages: string[]
-    htmlPages: string[]
+    markdownSlides: string[]
+    htmlSlides: string[]
+    slideNumbers: number[]
     htmlString: string
 }
