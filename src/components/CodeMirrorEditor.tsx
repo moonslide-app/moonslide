@@ -6,7 +6,11 @@ import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { markdown } from '@codemirror/lang-markdown'
 
-export function CodeMirrorEditor() {
+export type CodeMirrorEditorProps = {
+    className?: string
+}
+
+export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
     const [content, setContent] = useEditorStore(state => [state.content, state.setContent])
     const editingFilePath = useEditorStore(state => state.editingFilePath)
 
@@ -32,7 +36,7 @@ export function CodeMirrorEditor() {
         const myTheme = EditorView.theme({
             '&': {
                 fontSize: '20px',
-                minHeight: '300px',
+                minHeight: '100%',
             },
         })
 
@@ -55,5 +59,5 @@ export function CodeMirrorEditor() {
         return () => view?.destroy()
     })
 
-    return <div ref={editorDomNode}></div>
+    return <div ref={editorDomNode} className={props?.className}></div>
 }
