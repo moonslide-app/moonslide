@@ -1,11 +1,6 @@
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
-
-export type ParsedContent = {
-    markdownPages: string[]
-    htmlPages: string[]
-    htmlString: string
-}
+import { ParsedContent } from '../../src-shared/entities/ParsedContent'
 
 export function parseMarkdown(markdownContent: string): ParsedContent {
     const markdownPages = markdownContent.split('---')
