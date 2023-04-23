@@ -1,6 +1,6 @@
 import { app, BrowserWindow, protocol } from 'electron'
-import { registerIpc, unregisterIpc } from './helpers/ipc'
-import { registerRevealProtocl, REVEAL_PROTOCOL_NAME } from './helpers/protocol'
+import { registerIpc, unregisterIpc } from '../src-main/helpers/ipc'
+import { registerRevealProtocl, REVEAL_PROTOCOL_NAME } from '../src-main/helpers/protocol'
 import { join } from 'path'
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string
@@ -17,7 +17,7 @@ const createWindow = (): void => {
         height: 800,
         width: 1000,
         webPreferences: {
-            preload: join(__dirname, '../src/preload.js'),
+            preload: join(__dirname, 'preload.js'),
         },
     })
 
