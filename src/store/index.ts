@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { parseMarkdown } from './parser'
-import { ParsedContent } from '../../src-shared/entities/ParsedContent'
+import type { ParsedContent } from '../../src-shared/entities/ParsedContent'
 
 type EditorStore = {
     editingFilePath: string | undefined
@@ -12,8 +12,8 @@ type EditorStore = {
      * Updates the content, parses it and prepares the presentation files.
      */
     updateContent(newContent: string | undefined): Promise<void>
-    setTemplateFolderPath(newPath: string): Promise<void>
-    changeEditingFile(newFilePath: string): Promise<void>
+    setTemplateFolderPath(newPath: string | undefined): Promise<void>
+    changeEditingFile(newFilePath: string | undefined): Promise<void>
     saveContentToEditingFile(): Promise<void>
     preparePresentation(): Promise<void>
 }
@@ -37,8 +37,12 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         await get().preparePresentation()
     },
     async changeEditingFile(newFilePath) {
-        const fileContent = await window.ipc.files.getFileContent(newFilePath)
-        await get().updateContent(fileContent)
+        if (newFilePath !== undefined) {
+            const fileContent = await window.ipc.files.getFileContent(newFilePath)
+            await get().updateContent(fileContent)
+        } else {
+            await get().updateContent(undefined)
+        }
         set(state => ({ ...state, editingFilePath: newFilePath }))
     },
     async saveContentToEditingFile() {

@@ -1,18 +1,25 @@
 {
+    "include": ["src", "src-main", "src-shared", "vite.config.*", "forge.config.*"],
     "compilerOptions": {
+        // base config
         "target": "ESNext",
-        "module": "CommonJS",
-        "allowJs": true,
+        "module": "ESNext",
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "jsx": "react-jsx",
+        "baseUrl": ".",
+        // strict typescript rules
+        "strict": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "verbatimModuleSyntax": true,
+        "forceConsistentCasingInFileNames": true,
+        "strictNullChecks": true,
+        // other config
+        "isolatedModules": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
-        "noImplicitAny": true,
-        "sourceMap": true,
-        "baseUrl": ".",
-        "outDir": "dist",
         "moduleResolution": "node",
         "resolveJsonModule": true,
-        "jsx": "react-jsx",
-        "strictNullChecks": true
-    },
-    "include": ["src", "src-main", "src-shared"]
+        "incremental": false
+    }
 }
