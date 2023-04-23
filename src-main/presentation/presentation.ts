@@ -17,7 +17,7 @@ const BASE_FILE_NAME = 'base.html'
 const CONFIG_FILE_NAME = 'config.yml'
 const CONTENT_TOKEN = '@@content@@'
 
-const baseFolderPath = '/Users/timo/Developer/Studium/23_FS/BA/reveal-editor/presentation/base'
+const baseFolderPath = resolve(__dirname, '../../presentation/base')
 const previewScriptFile = 'preview.js'
 const presentationScriptFile = 'presentation.js'
 
