@@ -56,7 +56,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('quit', () => {
-    // unregisterIpc()
+    unregisterIpc()
 })
 
 app.on('activate', () => {
