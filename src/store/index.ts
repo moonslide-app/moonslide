@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { parseMarkdown } from './parser'
-import type { ParsedContent } from '../../src-shared/entities/ParsedContent'
+import { ParsedContent } from '../../src-shared/entities/ParsedContent'
 
 type EditorStore = {
     editingFilePath: string | undefined

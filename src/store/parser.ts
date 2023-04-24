@@ -1,6 +1,6 @@
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
-import type { ParsedContent } from '../../src-shared/entities/ParsedContent'
+import { ParsedContent } from '../../src-shared/entities/ParsedContent'
 
 export function parseMarkdown(markdownContent: string | undefined): ParsedContent {
     const markdownSlides = !markdownContent || !markdownContent.trim() ? [] : markdownContent.split('---')
