@@ -1,15 +1,19 @@
 import { ipcRenderer } from 'electron'
-import { ParsedPresentation } from '../../src-shared/entities/ParsedPresentation'
+import { Presentation } from '../../src-shared/entities/Presentation'
+import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 
 const presentation = {
     async clearOutputFolder(): Promise<void> {
         await ipcRenderer.invoke('presentation:clearOutFolder')
     },
-    async prepateTemplate(templateFolderPath: string): Promise<void> {
+    async parsePresentation(request: ParseRequest): Promise<Presentation> {
+        return await ipcRenderer.invoke('presentation:parse', request)
+    },
+    async prepareTemplate(templateFolderPath: string): Promise<void> {
         await ipcRenderer.invoke('presentation:prepareTemplate', templateFolderPath)
     },
-    async preparePresentation(presentation: ParsedPresentation, filePath: string): Promise<void> {
-        await ipcRenderer.invoke('presentation:prepare', presentation, filePath)
+    async preparePresentation(presentation: Presentation): Promise<void> {
+        await ipcRenderer.invoke('presentation:prepare', presentation)
     },
 } as const
 

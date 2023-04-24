@@ -1,11 +1,10 @@
 import { create } from 'zustand'
-import { parseMarkdown } from './parser'
-import { ParsedPresentation } from '../../src-shared/entities/ParsedPresentation'
+import { Presentation } from '../../src-shared/entities/Presentation'
 
 type EditorStore = {
     editingFilePath: string | undefined
     content: string | undefined
-    parsedContent: ParsedPresentation | undefined
+    parsedContent: Presentation | undefined
     lastUpdateOfPresentationFiles: number | undefined
     /**
      * Updates the content, parses it and prepares the presentation files.
@@ -25,9 +24,12 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     updateContent: async newContent => {
         // set both seperatly so parsing errors don't affect content
         set(state => ({ ...state, content: newContent }))
-
+        if (!newContent) return
         try {
-            const parsedContent = parseMarkdown(newContent)
+            const parsedContent = await window.ipc.presentation.parsePresentation({
+                markdownContent: newContent,
+                markdownFilePath: get().editingFilePath,
+            })
             set(state => ({ ...state, parsedContent }))
             await get().preparePresentation()
         } catch (error) {
@@ -49,9 +51,9 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         else console.error('Could not save editing file, either filePath or content was nullish.')
     },
     async preparePresentation() {
-        const { parsedContent, editingFilePath } = get()
-        if (parsedContent && editingFilePath) {
-            await window.ipc.presentation.preparePresentation(parsedContent, editingFilePath)
+        const { parsedContent } = get()
+        if (parsedContent) {
+            await window.ipc.presentation.preparePresentation(parsedContent)
             set(state => ({ ...state, lastUpdateOfPresentationFiles: Date.now() }))
         } else console.warn('Could not prepare presentation, either parsedContent or editingFilePath was nullish.')
     },

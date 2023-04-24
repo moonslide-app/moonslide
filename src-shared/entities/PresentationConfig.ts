@@ -1,7 +1,8 @@
+import { TEMPLATE_BASIC } from '../../src-main/presentation/assets'
 import { z } from 'zod'
 
 export const presentationConfigSchema = z.object({
-    template: z.string().optional(),
+    template: z.string().default(TEMPLATE_BASIC),
     title: z.string().optional(),
     author: z.string().optional(),
 })
@@ -9,5 +10,5 @@ export const presentationConfigSchema = z.object({
 export type PresentationConfig = z.infer<typeof presentationConfigSchema>
 
 export function parsePresentationConfig(json: unknown): PresentationConfig {
-    return presentationConfigSchema.nullish().parse(json) ?? {}
+    return presentationConfigSchema.parse(json ?? {})
 }

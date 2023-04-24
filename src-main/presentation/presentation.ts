@@ -1,18 +1,18 @@
-import { resolve, dirname } from 'path'
+import { resolve } from 'path'
 import { writeFile, rm, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { copy } from 'fs-extra'
 import { app } from 'electron'
 import { loadTemplate } from './template'
-import { BuilderConfig, buildHTMLPresentation } from './builder'
+import { HTMLPresentationContent, buildHTMLPresentation, buildHTMLSlide } from './htmlBuilder'
 import {
+    BASE_FILE_NAME,
     PRESENTATION_SCRIPT_FILENAME,
     PREVIEW_SCRIPT_FILENAME,
-    getTemplateFolder,
-    isTemplate,
+    loadAssetContent,
     resolveAsset,
 } from './assets'
-import { ParsedPresentation } from '../../src-shared/entities/ParsedPresentation'
+import { Presentation } from '../../src-shared/entities/Presentation'
 
 export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
 
@@ -41,24 +41,15 @@ export async function prepareTemplate(templateFolderPath: string): Promise<void>
     console.log('Prepared template folder.')
 }
 
-let lastSelectedTemplate: string | undefined = undefined
-export async function preparePresentation(presentation: ParsedPresentation, filePath: string): Promise<void> {
-    const selectedTemplate = presentation.config.template ?? 'basic'
-    const templateFolderPath = isTemplate(selectedTemplate)
-        ? getTemplateFolder(selectedTemplate)
-        : resolve(dirname(filePath), selectedTemplate)
+export async function preparePresentation(presentation: Presentation): Promise<void> {
+    await prepareTemplate(presentation.resolvedPaths.templateFolder)
 
-    if (selectedTemplate !== lastSelectedTemplate) {
-        lastSelectedTemplate = selectedTemplate
-        await prepareTemplate(templateFolderPath)
-    }
-
-    const template = await loadTemplate(templateFolderPath)
+    const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
     const config = template.getConfig()
-    const slidesTemplate = await template.loadSlides()
+    const slideHTML = await template.getSlideHtml()
 
-    const baseConfig: BuilderConfig = {
-        slideContent: slidesTemplate.buildSlides(presentation.htmlString),
+    const baseConfig: HTMLPresentationContent = {
+        slideContent: buildHTMLSlide(slideHTML, { content: presentation.html }),
         styleSheetPaths: config.stylesheets,
         meta: {
             title: presentation.config.title,
@@ -66,13 +57,13 @@ export async function preparePresentation(presentation: ParsedPresentation, file
         },
     }
 
+    const baseFile = await loadAssetContent(BASE_FILE_NAME)
     for (const target of Object.values(presentationTargets)) {
-        const targetConfig: BuilderConfig = {
+        const targetConfig: HTMLPresentationContent = {
             ...baseConfig,
-            scriptPaths: [...config.plugins, `./${target.assetScript}`, config.entry],
+            scriptPaths: [config.reveal, ...(config.plugins ?? []), `./${target.assetScript}`, config.entry],
         }
-
-        const htmlPresentation = await buildHTMLPresentation(targetConfig)
+        const htmlPresentation = buildHTMLPresentation(baseFile, targetConfig)
         await writeFile(resolve(presentationFolderPath, target.outFileName), htmlPresentation)
         await copy(resolveAsset(target.assetScript), resolve(presentationFolderPath, target.assetScript))
     }

@@ -1,20 +1,28 @@
 import { readFile, rm } from 'fs/promises'
 import { copy } from 'fs-extra'
-import { Config, parseConfig } from './config'
-import { resolve } from 'path'
+import { TemplateConfig, parseTemplateConfig } from './templateConfig'
+import { resolve, dirname } from 'path'
+import { getTemplateFolder, isTemplate } from './assets'
 
 const CONFIG_FILE_NAME = 'config.yml'
-const SLIDES_CONTENT_TOKEN = '@@content@@'
 
 export type Template = {
     /**
+     * The path of the template folder
+     */
+    folderPath: string
+    /**
      * Returns the loaded config of this template.
      */
-    getConfig(): Config
+    getConfig(): TemplateConfig
     /**
-     * Loads the template slides defined in the config.
+     * Returns the content of the slides file.
      */
-    loadSlides(): Promise<SlideTemplate>
+    getSlideHtml(): Promise<string>
+    /**
+     * Loads all layouts of the template.
+     */
+    getLayouts(): Promise<Layouts>
     /**
      * Copies the whole template folder to a new location,
      * removing unneded files like the config or the template slide file.
@@ -23,11 +31,9 @@ export type Template = {
     copyForPresentation(newLocation: string): Promise<void>
 }
 
-export type SlideTemplate = {
-    /**
-     * Fills the template slide with the content and returns the generated string
-     */
-    buildSlides(content: string): string
+export type Layouts = {
+    availableLayouts: string[]
+    layoutsHtml: Record<string, string>
 }
 
 /**
@@ -35,28 +41,49 @@ export type SlideTemplate = {
  */
 export async function loadTemplate(templateFolderPath: string): Promise<Template> {
     const configYaml = (await readFile(resolve(templateFolderPath, CONFIG_FILE_NAME))).toString()
-    const config = parseConfig(configYaml)
+    const config = parseTemplateConfig(configYaml)
     return new TemplateImpl(templateFolderPath, config)
 }
 
-class TemplateImpl implements Template {
-    folderPath: string
-    config: Config
+/**
+ * Tries to find the requested template relative to the markdownfile (or uses standard template if it is a known template).
+ */
+export function findAndLoadTemplate(template: string, markdownFilePath: string | undefined): Promise<Template> {
+    if (isTemplate(template)) return loadTemplate(getTemplateFolder(template))
+    else if (!markdownFilePath) return Promise.reject('Could not find template, markdownfilePath was not specified')
+    else return loadTemplate(resolve(dirname(markdownFilePath), template))
+}
 
-    constructor(folderPath: string, config: Config) {
+class TemplateImpl implements Template {
+    readonly folderPath: string
+    private readonly config: TemplateConfig
+
+    constructor(folderPath: string, config: TemplateConfig) {
         this.folderPath = folderPath
         this.config = config
     }
 
     getConfig = () => this.config
 
-    async loadSlides() {
+    async getSlideHtml() {
         const slidePath = resolve(this.folderPath, this.config.slide)
-        const templateString = (await readFile(slidePath)).toString()
-        const slidesTemplates: SlideTemplate = {
-            buildSlides: content => templateString.replace(SLIDES_CONTENT_TOKEN, content),
+        const fileContents = (await readFile(slidePath)).toString()
+        return fileContents // DOMPurify.sanitize(fileContents)
+    }
+
+    async getLayouts() {
+        const availableLayouts = this.config.layouts?.map(layout => layout.name) ?? []
+        const layoutPaths = this.config.layouts?.map(layout => layout.path) ?? []
+        const layoutsHtml: Record<string, string> = {}
+
+        for (let i = 0; i < availableLayouts.length; i++) {
+            const layoutName = availableLayouts[i]
+            const layoutPath = resolve(this.folderPath, layoutPaths[i])
+            const fileContents = (await readFile(layoutPath)).toString()
+            layoutsHtml[layoutName] = fileContents // DOMPurify.sanitize(fileContents)
         }
-        return slidesTemplates
+
+        return { availableLayouts, layoutsHtml }
     }
 
     async copyForPresentation(presentationLocation: string): Promise<void> {

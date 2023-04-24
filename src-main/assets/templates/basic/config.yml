@@ -1,6 +1,12 @@
+entry: ./custom.js
+reveal: ./reveal_js/dist/reveal.js
+slide: ./slide.html
+layouts:
+    - name: two-col
+      path: ./layouts/two-column.html
+    - name: three-col
+      path: ./layouts/three-column.html
 stylesheets:
     - ./reveal_js/dist/reveal.css
-plugins:
-    - ./reveal_js/dist/reveal.js
-entry: ./custom.js
-slide: ./slide.html
+
+
