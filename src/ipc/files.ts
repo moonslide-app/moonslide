@@ -11,7 +11,11 @@ const files = {
         return z.string().optional().parse(result)
     },
     selectOutputFolder: async () => {
-        const result = await ipcRenderer.invoke('dialog:selectOuputFolder')
+        const result = await ipcRenderer.invoke('dialog:selectOutputFolder')
+        return z.string().optional().parse(result)
+    },
+    selectOutputFile: async (filter: { name: string; extension: string }) => {
+        const result = await ipcRenderer.invoke('dialog:selectOutputFile', filter)
         return z.string().optional().parse(result)
     },
     getFileContent: async (filePath: string) => {
@@ -20,6 +24,9 @@ const files = {
     },
     saveFile: async (filePath: string, content: string) => {
         await ipcRenderer.invoke('file:save', filePath, content)
+    },
+    exportPdf: async (outputPath: string) => {
+        await ipcRenderer.invoke('export:pdf', outputPath)
     },
 } as const
 

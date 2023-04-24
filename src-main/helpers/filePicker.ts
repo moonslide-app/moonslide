@@ -22,6 +22,14 @@ export async function selectOutputFolder(): Promise<string | undefined> {
     return filePath
 }
 
+export async function selectOutputFile(filter: { name: string; extension: string }): Promise<string | undefined> {
+    const { filePath } = await dialog.showSaveDialog({
+        properties: ['createDirectory'],
+        filters: [{ name: filter.name, extensions: [filter.extension] }],
+    })
+    return filePath
+}
+
 export async function getFileContent(filePath: string): Promise<string> {
     return (await readFile(filePath)).toString()
 }

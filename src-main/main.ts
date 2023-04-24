@@ -1,7 +1,7 @@
 import { app, BrowserWindow, protocol } from 'electron'
 import path from 'path'
 import { registerIpc, unregisterIpc } from './helpers/ipc'
-import { registerRevealProtocl, REVEAL_PROTOCOL_NAME } from './helpers/protocol'
+import { registerRevealProtocl, REVEAL_EXPORT_PROTOCOL_NAME, REVEAL_PROTOCOL_NAME } from './helpers/protocol'
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -29,7 +29,10 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 }
 
-protocol.registerSchemesAsPrivileged([{ scheme: REVEAL_PROTOCOL_NAME, privileges: { bypassCSP: true } }])
+protocol.registerSchemesAsPrivileged([
+    { scheme: REVEAL_PROTOCOL_NAME, privileges: { bypassCSP: true } },
+    { scheme: REVEAL_EXPORT_PROTOCOL_NAME, privileges: { bypassCSP: true } },
+])
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
