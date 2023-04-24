@@ -23,6 +23,7 @@ export const presentationTargets = {
 export async function clearPresentationFolder(): Promise<void> {
     if (existsSync(presentationFolderPath)) await rm(presentationFolderPath, { recursive: true })
     await mkdir(presentationFolderPath)
+    console.log('Cleared presentation folder.')
 }
 
 export async function prepareTemplate(templateFolderPath: string): Promise<void> {

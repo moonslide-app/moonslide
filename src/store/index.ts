@@ -34,6 +34,8 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     },
     setTemplateFolderPath: async newPath => {
         set(state => ({ ...state, templateFolderPath: newPath }))
+        if (newPath) await window.ipc.presentation.prepateTemplate(newPath)
+        else await window.ipc.presentation.clearOutputFolder()
         await get().preparePresentation()
     },
     async changeEditingFile(newFilePath) {

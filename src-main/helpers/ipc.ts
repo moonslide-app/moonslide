@@ -16,7 +16,7 @@ export function registerIpc() {
         const filePath = z.string().parse(arg1)
         return getFileContent(filePath)
     })
-    ipcMain.handle('presentation:clearFolder', clearPresentationFolder)
+    ipcMain.handle('presentation:clearOutFolder', clearPresentationFolder)
     ipcMain.handle('presentation:prepareTemplate', (_, arg1) => {
         const templateFolderPath = z.string().parse(arg1)
         return prepareTemplate(templateFolderPath)
@@ -34,7 +34,7 @@ export function unregisterIpc() {
     ipcMain.removeHandler('dialog:selectOutputFolder')
     ipcMain.removeHandler('file:save')
     ipcMain.removeHandler('file:getContent')
-    ipcMain.removeHandler('presentation:clearFolder')
+    ipcMain.removeHandler('presentation:clearOutFolder')
     ipcMain.removeHandler('presentation:prepareTemplate')
     ipcMain.removeHandler('presentation:prepare')
 }
