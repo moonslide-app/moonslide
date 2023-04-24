@@ -7,5 +7,5 @@ export const slideConfigSchema = z.object({
 export type SlideConfig = z.infer<typeof slideConfigSchema>
 
 export function parseSlideConfig(json: unknown): SlideConfig {
-    return slideConfigSchema.nullish().parse(json) ?? {}
+    return slideConfigSchema.parse(json ?? {})
 }
