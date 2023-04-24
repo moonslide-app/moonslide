@@ -42,6 +42,7 @@ export async function prepareTemplate(templateFolderPath: string): Promise<void>
 }
 
 export async function preparePresentation(presentation: Presentation): Promise<void> {
+    // TODO: Remove next line! Detect template changes in webapp and trigger this when needed
     await prepareTemplate(presentation.resolvedPaths.templateFolder)
 
     const template = await loadTemplate(presentation.resolvedPaths.templateFolder)

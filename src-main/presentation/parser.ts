@@ -7,8 +7,8 @@ import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from './template'
 import { buildHTMLLayout } from './htmlBuilder'
 
-const SLIDE_SEPARATOR = '---'
-const SLOT_SEPERATOR = ':::'
+const SLIDE_SEPARATOR = '\n---'
+const SLOT_SEPERATOR = '\n\n'
 
 export async function parse(request: ParseRequest): Promise<Presentation> {
     console.log('parsing')
@@ -54,10 +54,12 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
 }
 
 function parseConfig(markdownContent: string) {
-    const seperated = !markdownContent || !markdownContent.trim() ? [] : markdownContent.split(SLIDE_SEPARATOR)
+    const hasContent = markdownContent && markdownContent.trim()
+    const separated = hasContent ? markdownContent.split(SLIDE_SEPARATOR) : []
+    const trimmed = separated.map(part => part.trim())
 
-    const slidesMarkdown = seperated.filter((_, idx) => idx % 2 == 1)
-    const yamlConfigParts = seperated.filter((_, idx) => idx % 2 == 0)
+    const slidesMarkdown = trimmed.filter((_, idx) => idx % 2 == 1)
+    const yamlConfigParts = trimmed.filter((_, idx) => idx % 2 == 0)
     const jsonConfigParts = yamlConfigParts.map(yml => yamlParse(yml))
     const presentationConfig = parsePresentationConfig(jsonConfigParts[0])
     const slidesConfig = jsonConfigParts.map(json => parseSlideConfig(json))

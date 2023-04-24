@@ -75,18 +75,26 @@ export type HTMLLayoutContent = {
 export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTMLLayoutContent): string {
     let buildingFile = layoutFileHtml ?? LAYOUT_SLOT_TOKEN
     const occurences = (buildingFile.match(RegExp(LAYOUT_SLOT_TOKEN, 'g')) || []).length
-    const slots = []
-    for (let i = 0; i < occurences; i++) {
-        if (i + 1 < occurences) slots.push(content.slots[i])
-        else {
-            const rest = content.slots.slice(i)
-            if (rest.length <= 1) slots.push(...rest)
-            else slots.push(rest.reduce((prev, next) => `${prev}${next}`))
-        }
-    }
 
-    slots.forEach(slot => {
-        buildingFile = buildingFile.replace(LAYOUT_SLOT_TOKEN, slot)
-    })
+    if (occurences >= content.slots.length) {
+        for (let i = 0; i < occurences; i++) {
+            buildingFile = buildingFile.replace(LAYOUT_SLOT_TOKEN, content.slots[i] || '')
+        }
+    } else {
+        const slots = []
+        for (let i = 0; i < occurences; i++) {
+            if (i + 1 < occurences) slots.push(content.slots[i] ?? '')
+            else {
+                // merge rest of slots into last slot
+                const rest = content.slots.slice(i)
+                if (rest.length <= 1) slots.push(...rest)
+                else slots.push(rest.reduce((prev, next) => `${prev}${next}`))
+            }
+        }
+
+        slots.forEach(slot => {
+            buildingFile = buildingFile.replace(LAYOUT_SLOT_TOKEN, slot)
+        })
+    }
     return buildingFile
 }

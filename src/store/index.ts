@@ -22,9 +22,9 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     parsedContent: undefined,
     lastUpdateOfPresentationFiles: undefined,
     updateContent: async newContent => {
-        // set both seperatly so parsing errors don't affect content
         set(state => ({ ...state, content: newContent }))
         if (!newContent) return
+
         try {
             const parsedContent = await window.ipc.presentation.parsePresentation({
                 markdownContent: newContent,
