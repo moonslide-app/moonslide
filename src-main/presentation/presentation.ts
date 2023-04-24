@@ -4,7 +4,7 @@ import { existsSync } from 'fs'
 import { copy } from 'fs-extra'
 import { app } from 'electron'
 import { loadTemplate } from './template'
-import { HTMLPresentationContent, buildHTMLPresentation, buildHTMLSlide } from './htmlBuilder'
+import { HTMLPresentation, buildHTMLPresentation } from './htmlBuilder'
 import {
     BASE_FILE_NAME,
     PRESENTATION_SCRIPT_FILENAME,
@@ -47,10 +47,9 @@ export async function preparePresentation(presentation: Presentation): Promise<v
 
     const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
     const config = template.getConfig()
-    const slideHTML = await template.getSlideHtml()
 
-    const baseConfig: HTMLPresentationContent = {
-        slideContent: buildHTMLSlide(slideHTML, { content: presentation.html }),
+    const baseConfig: HTMLPresentation = {
+        presentationContent: presentation.html,
         styleSheetPaths: config.stylesheets,
         meta: {
             title: presentation.config.title,
@@ -60,7 +59,7 @@ export async function preparePresentation(presentation: Presentation): Promise<v
 
     const baseFile = await loadAssetContent(BASE_FILE_NAME)
     for (const target of Object.values(presentationTargets)) {
-        const targetConfig: HTMLPresentationContent = {
+        const targetConfig: HTMLPresentation = {
             ...baseConfig,
             scriptPaths: [config.reveal, ...(config.plugins ?? []), `./${target.assetScript}`, config.entry],
         }

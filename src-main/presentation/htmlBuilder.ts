@@ -1,12 +1,12 @@
 // presentation
-const SLIDE_TOKEN = '@@slide@@'
+const PRESESENTATION_TOKEN = '@@presentation@@'
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
 const SCRIPTS_TOKEN = '@@scripts@@'
 const TITLE_TOKEN = '@@title@@'
 const AUTHOR_TOKEN = '@@author@@'
 
-// slides
-const SLIDES_CONTENT_TOKEN = '@@content@@'
+// presentation content
+const CONTENT_TOKEN = '@@content@@'
 
 // layout
 const LAYOUT_SLOT_TOKEN = '@@slot@@'
@@ -15,8 +15,8 @@ const LAYOUT_SLOT_TOKEN = '@@slot@@'
  * ---------- Build Presentation ----------
  */
 
-export type HTMLPresentationContent = {
-    slideContent?: string
+export type HTMLPresentation = {
+    presentationContent?: string
     scriptPaths?: string[]
     styleSheetPaths?: string[]
     meta?: {
@@ -25,13 +25,13 @@ export type HTMLPresentationContent = {
     }
 }
 
-export function buildHTMLPresentation(baseFileHtml: string, content: HTMLPresentationContent): string {
+export function buildHTMLPresentation(baseFileHtml: string, content: HTMLPresentation): string {
     let buildingFile = baseFileHtml
     const replaceToken = (token: string, content?: string) => {
         buildingFile = buildingFile.replace(token, content ?? '')
     }
 
-    replaceToken(SLIDE_TOKEN, content?.slideContent)
+    replaceToken(PRESESENTATION_TOKEN, content?.presentationContent)
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(content.styleSheetPaths))
     replaceToken(SCRIPTS_TOKEN, generateScripts(content.scriptPaths))
     replaceToken(TITLE_TOKEN, content?.meta?.title)
@@ -56,12 +56,19 @@ function generateStylesheets(styleSheetPaths?: string[]): string {
  * ---------- Build Slides ----------
  */
 
-export type HTMLSlideContent = {
-    content: string
+export type HTMLPresentationContent = {
+    slidesHtml: string[]
 }
 
-export function buildHTMLSlide(baseSlideHtml: string, content: HTMLSlideContent): string {
-    return baseSlideHtml.replace(SLIDES_CONTENT_TOKEN, content.content)
+export function buildHTMLPresentationContent(
+    presentationContentBaseHtml: string,
+    content: HTMLPresentationContent
+): string {
+    const slides =
+        content.slidesHtml.length === 0
+            ? ''
+            : content.slidesHtml.map(slide => `<section>${slide}</section>`).reduce((prev, next) => `${prev}\n${next}`)
+    return presentationContentBaseHtml.replace(CONTENT_TOKEN, slides)
 }
 
 /*

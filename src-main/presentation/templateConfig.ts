@@ -4,7 +4,7 @@ import { z } from 'zod'
 const templateConfigSchema = z.object({
     entry: z.string(),
     reveal: z.string(),
-    slide: z.string(),
+    presentation: z.string(),
     stylesheets: z.string().array().optional(),
     layouts: z
         .object({

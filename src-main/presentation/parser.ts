@@ -5,9 +5,9 @@ import { parseSlideConfig } from '../../src-shared/entities/SlideConfig'
 import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from './template'
-import { buildHTMLLayout } from './htmlBuilder'
+import { buildHTMLLayout, buildHTMLPresentationContent } from './htmlBuilder'
 
-const SLIDE_SEPARATOR = '\n---'
+const SLIDE_SEPARATOR = '\n---\n'
 const SLOT_SEPERATOR = '\n\n'
 
 export async function parse(request: ParseRequest): Promise<Presentation> {
@@ -36,10 +36,10 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         return { config: slideConfig, markdown, html }
     })
 
-    const html =
-        parsedSlides.length === 0
-            ? ''
-            : parsedSlides.map(slide => `<section>${slide.html}</section>`).reduce((prev, next) => `${prev}\n${next}`)
+    const presentationBase = await template.getPresentationHtml()
+    const html = buildHTMLPresentationContent(presentationBase, {
+        slidesHtml: parsedSlides.map(slide => slide.html),
+    })
 
     return {
         config: presentationConfig,

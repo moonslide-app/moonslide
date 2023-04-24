@@ -16,9 +16,9 @@ export type Template = {
      */
     getConfig(): TemplateConfig
     /**
-     * Returns the content of the slides file.
+     * Returns the content of the presentation html file.
      */
-    getSlideHtml(): Promise<string>
+    getPresentationHtml(): Promise<string>
     /**
      * Loads all layouts of the template.
      */
@@ -65,8 +65,8 @@ class TemplateImpl implements Template {
 
     getConfig = () => this.config
 
-    async getSlideHtml() {
-        const slidePath = resolve(this.folderPath, this.config.slide)
+    async getPresentationHtml() {
+        const slidePath = resolve(this.folderPath, this.config.presentation)
         const fileContents = (await readFile(slidePath)).toString()
         return fileContents // DOMPurify.sanitize(fileContents)
     }
@@ -92,6 +92,6 @@ class TemplateImpl implements Template {
 
         // Remove config and slide file
         await rm(resolve(presentationLocation, CONFIG_FILE_NAME))
-        await rm(resolve(presentationLocation, this.config.slide))
+        await rm(resolve(presentationLocation, this.config.presentation))
     }
 }
