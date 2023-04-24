@@ -1,6 +1,3 @@
-meta:
-    title: Test Presentation
-    author: Timo Siegenthaler
 stylesheets:
     - ./reveal_js/dist/reveal.css
 plugins:

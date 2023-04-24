@@ -60,7 +60,10 @@ export async function preparePresentation(presentation: ParsedPresentation, file
     const baseConfig: BuilderConfig = {
         slideContent: slidesTemplate.buildSlides(presentation.htmlString),
         styleSheetPaths: config.stylesheets,
-        meta: config.meta,
+        meta: {
+            title: presentation.config.title,
+            author: presentation.config.author,
+        },
     }
 
     for (const target of Object.values(presentationTargets)) {
