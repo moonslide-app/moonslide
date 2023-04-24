@@ -59,6 +59,7 @@ export function comparePresentations(
     const templateChange = lastVersion?.resolvedPaths.templateFolder !== newVersion?.resolvedPaths.templateFolder
     const slideChanges =
         newVersion?.slides.map((slide, idx) => {
+            if (templateChange) return true
             const lastVersionSlide = lastVersion?.slides[idx]
             return lastVersionSlide?.html !== slide.html
         }) ?? []
