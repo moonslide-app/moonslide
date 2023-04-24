@@ -1,18 +1,16 @@
 import { create } from 'zustand'
 import { parseMarkdown } from './parser'
-import { ParsedContent } from '../../src-shared/entities/ParsedContent'
+import { ParsedPresentation } from '../../src-shared/entities/ParsedPresentation'
 
 type EditorStore = {
     editingFilePath: string | undefined
-    templateFolderPath: string | undefined
     content: string | undefined
-    parsedContent: ParsedContent | undefined
+    parsedContent: ParsedPresentation | undefined
     lastUpdateOfPresentationFiles: number | undefined
     /**
      * Updates the content, parses it and prepares the presentation files.
      */
     updateContent(newContent: string | undefined): Promise<void>
-    setTemplateFolderPath(newPath: string | undefined): Promise<void>
     changeEditingFile(newFilePath: string | undefined): Promise<void>
     saveContentToEditingFile(): Promise<void>
     preparePresentation(): Promise<void>
@@ -25,18 +23,16 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     parsedContent: undefined,
     lastUpdateOfPresentationFiles: undefined,
     updateContent: async newContent => {
-        set(state => ({
-            ...state,
-            content: newContent,
-            parsedContent: parseMarkdown(newContent),
-        }))
-        await get().preparePresentation()
-    },
-    setTemplateFolderPath: async newPath => {
-        set(state => ({ ...state, templateFolderPath: newPath }))
-        if (newPath) await window.ipc.presentation.prepateTemplate(newPath)
-        else await window.ipc.presentation.clearOutputFolder()
-        await get().preparePresentation()
+        // set both seperatly so parsing errors don't affect content
+        set(state => ({ ...state, content: newContent }))
+
+        try {
+            const parsedContent = parseMarkdown(newContent)
+            set(state => ({ ...state, parsedContent }))
+            await get().preparePresentation()
+        } catch (error) {
+            console.warn(error)
+        }
     },
     async changeEditingFile(newFilePath) {
         if (newFilePath !== undefined) {
@@ -53,10 +49,10 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         else console.error('Could not save editing file, either filePath or content was nullish.')
     },
     async preparePresentation() {
-        const { templateFolderPath, parsedContent } = get()
-        if (templateFolderPath && parsedContent) {
-            await window.ipc.presentation.preparePresentation(parsedContent.htmlString, templateFolderPath)
+        const { parsedContent, editingFilePath } = get()
+        if (parsedContent && editingFilePath) {
+            await window.ipc.presentation.preparePresentation(parsedContent, editingFilePath)
             set(state => ({ ...state, lastUpdateOfPresentationFiles: Date.now() }))
-        } else console.warn('Could not prepare presentation, either templatefolderpath or content was nulllish.')
+        } else console.warn('Could not prepare presentation, either parsedContent or editingFilePath was nullish.')
     },
 }))

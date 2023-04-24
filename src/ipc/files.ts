@@ -1,24 +1,19 @@
 import { ipcRenderer } from 'electron'
-import { z } from 'zod'
 
 const files = {
-    selectFile: async () => {
-        const result = await ipcRenderer.invoke('dialog:selectFile')
-        return z.string().optional().parse(result)
+    async selectFile(): Promise<string | undefined> {
+        return await ipcRenderer.invoke('dialog:selectFile')
     },
-    selectFolder: async () => {
-        const result = await ipcRenderer.invoke('dialog:selectFolder')
-        return z.string().optional().parse(result)
+    async selectFolder(): Promise<string | undefined> {
+        return await ipcRenderer.invoke('dialog:selectFolder')
     },
-    selectOutputFolder: async () => {
-        const result = await ipcRenderer.invoke('dialog:selectOuputFolder')
-        return z.string().optional().parse(result)
+    async selectOutputFolder(): Promise<string | undefined> {
+        return await ipcRenderer.invoke('dialog:selectOuputFolder')
     },
-    getFileContent: async (filePath: string) => {
-        const result = await ipcRenderer.invoke('file:getContent', filePath)
-        return z.string().optional().parse(result)
+    async getFileContent(filePath: string): Promise<string | undefined> {
+        return await ipcRenderer.invoke('file:getContent', filePath)
     },
-    saveFile: async (filePath: string, content: string) => {
+    async saveFile(filePath: string, content: string): Promise<void> {
         await ipcRenderer.invoke('file:save', filePath, content)
     },
 } as const

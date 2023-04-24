@@ -2,11 +2,9 @@ import { useEditorStore } from '../store'
 import { useEventListener } from 'usehooks-ts'
 
 export function FilePicker() {
-    const { editingFilePath, changeEditingFile, templateFolderPath, setTemplateFolderPath, saveContentToEditingFile } =
-        useEditorStore()
+    const { editingFilePath, changeEditingFile, saveContentToEditingFile } = useEditorStore()
 
     const selectMarkdownFile = () => window.ipc.files.selectFile().then(changeEditingFile)
-    const selectTemplateFolder = () => window.ipc.files.selectFolder().then(setTemplateFolderPath)
 
     const openInWindow = () => window.open('reveal://presentation/', '_blank')
 
@@ -27,13 +25,6 @@ export function FilePicker() {
                     Select Markdown File
                 </button>
                 <span className="text-xs">{`${editingFilePath || 'None'}`}</span>
-            </div>
-
-            <div className="flex space-x-2 items-baseline">
-                <button onClick={selectTemplateFolder} className="text-violet-500 font-medium">
-                    Select Template Folder
-                </button>
-                <span className="text-xs">{`${templateFolderPath || 'None'}`}</span>
             </div>
 
             <div>

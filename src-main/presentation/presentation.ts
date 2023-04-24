@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve, dirname } from 'path'
 import { writeFile, rm, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { copy } from 'fs-extra'
@@ -6,6 +6,7 @@ import { app } from 'electron'
 import { loadTemplate } from './template'
 import { BuilderConfig, buildHTMLPresentation } from './builder'
 import { PRESENTATION_SCRIPT_FILENAME, PREVIEW_SCRIPT_FILENAME, resolveAsset } from './assets'
+import { ParsedPresentation } from '../../src-shared/entities/ParsedPresentation'
 
 export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
 
@@ -34,13 +35,22 @@ export async function prepareTemplate(templateFolderPath: string): Promise<void>
     console.log('Prepared template folder.')
 }
 
-export async function preparePresentation(presentationContent: string, templateFolderPath: string): Promise<void> {
+let lastSelectedTemplate: string | undefined = undefined
+export async function preparePresentation(presentation: ParsedPresentation, filePath: string): Promise<void> {
+    const selectedTemplate = presentation.config.template
+    const templateFolderPath = resolve(dirname(filePath), selectedTemplate ?? '')
+
+    if (selectedTemplate !== lastSelectedTemplate) {
+        lastSelectedTemplate = selectedTemplate
+        prepareTemplate(templateFolderPath)
+    }
+
     const template = await loadTemplate(templateFolderPath)
     const config = template.getConfig()
     const slidesTemplate = await template.loadSlides()
 
     const baseConfig: BuilderConfig = {
-        slideContent: slidesTemplate.buildSlides(presentationContent),
+        slideContent: slidesTemplate.buildSlides(presentation.htmlString),
         styleSheetPaths: config.stylesheets,
         meta: config.meta,
     }
