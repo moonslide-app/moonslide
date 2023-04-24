@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { getFileContent, saveFile, selectFile, selectFolder, selectOutputFolder } from './filePicker'
-import { preparePresentation } from '../presentation/presentation'
+import { clearPresentationFolder, preparePresentation, prepareTemplate } from '../presentation/presentation'
 import { z } from 'zod'
 
 export function registerIpc() {
@@ -16,6 +16,11 @@ export function registerIpc() {
         const filePath = z.string().parse(arg1)
         return getFileContent(filePath)
     })
+    ipcMain.handle('presentation:clearFolder', clearPresentationFolder)
+    ipcMain.handle('presentation:prepareTemplate', (_, arg1) => {
+        const templateFolderPath = z.string().parse(arg1)
+        return prepareTemplate(templateFolderPath)
+    })
     ipcMain.handle('presentation:prepare', (_, arg1, arg2) => {
         const content = z.string().parse(arg1)
         const templateFolderPath = z.string().parse(arg2)
@@ -29,5 +34,7 @@ export function unregisterIpc() {
     ipcMain.removeHandler('dialog:selectOutputFolder')
     ipcMain.removeHandler('file:save')
     ipcMain.removeHandler('file:getContent')
+    ipcMain.removeHandler('presentation:clearFolder')
+    ipcMain.removeHandler('presentation:prepareTemplate')
     ipcMain.removeHandler('presentation:prepare')
 }

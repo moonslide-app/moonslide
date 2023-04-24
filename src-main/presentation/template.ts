@@ -1,6 +1,5 @@
-import { readFile, rm, mkdir } from 'fs/promises'
+import { readFile, rm } from 'fs/promises'
 import { copy } from 'fs-extra'
-import { existsSync } from 'fs'
 import { Config, parseConfig } from './config'
 import { resolve } from 'path'
 
@@ -19,8 +18,7 @@ export type Template = {
     /**
      * Copies the whole template folder to a new location,
      * removing unneded files like the config or the template slide file.
-     * @param newLocation the new location where the template should,
-     * will be deleted before the template is copied.
+     * @param newLocation the new location where the template should be copied to. The folder should be empty.
      */
     copyForPresentation(newLocation: string): Promise<void>
 }
@@ -62,10 +60,6 @@ class TemplateImpl implements Template {
     }
 
     async copyForPresentation(presentationLocation: string): Promise<void> {
-        // Remove directory if it already exists
-        if (existsSync(presentationLocation)) await rm(presentationLocation, { recursive: true })
-        await mkdir(presentationLocation)
-
         // Copy all files from template folder
         await copy(this.folderPath, presentationLocation)
 
