@@ -11,7 +11,6 @@ const SLIDE_SEPARATOR = '\n---\n'
 const SLOT_SEPERATOR = '\n\n'
 
 export async function parse(request: ParseRequest): Promise<Presentation> {
-    console.log('parsing')
     const { markdownContent, markdownFilePath } = request
     const { presentationConfig, slidesMarkdown, slidesConfig } = parseConfig(markdownContent)
 
