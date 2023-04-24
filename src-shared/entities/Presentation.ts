@@ -54,12 +54,13 @@ export type PresentationComparison = {
 
 export function comparePresentations(
     lastVersion: Presentation | undefined,
-    newVersion: Presentation
+    newVersion: Presentation | undefined
 ): PresentationComparison {
-    const templateChange = lastVersion?.resolvedPaths.templateFolder !== newVersion.resolvedPaths.templateFolder
-    const slideChanges = newVersion.slides.map((slide, idx) => {
-        const lastVersionSlide = lastVersion?.slides[idx]
-        return lastVersionSlide?.html !== slide.html
-    })
+    const templateChange = lastVersion?.resolvedPaths.templateFolder !== newVersion?.resolvedPaths.templateFolder
+    const slideChanges =
+        newVersion?.slides.map((slide, idx) => {
+            const lastVersionSlide = lastVersion?.slides[idx]
+            return lastVersionSlide?.html !== slide.html
+        }) ?? []
     return { templateChange, slideChanges }
 }

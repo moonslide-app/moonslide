@@ -10,7 +10,7 @@ type EditorStore = {
      * Updates the content, parses it and prepares the presentation files.
      */
     updateContent(newContent: string | undefined): Promise<void>
-    updateParsedContent(newContent: Presentation): Promise<void>
+    updateParsedContent(newContent: Presentation | undefined): Promise<void>
     changeEditingFile(newFilePath: string | undefined): Promise<void>
     saveContentToEditingFile(): Promise<void>
     preparePresentation(): Promise<void>
@@ -24,7 +24,11 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     slidesLastUpdate: [],
     updateContent: async newContent => {
         set(state => ({ ...state, content: newContent }))
-        if (!newContent) return
+
+        if (!newContent) {
+            await get().updateParsedContent(undefined)
+            return
+        }
 
         try {
             const parsedContent = await window.ipc.presentation.parsePresentation({
@@ -41,14 +45,19 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         set(state => ({ ...state, parsedContent: newParsedContent }))
 
         const comparison = comparePresentations(parsedContent, newParsedContent)
-        if (comparison.templateChange)
-            await window.ipc.presentation.prepareTemplate(newParsedContent.resolvedPaths.templateFolder)
+        if (comparison.templateChange) {
+            if (newParsedContent !== undefined) {
+                await window.ipc.presentation.prepareTemplate(newParsedContent.resolvedPaths.templateFolder)
+            } else {
+                await window.ipc.presentation.clearOutputFolder()
+            }
+        }
+
+        if (newParsedContent) await get().preparePresentation()
 
         const newSlidesLastUpdate = comparison.slideChanges.map((update, idx) =>
             update ? Date.now() : slidesLastUpdate[idx]
         )
-
-        await get().preparePresentation()
         set(state => ({ ...state, slidesLastUpdate: newSlidesLastUpdate }))
     },
     async changeEditingFile(newFilePath) {

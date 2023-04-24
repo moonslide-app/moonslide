@@ -4,7 +4,7 @@ import { presentationFolderPath, presentationTargets } from '../presentation/pre
 
 export const REVEAL_PROTOCOL_NAME = 'reveal'
 
-export function registerRevealProtocl() {
+export function registerRevealProtocol() {
     protocol.registerFileProtocol(REVEAL_PROTOCOL_NAME, (request, callback) => {
         const requestedPath = request.url.slice('reveal://'.length)
         const allowedPaths = [
