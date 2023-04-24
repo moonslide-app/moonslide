@@ -46,3 +46,20 @@ export type Slide = {
      */
     html: string
 }
+
+export type PresentationComparison = {
+    templateChange: boolean
+    slideChanges: boolean[]
+}
+
+export function comparePresentations(
+    lastVersion: Presentation | undefined,
+    newVersion: Presentation
+): PresentationComparison {
+    const templateChange = lastVersion?.resolvedPaths.templateFolder !== newVersion.resolvedPaths.templateFolder
+    const slideChanges = newVersion.slides.map((slide, idx) => {
+        const lastVersionSlide = lastVersion?.slides[idx]
+        return lastVersionSlide?.html !== slide.html
+    })
+    return { templateChange, slideChanges }
+}
