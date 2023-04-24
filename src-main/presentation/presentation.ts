@@ -5,7 +5,13 @@ import { copy } from 'fs-extra'
 import { app } from 'electron'
 import { loadTemplate } from './template'
 import { BuilderConfig, buildHTMLPresentation } from './builder'
-import { PRESENTATION_SCRIPT_FILENAME, PREVIEW_SCRIPT_FILENAME, resolveAsset } from './assets'
+import {
+    PRESENTATION_SCRIPT_FILENAME,
+    PREVIEW_SCRIPT_FILENAME,
+    getTemplateFolder,
+    isTemplate,
+    resolveAsset,
+} from './assets'
 import { ParsedPresentation } from '../../src-shared/entities/ParsedPresentation'
 
 export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
@@ -37,12 +43,14 @@ export async function prepareTemplate(templateFolderPath: string): Promise<void>
 
 let lastSelectedTemplate: string | undefined = undefined
 export async function preparePresentation(presentation: ParsedPresentation, filePath: string): Promise<void> {
-    const selectedTemplate = presentation.config.template
-    const templateFolderPath = resolve(dirname(filePath), selectedTemplate ?? '')
+    const selectedTemplate = presentation.config.template ?? 'basic'
+    const templateFolderPath = isTemplate(selectedTemplate)
+        ? getTemplateFolder(selectedTemplate)
+        : resolve(dirname(filePath), selectedTemplate)
 
     if (selectedTemplate !== lastSelectedTemplate) {
         lastSelectedTemplate = selectedTemplate
-        prepareTemplate(templateFolderPath)
+        await prepareTemplate(templateFolderPath)
     }
 
     const template = await loadTemplate(templateFolderPath)
