@@ -1,0 +1,242 @@
+/*
+ * Local Reveal.js styles
+ * bkrt, 17.02.2021
+ *
+ * 30.07.2016 - initial version
+ * 06.08.2017 - reduced font-size in main rule for Reveal.js 3.5
+ * 17.02.2021 - incremental changes 2018...2021, more classes, css variables
+ */
+
+/* --- general settings --- */
+.reveal .slides {
+    text-align: left;
+    font-size: 90%;
+}
+.reveal .slides img,
+.reveal section p img {
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+}
+.reveal .footer {
+    position: absolute;
+    bottom: 1em;
+    left: 1em;
+    font-size: 0.3em;
+    color: rgb(180, 180, 180);
+}
+span.reference {
+    font-size: 0.5em;
+    color: rgb(180, 180, 180);
+}
+.reveal pre {
+    margin-left: 0;
+    box-shadow: none;
+    line-height: 1.3;
+}
+.reveal .slides pre code {
+    font-family: Consolas, monospace;
+}
+.reveal .slides pre code em {
+    font-style: normal;
+    border: 2px solid red;
+    border-radius: 5px;
+}
+.reveal .slides pre code hr {
+    border-width: 0;
+    display: block;
+    margin-top: -0.75em;
+}
+@media print {
+    .reveal pre code {
+        background: transparent;
+    }
+}
+
+.reveal .ma00 {
+    margin: 0;
+}
+
+.reveal .mt05 {
+    margin-top: 0.5em;
+}
+.reveal .mt10 {
+    margin-top: 1em;
+}
+.reveal .mt15 {
+    margin-top: 1.5em;
+}
+.reveal .mt20 {
+    margin-top: 2em;
+}
+.reveal .mt25 {
+    margin-top: 2.5em;
+}
+
+.reveal .mb05 {
+    margin-bottom: 0.5em;
+}
+.reveal .mb10 {
+    margin-bottom: 1em;
+}
+.reveal .mb15 {
+    margin-bottom: 1.5em;
+}
+.reveal .mb20 {
+    margin-bottom: 2em;
+}
+.reveal .mb25 {
+    margin-bottom: 2.5em;
+}
+
+.reveal .fs70 {
+    font-size: 70%;
+}
+.reveal .fs75 {
+    font-size: 75%;
+}
+.reveal .fs80 {
+    font-size: 80%;
+}
+.reveal .fs85 {
+    font-size: 85%;
+}
+.reveal .fs90 {
+    font-size: 90%;
+}
+.reveal .fs95 {
+    font-size: 95%;
+}
+
+.reveal .lh10 {
+    line-height: 1;
+}
+.reveal .lh11 {
+    line-height: 1.1;
+}
+.reveal .lh12 {
+    line-height: 1.2;
+}
+.reveal .lh13 {
+    line-height: 1.3;
+}
+.reveal .lh14 {
+    line-height: 1.4;
+}
+.reveal .lh15 {
+    line-height: 1.5;
+}
+
+.reveal .dim {
+    opacity: 0.6;
+}
+.reveal .lower {
+    text-transform: lowercase;
+}
+.reveal .exact {
+    text-transform: none;
+}
+.reveal .w100 {
+    width: 100%;
+}
+
+.styledtable table {
+    border: 1px solid;
+    margin-left: 0;
+    width: 100%;
+    margin-top: 1em;
+}
+.styledtable table td {
+    font-size: 80%;
+    padding: 0.3 0.7em;
+    border-left: 1px solid var(--main-color);
+    border-right: 1px solid var(--main-color);
+}
+.styledtable table th {
+    font-size: 80%;
+}
+
+.styledtable.ldefine table td:nth-child(1) {
+    color: var(--main-define-color);
+}
+.styledtable.mdefine table td:nth-child(2) {
+    color: var(--main-define-color);
+}
+.styledtable.rdefine table td:nth-child(3) {
+    color: var(--main-define-color);
+}
+.styledtable.lnote table td:nth-child(1) {
+    color: var(--main-note-color);
+}
+.styledtable.mnote table td:nth-child(2) {
+    color: var(--main-note-color);
+}
+.styledtable.rnote table td:nth-child(3) {
+    color: var(--main-note-color);
+}
+.styledtable.lhilite table td:nth-child(1) {
+    color: var(--main-hilite-color);
+}
+.styledtable.mhilite table td:nth-child(2) {
+    color: var(--main-hilite-color);
+}
+.styledtable.rhilite table td:nth-child(3) {
+    color: var(--main-hilite-color);
+}
+
+/* --- position elements side by side --- */
+.two-floating-elements > h2 ~ p,
+.two-floating-elements > h2 ~ ul,
+.two-floating-elements > h3 ~ p,
+.two-floating-elements > h3 ~ ul {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 0.7em;
+    padding-right: 1em;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.two-floating-elements > ul {
+    margin-left: 1em;
+    padding-top: 1.5em;
+}
+.two-floating-elements > p {
+    padding-top: 0.75em;
+}
+
+/* --- classes for font-size and list styling --- */
+.multiline-in-list ul li {
+    font-size: 90%;
+    margin-top: 0.3em;
+}
+.multiline-in-list ul li:first-child {
+    margin-top: 0;
+}
+.multiline-in-list ul ul li {
+    margin-top: 0;
+}
+.smaller90-in-list ul li {
+    font-size: 90%;
+}
+.smaller80-in-list ul li {
+    font-size: 80%;
+}
+.smaller70-in-list ul li {
+    font-size: 70%;
+}
+
+/* --- button to run code --- */
+a.runcode {
+    font-size: 50%;
+    border-radius: 50%;
+    padding: 0.3em;
+    background-color: rgba(102, 102, 102, 0.1);
+    color: transparent;
+    transition: 1s;
+}
+a:hover.runcode {
+    background-color: #666;
+    visibility: visible;
+}
