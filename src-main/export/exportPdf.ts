@@ -1,42 +1,32 @@
 import { BrowserWindow } from 'electron'
-import fs from 'fs'
+import fs from 'fs/promises'
 
-export function exportPdf(outputPath: string) {
-    return new Promise<string>((resolve, reject) => {
-        const pdfWindow = new BrowserWindow({
-            show: false,
-        })
-
-        console.log(`Loading export window with output path: ${outputPath}`)
-        pdfWindow.loadURL('reveal://export/?print-pdf')
-
-        pdfWindow.webContents.insertCSS(
-            'html.print-pdf .reveal .slides .pdf-page:last-child { page-break-after: avoid; }'
-        )
-
-        pdfWindow.webContents.on('dom-ready', () => {
-            setTimeout(() => {
-                // Use default printing options
-                pdfWindow.webContents
-                    .printToPDF({
-                        preferCSSPageSize: true,
-                        printBackground: true,
-                    })
-                    .then(data => {
-                        fs.writeFile(outputPath, data, error => {
-                            if (error) throw error
-                            console.log(`Wrote PDF successfully to ${outputPath}`)
-                            resolve(outputPath)
-                        })
-                    })
-                    .catch(error => {
-                        console.log(`Failed to write PDF to ${outputPath}. Error: ${error}`)
-                        reject(error)
-                    })
-                    .finally(() => {
-                        pdfWindow.destroy()
-                    })
-            }, 1000)
-        })
+export async function exportPdf(outputPath: string): Promise<string> {
+    const pdfWindow = new BrowserWindow({
+        show: false,
     })
+
+    console.log(`Loading export window with output path: ${outputPath}`)
+    pdfWindow.loadURL('reveal://export/?print-pdf')
+
+    pdfWindow.webContents.insertCSS('html.print-pdf .reveal .slides .pdf-page:last-child { page-break-after: avoid; }')
+
+    try {
+        await pdfWindow.webContents.executeJavaScript('new Promise(resolve => { Reveal.on("pdf-ready", resolve) })')
+        // Use default printing options
+        const data = await pdfWindow.webContents.printToPDF({
+            preferCSSPageSize: true,
+            printBackground: true,
+        })
+
+        await fs.writeFile(outputPath, data)
+        console.log(`Wrote PDF successfully to ${outputPath}`)
+
+        return outputPath
+    } catch (error) {
+        console.error(`Failed to write PDF to ${outputPath}. Error: ${error}`)
+        throw error
+    } finally {
+        pdfWindow.destroy()
+    }
 }
