@@ -30,10 +30,7 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 }
 
-protocol.registerSchemesAsPrivileged([
-    { scheme: REVEAL_PROTOCOL_NAME, privileges: { bypassCSP: true } },
-    { scheme: REVEAL_EXPORT_PROTOCOL_NAME, privileges: { bypassCSP: true } },
-])
+protocol.registerSchemesAsPrivileged([{ scheme: REVEAL_PROTOCOL_NAME, privileges: { bypassCSP: true } }])
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

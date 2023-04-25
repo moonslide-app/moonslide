@@ -9,9 +9,9 @@ const files = {
     },
     async selectOutputFolder(): Promise<string | undefined> {
         return await ipcRenderer.invoke('dialog:selectOutputFolder')
-    selectOutputFile: async (filter: { name: string; extension: string }) => {
-        const result = await ipcRenderer.invoke('dialog:selectOutputFile', filter)
-        return z.string().optional().parse(result)
+    },
+    async selectOutputFile(filter: { name: string; extension: string }): Promise<string | undefined> {
+        return await ipcRenderer.invoke('dialog:selectOutputFile', filter)
     },
     async getFileContent(filePath: string): Promise<string | undefined> {
         return await ipcRenderer.invoke('file:getContent', filePath)
@@ -19,8 +19,8 @@ const files = {
     async saveFile(filePath: string, content: string): Promise<void> {
         await ipcRenderer.invoke('file:save', filePath, content)
     },
-    exportPdf: async (outputPath: string) => {
-        await ipcRenderer.invoke('export:pdf', outputPath)
+    async exportPdf(outputPath: string): Promise<string> {
+        return await ipcRenderer.invoke('export:pdf', outputPath)
     },
 } as const
 
