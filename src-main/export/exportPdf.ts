@@ -6,6 +6,7 @@ export function exportPdf(outputPath: string) {
     const pdfWindow = new BrowserWindow({
         width: 1440,
         height: 960,
+        show: false,
     })
 
     console.log(`Loading export window with output path: ${outputPath}`)
@@ -17,7 +18,7 @@ export function exportPdf(outputPath: string) {
             pdfWindow.webContents
                 .printToPDF({
                     preferCSSPageSize: true,
-                    //printBackground: true,
+                    printBackground: true,
                 })
                 .then(data => {
                     fs.writeFile(outputPath, data, error => {
@@ -27,6 +28,9 @@ export function exportPdf(outputPath: string) {
                 })
                 .catch(error => {
                     console.log(`Failed to write PDF to ${outputPath}: `, error)
+                })
+                .finally(() => {
+                    pdfWindow.destroy()
                 })
         }, 1000)
     })
