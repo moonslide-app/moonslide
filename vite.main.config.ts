@@ -9,4 +9,5 @@ export default defineConfig({
         mainFields: ['module', 'jsnext:main', 'jsnext'],
     },
     plugins: [restart()],
+    publicDir: './src-main/assets',
 })

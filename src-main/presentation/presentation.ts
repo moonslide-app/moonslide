@@ -1,91 +1,68 @@
-import { resolve, relative } from 'path'
-import { readFile, writeFile, mkdir, rm } from 'fs/promises'
+import { resolve } from 'path'
+import { writeFile, rm, mkdir } from 'fs/promises'
+import { existsSync } from 'fs'
 import { copy } from 'fs-extra'
 import { app } from 'electron'
-import { existsSync } from 'fs'
-import { parseConfig } from './config'
+import { loadTemplate } from './template'
+import { HTMLPresentation, buildHTMLPresentation } from './htmlBuilder'
+import {
+    BASE_FILE_NAME,
+    PRESENTATION_SCRIPT_FILENAME,
+    PREVIEW_SCRIPT_FILENAME,
+    loadAssetContent,
+    resolveAsset,
+} from './assets'
+import { Presentation } from '../../src-shared/entities/Presentation'
 
-// base.html
-const SLIDE_TOKEN = '@@slide@@'
-const AUTHOR_TOKEN = '@@author@@'
-const TITLE_TOKEN = '@@title@@'
-const STYLESHEETS_TOKEN = '@@stylesheets@@'
-const SCRIPTS_TOKEN = '@@scripts@@'
+export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
 
-// template
-const BASE_FILE_NAME = 'base.html'
-const CONFIG_FILE_NAME = 'config.yml'
-const CONTENT_TOKEN = '@@content@@'
+export const presentationTargets = {
+    preview: {
+        assetScript: PREVIEW_SCRIPT_FILENAME,
+        outFileName: 'preview.html',
+    },
+    presentation: {
+        assetScript: PRESENTATION_SCRIPT_FILENAME,
+        outFileName: 'presentation.html',
+    },
+}
 
-const baseFolderPath = resolve(__dirname, '../../presentation/base')
-const previewScriptFile = 'preview.js'
-const presentationScriptFile = 'presentation.js'
+export async function clearPresentationFolder(): Promise<void> {
+    if (existsSync(presentationFolderPath)) await rm(presentationFolderPath, { recursive: true })
+    await mkdir(presentationFolderPath)
+    console.log('Cleared presentation folder.')
+}
 
-export async function preparePresentation(presentationContent: string, templateFolderPath: string): Promise<void> {
-    const baseFilePath = resolve(baseFolderPath, BASE_FILE_NAME)
+export async function prepareTemplate(templateFolderPath: string): Promise<void> {
+    await clearPresentationFolder()
+    const template = await loadTemplate(templateFolderPath)
+    await template.copyForPresentation(presentationFolderPath)
+    console.log('Prepared template folder.')
+}
 
-    console.log(`Using parsed HTML input to create presentation.`)
-    console.log(`Using template dir: '${relative(__dirname, templateFolderPath)}'.`)
+export async function preparePresentation(presentation: Presentation): Promise<void> {
+    const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
+    const config = template.getConfig()
 
-    const configFilePath = resolve(templateFolderPath, CONFIG_FILE_NAME)
-    const configFileContent = (await readFile(configFilePath)).toString()
-    const parsedConfig = parseConfig(configFileContent)
-
-    console.log(`Generating HTML Presentation...`)
-
-    let htmlDoc = (await readFile(baseFilePath)).toString()
-    htmlDoc = htmlDoc.replace(AUTHOR_TOKEN, parsedConfig.meta?.author ?? '')
-    htmlDoc = htmlDoc.replace(TITLE_TOKEN, parsedConfig.meta?.title ?? '')
-
-    const styleSheets = parsedConfig.stylesheets
-        .map(styleSheetPath => `<link rel="stylesheet" href="${styleSheetPath}">`)
-        .reduce((prev, curr) => `${prev}\n${curr}`)
-
-    htmlDoc = htmlDoc.replace(STYLESHEETS_TOKEN, styleSheets)
-
-    const slidePath = resolve(configFilePath, '..', parsedConfig.slide)
-    const slideFileContent = (await readFile(slidePath)).toString()
-    const slide = slideFileContent.replace(CONTENT_TOKEN, presentationContent)
-
-    htmlDoc = htmlDoc.replace(SLIDE_TOKEN, slide)
-
-    const scripts = [...parsedConfig.plugins]
-        .map(script => `<script src="${script}"></script>`)
-        .reduce((prev, curr) => `${prev}\n${curr}`)
-
-    let previewScripts = scripts + `\n<script src="./${previewScriptFile}"></script>`
-    let presentationScripts = scripts + `\n<script src="./${presentationScriptFile}"></script>`
-
-    previewScripts += `\n<script src="${parsedConfig.entry}"></script>`
-    presentationScripts += `\n<script src="${parsedConfig.entry}"></script>`
-
-    const previewHtml = htmlDoc.replace(SCRIPTS_TOKEN, previewScripts)
-    const presentationHtml = htmlDoc.replace(SCRIPTS_TOKEN, presentationScripts)
-
-    const presentationOutputPath = resolve(app.getPath('userData'), 'presentation')
-
-    console.log(`Creating output directory: '${presentationOutputPath}'.`)
-    if (existsSync(presentationOutputPath)) {
-        await rm(presentationOutputPath, { recursive: true })
+    const baseConfig: HTMLPresentation = {
+        presentationContent: presentation.html,
+        styleSheetPaths: config.stylesheets,
+        meta: {
+            title: presentation.config.title,
+            author: presentation.config.author,
+        },
     }
-    await mkdir(presentationOutputPath)
 
-    console.log(`Copying template files to output folder...`)
-    await copy(templateFolderPath, presentationOutputPath)
-    await copy(resolve(baseFolderPath, previewScriptFile), resolve(presentationOutputPath, previewScriptFile))
-    await copy(resolve(baseFolderPath, presentationScriptFile), resolve(presentationOutputPath, presentationScriptFile))
+    const baseFile = await loadAssetContent(BASE_FILE_NAME)
+    for (const target of Object.values(presentationTargets)) {
+        const targetConfig: HTMLPresentation = {
+            ...baseConfig,
+            scriptPaths: [config.reveal, ...(config.plugins ?? []), `./${target.assetScript}`, config.entry],
+        }
+        const htmlPresentation = buildHTMLPresentation(baseFile, targetConfig)
+        await writeFile(resolve(presentationFolderPath, target.outFileName), htmlPresentation)
+        await copy(resolveAsset(target.assetScript), resolve(presentationFolderPath, target.assetScript))
+    }
 
-    console.log(`Removing unneeded template files in output folder...`)
-    await rm(resolve(presentationOutputPath, CONFIG_FILE_NAME))
-    await rm(resolve(presentationOutputPath, parsedConfig.slide))
-
-    console.log(`Saving generated HTML presentation to output folder...`)
-    const presentationOutFile = resolve(presentationOutputPath, 'presentation.html')
-    await writeFile(presentationOutFile, presentationHtml)
-
-    // TODO: Change
-    const previewOutFile = resolve(presentationOutputPath, 'preview.html')
-    await writeFile(previewOutFile, previewHtml)
-
-    console.log(`Presentation export successful.`)
+    console.log('Generated new presentation files.')
 }
