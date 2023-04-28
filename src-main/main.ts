@@ -1,7 +1,7 @@
 import { app, BrowserWindow, protocol } from 'electron'
 import path from 'path'
 import { registerIpc, unregisterIpc } from './helpers/ipc'
-import { registerRevealProtocol, REVEAL_PROTOCOL_NAME } from './helpers/protocol'
+import { registerProtocols, REVEAL_PROTOCOL_NAME } from './helpers/protocol'
 import { clearPresentationFolder } from './presentation/presentation'
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -39,7 +39,7 @@ protocol.registerSchemesAsPrivileged([{ scheme: REVEAL_PROTOCOL_NAME, privileges
 
 app.whenReady().then(() => {
     registerIpc()
-    registerRevealProtocol()
+    registerProtocols()
     clearPresentationFolder()
 
     createWindow()

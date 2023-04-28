@@ -1,7 +1,7 @@
-import { readFile, rm } from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { copy } from 'fs-extra'
 import { TemplateConfig, parseTemplateConfig } from './templateConfig'
-import { resolve, dirname } from 'path'
+import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from './assets'
 import sanitizeHtml from './sanitize'
 
@@ -16,6 +16,11 @@ export type Template = {
      * Returns the loaded config of this template.
      */
     getConfig(): TemplateConfig
+    /**
+     * TODO
+     * @param relativeToPath
+     */
+    getConfigWithRelativePaths(relativeToPath: string): TemplateConfig
     /**
      * Returns the content of the presentation html file.
      */
@@ -66,6 +71,17 @@ class TemplateImpl implements Template {
 
     getConfig = () => this.config
 
+    getConfigWithRelativePaths(relativeToPath: string) {
+        const relativeTo = relativeToPath
+        return {
+            entry: relative(relativeTo, resolve(this.folderPath, this.config.entry)),
+            reveal: relative(relativeTo, resolve(this.folderPath, this.config.reveal)),
+            presentation: relative(relativeTo, resolve(this.folderPath, this.config.presentation)),
+            stylesheets: this.config.stylesheets?.map(sheet => relative(relativeTo, resolve(this.folderPath, sheet))),
+            plugins: this.config.plugins?.map(plugin => relative(relativeTo, resolve(this.folderPath, plugin))),
+        }
+    }
+
     async getPresentationHtml() {
         const slidePath = resolve(this.folderPath, this.config.presentation)
         const fileContents = (await readFile(slidePath)).toString()
@@ -92,7 +108,12 @@ class TemplateImpl implements Template {
         await copy(this.folderPath, presentationLocation)
 
         // Remove config and slide file
-        await rm(resolve(presentationLocation, CONFIG_FILE_NAME))
-        await rm(resolve(presentationLocation, this.config.presentation))
+        // await rm(resolve(presentationLocation, CONFIG_FILE_NAME))
+        // await rm(resolve(presentationLocation, this.config.presentation))
+
+        // Remove layout html files
+        // for (const layout of this.config.layouts ?? []) {
+        //     await rm(resolve(presentationLocation, layout.path))
+        // }
     }
 }

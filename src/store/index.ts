@@ -47,6 +47,8 @@ type EditorStore = {
      * This methods calls the ipc function to rebuild the presentation (and preview) files.
      */
     preparePresentation(): Promise<void>
+
+    exportPresentation(): Promise<void>
 }
 
 export const useEditorStore = create<EditorStore>()((set, get) => ({
@@ -112,5 +114,12 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         if (parsedPresentation) {
             await window.ipc.presentation.preparePresentation(parsedPresentation)
         } else console.warn('Could not prepare presentation, either parsedPresentation or editingFilePath was nullish.')
+    },
+    async exportPresentation() {
+        const { parsedPresentation } = get()
+        if (parsedPresentation) {
+            const outputPath = await window.ipc.files.selectOutputFolder()
+            if (outputPath) await window.ipc.presentation.exportPresentation(parsedPresentation, outputPath)
+        }
     },
 }))

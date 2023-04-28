@@ -15,6 +15,9 @@ const presentation = {
     async preparePresentation(presentation: Presentation): Promise<void> {
         await ipcRenderer.invoke('presentation:prepare', presentation)
     },
+    async exportPresentation(presentation: Presentation, outputPath: string) {
+        await ipcRenderer.invoke('presentation:export', presentation, outputPath)
+    },
 } as const
 
 export default presentation

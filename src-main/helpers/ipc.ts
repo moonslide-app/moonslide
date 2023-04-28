@@ -1,6 +1,12 @@
 import { ipcMain } from 'electron'
 import { getFileContent, saveFile, selectFile, selectFolder, selectOutputFile, selectOutputFolder } from './filePicker'
-import { clearPresentationFolder, preparePresentation, prepareTemplate } from '../presentation/presentation'
+import {
+    clearPresentationFolder,
+    exportOnlyPresentation,
+    exportPresentation,
+    preparePresentation,
+    prepareTemplate,
+} from '../presentation/presentation'
 import { parse } from '../presentation/parser'
 import { exportPdf } from '../export/exportPdf'
 
@@ -14,6 +20,7 @@ export function registerIpc() {
     ipcMain.handle('presentation:prepareTemplate', (_, arg1) => prepareTemplate(arg1))
     ipcMain.handle('presentation:prepare', (_, arg1) => preparePresentation(arg1))
     ipcMain.handle('presentation:parse', (_, arg1) => parse(arg1))
+    ipcMain.handle('presentation:export', (_, arg1, arg2) => exportPresentation(arg1, arg2))
     ipcMain.handle('dialog:selectOutputFile', (_, filter) => selectOutputFile(filter))
     ipcMain.handle('export:pdf', (_, arg1) => exportPdf(arg1))
 }
@@ -29,5 +36,6 @@ export function unregisterIpc() {
     ipcMain.removeHandler('presentation:prepareTemplate')
     ipcMain.removeHandler('presentation:prepare')
     ipcMain.removeHandler('presentation:parse')
+    ipcMain.removeHandler('presentation:export')
     ipcMain.removeHandler('export:pdf')
 }
