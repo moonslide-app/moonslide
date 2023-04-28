@@ -1,3 +1,4 @@
+import { LocalImage } from '../../src-main/presentation/parseMarkdown'
 import { PresentationConfig } from './PresentationConfig'
 import { SlideConfig } from './SlideConfig'
 
@@ -24,6 +25,10 @@ export type Presentation = {
          */
         markdownFile: string | undefined
     }
+    /**
+     * All local image files referenced in the presentation
+     */
+    images: LocalImage[]
     /**
      * Layouts of this presentations template.
      * The key is the name of the layout,

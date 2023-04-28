@@ -3,7 +3,7 @@ import MarkdownItAttrs from 'markdown-it-attrs'
 import MarkdownItReplaceLink from 'markdown-it-replace-link'
 import sanitizeHtml from './sanitize'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
-import { isAbsolute, resolve, dirname, extname } from 'path'
+import { isAbsolute, resolve, dirname, extname, relative } from 'path'
 import { parse } from 'url'
 import { getLocalImageUrl } from '../helpers/protocol'
 import { MEDIA_FOLDER_NAME } from './media'
@@ -66,7 +66,9 @@ export function parseMarkdown(request: ParseRequest): ParseMarkdownResult {
                 toRelativePath: transformedPath,
             }
         } else if (request.imageMode === 'export-relative') {
-            transformedPath = originalPath
+            if (!request.outputPath)
+                throw new Error(`Can not parse markdown in mode 'export-relative' when no outputPath is specified.`)
+            transformedPath = relative(request.outputPath, resolvedPath)
         }
 
         localImages.push({ originalPath, resolvedPath, transformedPath, requiredCopyAction })

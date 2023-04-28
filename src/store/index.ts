@@ -47,8 +47,11 @@ type EditorStore = {
      * This methods calls the ipc function to rebuild the presentation (and preview) files.
      */
     preparePresentation(): Promise<void>
-
-    exportPresentation(): Promise<void>
+    /**
+     * Exports the presentation as html.
+     * @param standalone If `true` the whole template folder is copied with the presentation.
+     */
+    exportHTMLPresentation(standalone?: boolean): Promise<void>
 }
 
 export const useEditorStore = create<EditorStore>()((set, get) => ({
@@ -70,7 +73,7 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
             const parsedPresentation = await window.ipc.presentation.parsePresentation({
                 markdownContent: newContent,
                 markdownFilePath: editingFilePath,
-                imageMode: 'export-standalone',
+                imageMode: 'preview',
             })
             get().updateParsedPresentation(parsedPresentation)
         } catch (error) {
@@ -117,11 +120,18 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
             await window.ipc.presentation.preparePresentation(parsedPresentation)
         } else console.warn('Could not prepare presentation, either parsedPresentation or editingFilePath was nullish.')
     },
-    async exportPresentation() {
-        const { parsedPresentation } = get()
-        if (parsedPresentation) {
+    async exportHTMLPresentation(standalone = true) {
+        const { editingFilePath, content } = get()
+        if (editingFilePath && content) {
             const outputPath = await window.ipc.files.selectOutputFolder()
-            if (outputPath) await window.ipc.presentation.exportPresentation(parsedPresentation, outputPath)
+            if (outputPath) {
+                await window.ipc.presentation.exportHtml({
+                    markdownContent: content,
+                    markdownFilePath: editingFilePath,
+                    outputPath,
+                    mode: standalone ? 'export-standalone' : 'export-relative',
+                })
+            }
         }
     },
 }))

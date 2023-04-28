@@ -39,8 +39,6 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         return { config: slideConfig, markdown, html }
     })
 
-    console.log(localImages)
-
     const presentationBase = await template.getPresentationHtml()
     const html = buildHTMLPresentationContent(presentationBase, {
         slidesHtml: parsedSlides.map(slide => slide.html),
@@ -51,6 +49,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         slides: parsedSlides,
         html,
         layoutsHtml: layouts.layoutsHtml,
+        images: localImages,
         resolvedPaths: {
             templateFolder: template.folderPath,
             markdownFile: markdownFilePath,

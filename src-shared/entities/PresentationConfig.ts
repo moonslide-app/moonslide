@@ -1,4 +1,4 @@
-import { TEMPLATE_BASIC } from '../../src-main/presentation/assets'
+import { TEMPLATE_BASIC } from '../../src-main/helpers/assets'
 import { z } from 'zod'
 
 export const presentationConfigSchema = z.object({

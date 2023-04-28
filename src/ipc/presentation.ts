@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron'
 import { Presentation } from '../../src-shared/entities/Presentation'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
+import { ExportRequest } from '../../src-shared/entities/ExportRequest'
 
 const presentation = {
     async clearOutputFolder(): Promise<void> {
@@ -15,8 +16,11 @@ const presentation = {
     async preparePresentation(presentation: Presentation): Promise<void> {
         await ipcRenderer.invoke('presentation:prepare', presentation)
     },
-    async exportPresentation(presentation: Presentation, outputPath: string) {
-        await ipcRenderer.invoke('presentation:export', presentation, outputPath)
+    async exportPdf(outputPath: string): Promise<string> {
+        return await ipcRenderer.invoke('export:pdf', outputPath)
+    },
+    async exportHtml(request: ExportRequest) {
+        await ipcRenderer.invoke('export:html', request)
     },
 } as const
 

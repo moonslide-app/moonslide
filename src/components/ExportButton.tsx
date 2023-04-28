@@ -5,12 +5,12 @@ export function ExportButton() {
         window.ipc.files.selectOutputFile({ name: 'PDF', extension: 'pdf' }).then(async path => {
             if (path) {
                 console.log(`exportPdf outputPath: ${path}`)
-                const outputPath = await window.ipc.files.exportPdf(path)
+                const outputPath = await window.ipc.presentation.exportPdf(path)
                 console.log(`Exported PDF to ${outputPath}`)
             }
         })
 
-    const exportPresentation = useEditorStore(state => state.exportPresentation)
+    const exportPresentation = useEditorStore(state => state.exportHTMLPresentation)
 
     return (
         <div className="space-y-2 mb-4">
@@ -18,8 +18,15 @@ export function ExportButton() {
                 <button onClick={exportToPath} className="text-violet-500 font-medium">
                     Export PDF
                 </button>
-                <button onClick={exportPresentation} className="text-violet-500 font-medium">
-                    Export HTML Presentation
+            </div>
+            <div>
+                <button onClick={() => exportPresentation(true)} className="text-violet-500 font-medium">
+                    Export Standalone HTML Presentation
+                </button>
+            </div>
+            <div>
+                <button onClick={() => exportPresentation(false)} className="text-violet-500 font-medium">
+                    Export HTML Presentation only
                 </button>
             </div>
         </div>

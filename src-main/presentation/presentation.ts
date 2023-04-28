@@ -11,9 +11,8 @@ import {
     PREVIEW_SCRIPT_FILENAME,
     loadAssetContent,
     resolveAsset,
-} from './assets'
+} from '../helpers/assets'
 import { Presentation } from '../../src-shared/entities/Presentation'
-import pretty from 'pretty'
 
 export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
 
@@ -37,71 +36,8 @@ export async function clearPresentationFolder(): Promise<void> {
 export async function prepareTemplate(templateFolderPath: string): Promise<void> {
     await clearPresentationFolder()
     const template = await loadTemplate(templateFolderPath)
-    await template.copyForPresentation(presentationFolderPath)
+    await template.copyTo(presentationFolderPath)
     console.log('Prepared template folder.')
-}
-
-export async function exportPresentation(presentation: Presentation, outputPath: string): Promise<void> {
-    const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
-    const templateConfig = template.getConfig()
-    const target = presentationTargets.presentation
-
-    const presentationConfig: HTMLPresentation = {
-        presentationContent: presentation.html,
-        styleSheetPaths: templateConfig.stylesheets,
-        scriptPaths: [
-            templateConfig.reveal,
-            ...(templateConfig.plugins ?? []),
-            `./${target.assetScript}`,
-            templateConfig.entry,
-        ],
-        meta: {
-            title: presentation.config.title,
-            author: presentation.config.author,
-        },
-    }
-
-    const baseFile = await loadAssetContent(BASE_FILE_NAME)
-    const htmlPresentation = buildHTMLPresentation(baseFile, presentationConfig)
-    const formatted = pretty(htmlPresentation, { ocd: true })
-
-    await template.copyForPresentation(outputPath)
-    await writeFile(resolve(outputPath, target.outFileName), formatted)
-    await copy(resolveAsset(target.assetScript), resolve(outputPath, target.assetScript))
-
-    console.log('Exported presentation.')
-}
-
-export async function exportOnlyPresentation(presentation: Presentation, outputPath: string): Promise<void> {
-    const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
-    const templateConfig = template.getConfigWithRelativePaths(outputPath)
-    const target = presentationTargets.presentation
-
-    const presentationConfig: HTMLPresentation = {
-        presentationContent: presentation.html,
-        styleSheetPaths: templateConfig.stylesheets,
-        scriptPaths: [
-            templateConfig.reveal,
-            ...(templateConfig.plugins ?? []),
-            `./${target.assetScript}`,
-            templateConfig.entry,
-        ],
-        meta: {
-            title: presentation.config.title,
-            author: presentation.config.author,
-        },
-    }
-
-    const baseFile = await loadAssetContent(BASE_FILE_NAME)
-    const htmlPresentation = buildHTMLPresentation(baseFile, presentationConfig)
-    const formatted = pretty(htmlPresentation, { ocd: true })
-
-    // await template.copyForPresentation(outputPath)
-    await mkdir(outputPath)
-    await writeFile(resolve(outputPath, target.outFileName), formatted)
-    await copy(resolveAsset(target.assetScript), resolve(outputPath, target.assetScript))
-
-    console.log('Exported presentation.')
 }
 
 export async function preparePresentation(presentation: Presentation): Promise<void> {

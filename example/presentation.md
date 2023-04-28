@@ -6,11 +6,9 @@ layout: three-col
 ---
 
 # Links{.test-class}
-
 Das hier ist links.
 
 # Mitte
-
 Das ist in der Mitte.
 
 # Rechts

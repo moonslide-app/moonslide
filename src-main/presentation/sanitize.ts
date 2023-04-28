@@ -11,5 +11,6 @@ allowedTags.forEach(tag => {
 })
 
 export default function sanitizeHtml(htmlString: string): string {
-    return sanitize(htmlString, { allowedTags, allowedAttributes })
+    return htmlString
+    // return sanitize(htmlString, { allowedTags, allowedAttributes })
 }
