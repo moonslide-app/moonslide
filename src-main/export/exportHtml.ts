@@ -17,15 +17,14 @@ export async function exportHtml(request: ExportRequest): Promise<void> {
     const presentation = await parse({ ...request, imageMode: request.mode, outputFolderPath })
     const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
 
-    const templateConfig =
-        request.mode === 'export-standalone' ? template.getConfig() : template.getConfig(outputFolderPath)
+    const templateConfig = isStandalone ? template.getConfig() : template.getConfig(outputFolderPath)
 
     const htmlPresentation = await buildHTMLPresentation({ presentation, templateConfig, type: 'presentation' })
     const formatted = pretty(htmlPresentation, { ocd: true })
 
     if (!existsSync(outputFolderPath)) await mkdir(outputFolderPath)
 
-    if (request.mode === 'export-standalone') {
+    if (isStandalone) {
         await template.copyTo(request.outputPath)
         await prepareMedia(request.outputPath, presentation.images)
     }
