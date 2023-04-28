@@ -23,7 +23,8 @@ export type LocalImage = {
      * - For mode `preview` it is an url with a custom scheme which points to the `resolvedPath`
      * - For mode `export-standalone` the `resolvedPath` is transformed to a relative path
      * pointing to the media directory. In this case the `requiredCopyAction` will be set
-     * - For mode `export-relative` this path will be the same as `originalPath`.
+     * - For mode `export-relative` the relative paths will be updated so they
+     * work from the location the presentation is exported to.
      */
     transformedPath: string
     /**
