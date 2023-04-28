@@ -3,6 +3,7 @@ import { copy } from 'fs-extra'
 import { TemplateConfig, parseTemplateConfig } from './templateConfig'
 import { resolve, dirname } from 'path'
 import { getTemplateFolder, isTemplate } from './assets'
+import sanitizeHtml from './sanitize'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
@@ -68,7 +69,7 @@ class TemplateImpl implements Template {
     async getPresentationHtml() {
         const slidePath = resolve(this.folderPath, this.config.presentation)
         const fileContents = (await readFile(slidePath)).toString()
-        return fileContents // DOMPurify.sanitize(fileContents)
+        return sanitizeHtml(fileContents)
     }
 
     async getLayouts() {
@@ -80,7 +81,7 @@ class TemplateImpl implements Template {
             const layoutName = availableLayouts[i]
             const layoutPath = resolve(this.folderPath, layoutPaths[i])
             const fileContents = (await readFile(layoutPath)).toString()
-            layoutsHtml[layoutName] = fileContents // DOMPurify.sanitize(fileContents)
+            layoutsHtml[layoutName] = sanitizeHtml(fileContents)
         }
 
         return { availableLayouts, layoutsHtml }

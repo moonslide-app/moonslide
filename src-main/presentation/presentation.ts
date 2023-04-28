@@ -13,6 +13,7 @@ import {
     resolveAsset,
 } from './assets'
 import { Presentation } from '../../src-shared/entities/Presentation'
+import pretty from 'pretty'
 
 export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
 
@@ -60,7 +61,10 @@ export async function preparePresentation(presentation: Presentation): Promise<v
             scriptPaths: [config.reveal, ...(config.plugins ?? []), `./${target.assetScript}`, config.entry],
         }
         const htmlPresentation = buildHTMLPresentation(baseFile, targetConfig)
-        await writeFile(resolve(presentationFolderPath, target.outFileName), htmlPresentation)
+        // TODO: Probably remove from here, but use prettify for html-export
+        const formatted = pretty(htmlPresentation, { ocd: true })
+        await writeFile(resolve(presentationFolderPath, target.outFileName), formatted)
+
         await copy(resolveAsset(target.assetScript), resolve(presentationFolderPath, target.assetScript))
     }
 

@@ -1,4 +1,3 @@
-import { marked } from 'marked'
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
 import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
 import { parseSlideConfig } from '../../src-shared/entities/SlideConfig'
@@ -6,6 +5,9 @@ import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from './template'
 import { buildHTMLLayout, buildHTMLPresentationContent } from './htmlBuilder'
+import MarkdownIt from 'markdown-it'
+import MarkdownItAttrs from 'markdown-it-attrs'
+import sanitizeHtml from './sanitize'
 
 const SLIDE_SEPARATOR = '\n---\n'
 const SLOT_SEPERATOR = '\n\n'
@@ -25,8 +27,9 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
     const parsedSlides: Slide[] = slidesConfig.map((slideConfig, i) => {
         const markdown = slidesMarkdown[i] || ''
         const slots = markdown.split(SLOT_SEPERATOR).map(slot => {
-            const parsed = marked.parse(slot)
-            return parsed // DOMPurify.sanitize(parsed)
+            const markdownIt = new MarkdownIt().use(MarkdownItAttrs)
+            const parsed = markdownIt.render(slot)
+            return sanitizeHtml(parsed)
         })
 
         const htmlLayout = getLayout(slideConfig.layout)
