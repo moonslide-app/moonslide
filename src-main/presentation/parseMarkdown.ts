@@ -66,10 +66,12 @@ export function parseMarkdown(request: ParseRequest): ParseMarkdownResult {
                 toRelativePath: transformedPath,
             }
         } else if (request.imageMode === 'export-relative') {
-            if (!request.outputPath)
-                throw new Error(`Can not parse markdown in mode 'export-relative' when no outputPath is specified.`)
+            if (!request.outputFolderPath)
+                throw new Error(
+                    `Can not parse markdown in mode 'export-relative' when no outputFolderPath is specified.`
+                )
             if (isAbsolute(originalPath)) transformedPath = originalPath
-            else transformedPath = relative(request.outputPath, resolvedPath)
+            else transformedPath = relative(request.outputFolderPath, resolvedPath)
         }
 
         localImages.push({ originalPath, resolvedPath, transformedPath, requiredCopyAction })

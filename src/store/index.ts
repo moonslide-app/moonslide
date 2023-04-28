@@ -123,7 +123,10 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     async exportHTMLPresentation(standalone = true) {
         const { editingFilePath, content } = get()
         if (editingFilePath && content) {
-            const outputPath = await window.ipc.files.selectOutputFolder()
+            const outputPath = await (standalone
+                ? window.ipc.files.selectOutputFolder()
+                : window.ipc.files.selectOutputFile({ name: 'HTML', extension: '.html' }))
+
             if (outputPath) {
                 await window.ipc.presentation.exportHtml({
                     markdownContent: content,

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve, dirname, basename } from 'path'
 import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { loadTemplate } from '../presentation/template'
@@ -9,21 +9,26 @@ import { parse } from '../presentation/parser'
 import { prepareMedia } from '../presentation/media'
 
 export async function exportHtml(request: ExportRequest): Promise<void> {
-    const presentation = await parse({ ...request, imageMode: request.mode })
+    const isStandalone = request.mode === 'export-standalone'
+
+    const outputFolderPath = isStandalone ? request.outputPath : dirname(request.outputPath)
+    const outputFileName = isStandalone ? 'presentation.html' : basename(request.outputPath)
+
+    const presentation = await parse({ ...request, imageMode: request.mode, outputFolderPath })
     const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
 
     const templateConfig =
-        request.mode === 'export-standalone' ? template.getConfig() : template.getConfig(request.outputPath)
+        request.mode === 'export-standalone' ? template.getConfig() : template.getConfig(outputFolderPath)
 
     const htmlPresentation = await buildHTMLPresentation({ presentation, templateConfig, type: 'presentation' })
     const formatted = pretty(htmlPresentation, { ocd: true })
 
-    if (!existsSync(request.outputPath)) await mkdir(request.outputPath)
+    if (!existsSync(outputFolderPath)) await mkdir(outputFolderPath)
 
     if (request.mode === 'export-standalone') {
         await template.copyTo(request.outputPath)
         await prepareMedia(request.outputPath, presentation.images)
     }
 
-    await writeFile(resolve(request.outputPath, 'presentation.html'), formatted)
+    await writeFile(resolve(outputFolderPath, outputFileName), formatted)
 }
