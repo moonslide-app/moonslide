@@ -8,3 +8,7 @@ declare const MAIN_WINDOW_VITE_NAME: string
 declare module 'markdown-it-replace-link' {
     export = any
 }
+
+declare module 'markdown-it-bracketed-spans' {
+    export = any
+}

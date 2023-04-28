@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it'
 import MarkdownItAttrs from 'markdown-it-attrs'
+import MarkdownItBracketedSpans from 'markdown-it-bracketed-spans'
 import MarkdownItReplaceLink from 'markdown-it-replace-link'
 import sanitizeHtml from './sanitize'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
@@ -79,7 +80,12 @@ export function parseMarkdown(request: ParseRequest): ParseMarkdownResult {
     }
 
     const markdownItOptions = { replaceLink } as MarkdownIt.Options
-    const markdownIt = new MarkdownIt(markdownItOptions).use(MarkdownItAttrs).use(MarkdownItReplaceLink)
+
+    const markdownIt = new MarkdownIt(markdownItOptions)
+        .use(MarkdownItAttrs)
+        .use(MarkdownItBracketedSpans)
+        .use(MarkdownItReplaceLink)
+
     const parsed = markdownIt.render(request.markdownContent)
     const sanitized = sanitizeHtml(parsed)
     return { html: sanitized, localImages }
