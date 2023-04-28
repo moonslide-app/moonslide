@@ -1,17 +1,23 @@
-import { protocol } from 'electron'
+import { app, protocol } from 'electron'
 import { resolve } from 'path'
-import { presentationFolderPath, presentationTargets } from '../presentation/presentation'
 
 export const REVEAL_PROTOCOL_NAME = 'reveal'
 export const IMAGE_PROTOCOL_NAME = 'image'
+
+export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
+
+export const presentationTargets = {
+    preview: 'preview.html',
+    presentation: 'presentation.html',
+}
 
 export function registerProtocols() {
     protocol.registerFileProtocol(REVEAL_PROTOCOL_NAME, (request, callback) => {
         const requestedPath = request.url.slice(`${REVEAL_PROTOCOL_NAME}://`.length)
         const allowedPaths = [
-            { match: /^presentation\/(#\/\d+)?/, baseFile: presentationTargets.presentation.outFileName },
-            { match: /^preview\/(#\/\d+)?/, baseFile: presentationTargets.preview.outFileName },
-            { match: /^export\/(\?print-pdf)?/, baseFile: presentationTargets.presentation.outFileName },
+            { match: /^presentation\/(#\/\d+)?/, baseFile: presentationTargets.presentation },
+            { match: /^preview\/(#\/\d+)?/, baseFile: presentationTargets.preview },
+            { match: /^export\/(\?print-pdf)?/, baseFile: presentationTargets.presentation },
         ]
 
         for (const allowed of allowedPaths) {

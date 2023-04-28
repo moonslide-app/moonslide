@@ -1,9 +1,21 @@
+import {
+    BASE_FILE_NAME,
+    PRESENTATION_SCRIPT_FILENAME,
+    PREVIEW_SCRIPT_FILENAME,
+    loadAssetContent,
+} from '../../src-main/helpers/assets'
+import { Presentation } from '../../src-shared/entities/Presentation'
+import { TemplateConfig } from './templateConfig'
+
 // presentation
-const PRESESENTATION_TOKEN = '@@presentation@@'
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
-const SCRIPTS_TOKEN = '@@scripts@@'
 const TITLE_TOKEN = '@@title@@'
 const AUTHOR_TOKEN = '@@author@@'
+const PRESESENTATION_TOKEN = '@@presentation@@'
+const REVEAL_TOKEN = '@@reveal@@'
+const PLUGINS_TOKEN = '@@plugins@@'
+const REVEAL_EDITOR_TOKEN = '@@reveal-editor@@'
+const ENTRY_TOKEN = '@@entry@@'
 
 // presentation content
 const CONTENT_TOKEN = '@@content@@'
@@ -15,34 +27,48 @@ const LAYOUT_SLOT_TOKEN = '@@slot@@'
  * ---------- Build Presentation ----------
  */
 
-export type HTMLPresentation = {
-    presentationContent?: string
-    scriptPaths?: string[]
-    styleSheetPaths?: string[]
-    meta?: {
-        title?: string
-        author?: string
-    }
+export type HTMLPresentationBulidConfig = {
+    presentation: Presentation
+    templateConfig: TemplateConfig
+    type: HTMLPresentationBuildType
 }
 
-export function buildHTMLPresentation(baseFileHtml: string, content: HTMLPresentation): string {
-    let buildingFile = baseFileHtml
+export type HTMLPresentationBuildType = 'presentation' | 'preview'
+
+export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
+    const { presentation, templateConfig } = config
+
+    let buildingFile = await loadAssetContent(BASE_FILE_NAME)
     const replaceToken = (token: string, content?: string) => {
         buildingFile = buildingFile.replace(token, content ?? '')
     }
 
-    replaceToken(PRESESENTATION_TOKEN, content?.presentationContent)
-    replaceToken(STYLESHEETS_TOKEN, generateStylesheets(content.styleSheetPaths))
-    replaceToken(SCRIPTS_TOKEN, generateScripts(content.scriptPaths))
-    replaceToken(TITLE_TOKEN, content?.meta?.title)
-    replaceToken(AUTHOR_TOKEN, content?.meta?.author)
+    replaceToken(TITLE_TOKEN, presentation.config.title)
+    replaceToken(AUTHOR_TOKEN, presentation.config.author)
+    replaceToken(PRESESENTATION_TOKEN, presentation.html)
+
+    replaceToken(STYLESHEETS_TOKEN, generateStylesheets(templateConfig.stylesheets))
+    replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal))
+    replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.plugins))
+    replaceToken(REVEAL_EDITOR_TOKEN, await getRevealEditorScriptContent(config.type))
+    replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.entry))
 
     return buildingFile
 }
 
-function generateScripts(scriptPaths?: string[]): string {
-    if (!scriptPaths || scriptPaths.length == 0) return ''
-    return scriptPaths.map(script => `<script src="${script}"></script>`).reduce((prev, curr) => `${prev}\n${curr}`)
+async function getRevealEditorScriptContent(type: HTMLPresentationBuildType): Promise<string> {
+    const scriptName = type === 'presentation' ? PRESENTATION_SCRIPT_FILENAME : PREVIEW_SCRIPT_FILENAME
+    const scriptContent = await loadAssetContent(scriptName)
+    return `<script>${scriptContent}</script>`
+}
+
+function generatePluginScripts(pluginsPaths?: string[]): string {
+    if (!pluginsPaths || pluginsPaths.length == 0) return ''
+    return pluginsPaths.map(scriptWithSource).reduce((prev, curr) => `${prev}\n${curr}`)
+}
+
+function scriptWithSource(src: string) {
+    return `<script src="${src}"></script>`
 }
 
 function generateStylesheets(styleSheetPaths?: string[]): string {

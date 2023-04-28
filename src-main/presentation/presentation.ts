@@ -1,31 +1,10 @@
 import { resolve } from 'path'
 import { writeFile, rm, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
-import { copy } from 'fs-extra'
-import { app } from 'electron'
 import { loadTemplate } from './template'
-import { HTMLPresentation, buildHTMLPresentation } from './htmlBuilder'
-import {
-    BASE_FILE_NAME,
-    PRESENTATION_SCRIPT_FILENAME,
-    PREVIEW_SCRIPT_FILENAME,
-    loadAssetContent,
-    resolveAsset,
-} from '../helpers/assets'
+import { buildHTMLPresentation } from './htmlBuilder'
 import { Presentation } from '../../src-shared/entities/Presentation'
-
-export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
-
-export const presentationTargets = {
-    preview: {
-        assetScript: PREVIEW_SCRIPT_FILENAME,
-        outFileName: 'preview.html',
-    },
-    presentation: {
-        assetScript: PRESENTATION_SCRIPT_FILENAME,
-        outFileName: 'presentation.html',
-    },
-}
+import { presentationFolderPath, presentationTargets } from '../helpers/protocol'
 
 export async function clearPresentationFolder(): Promise<void> {
     if (existsSync(presentationFolderPath)) await rm(presentationFolderPath, { recursive: true })
@@ -42,27 +21,22 @@ export async function prepareTemplate(templateFolderPath: string): Promise<void>
 
 export async function preparePresentation(presentation: Presentation): Promise<void> {
     const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
-    const config = template.getConfig()
+    const templateConfig = template.getConfig()
 
-    const baseConfig: HTMLPresentation = {
-        presentationContent: presentation.html,
-        styleSheetPaths: config.stylesheets,
-        meta: {
-            title: presentation.config.title,
-            author: presentation.config.author,
+    const targets = [
+        {
+            name: 'presentation',
+            file: presentationTargets.presentation,
         },
-    }
+        {
+            name: 'preview',
+            file: presentationTargets.preview,
+        },
+    ] as const
 
-    const baseFile = await loadAssetContent(BASE_FILE_NAME)
-    for (const target of Object.values(presentationTargets)) {
-        const targetConfig: HTMLPresentation = {
-            ...baseConfig,
-            scriptPaths: [config.reveal, ...(config.plugins ?? []), `./${target.assetScript}`, config.entry],
-        }
-        const htmlPresentation = buildHTMLPresentation(baseFile, targetConfig)
-        await writeFile(resolve(presentationFolderPath, target.outFileName), htmlPresentation)
-
-        await copy(resolveAsset(target.assetScript), resolve(presentationFolderPath, target.assetScript))
+    for (const target of Object.values(targets)) {
+        const htmlPresentation = await buildHTMLPresentation({ presentation, templateConfig, type: target.name })
+        await writeFile(resolve(presentationFolderPath, target.file), htmlPresentation)
     }
 
     console.log('Generated new presentation files.')
