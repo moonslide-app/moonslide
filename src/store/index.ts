@@ -58,9 +58,10 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     parsedPresentation: undefined,
     slidesLastUpdate: [],
     updateContent: async newContent => {
+        const { editingFilePath } = get()
         set(state => ({ ...state, content: newContent }))
 
-        if (!newContent) {
+        if (!newContent || !editingFilePath) {
             await get().updateParsedPresentation(undefined)
             return
         }
@@ -68,7 +69,8 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         try {
             const parsedPresentation = await window.ipc.presentation.parsePresentation({
                 markdownContent: newContent,
-                markdownFilePath: get().editingFilePath,
+                markdownFilePath: editingFilePath,
+                imageMode: 'export-standalone',
             })
             get().updateParsedPresentation(parsedPresentation)
         } catch (error) {

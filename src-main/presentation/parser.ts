@@ -5,9 +5,7 @@ import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from './template'
 import { buildHTMLLayout, buildHTMLPresentationContent } from './htmlBuilder'
-import MarkdownIt from 'markdown-it'
-import MarkdownItAttrs from 'markdown-it-attrs'
-import sanitizeHtml from './sanitize'
+import { LocalImage, parseMarkdown } from './parseMarkdown'
 
 const SLIDE_SEPARATOR = '\n---\n'
 const SLOT_SEPERATOR = '\n\n'
@@ -24,19 +22,24 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         else return layouts.layoutsHtml[name]
     }
 
+    const localImages: LocalImage[] = []
     const parsedSlides: Slide[] = slidesConfig.map((slideConfig, i) => {
         const markdown = slidesMarkdown[i] || ''
-        const slots = markdown.split(SLOT_SEPERATOR).map(slot => {
-            const markdownIt = new MarkdownIt().use(MarkdownItAttrs)
-            const parsed = markdownIt.render(slot)
-            return sanitizeHtml(parsed)
-        })
+        const parseResults = markdown
+            .split(SLOT_SEPERATOR)
+            .map(slot => parseMarkdown({ ...request, markdownContent: slot }))
+
+        const slots = parseResults.map(res => res.html)
+        const images = parseResults.flatMap(res => res.localImages)
+        localImages.push(...images)
 
         const htmlLayout = getLayout(slideConfig.layout)
         const html = buildHTMLLayout(htmlLayout, { slots })
 
         return { config: slideConfig, markdown, html }
     })
+
+    console.log(localImages)
 
     const presentationBase = await template.getPresentationHtml()
     const html = buildHTMLPresentationContent(presentationBase, {

@@ -34,3 +34,7 @@ export function registerProtocols() {
         callback({ path: requestedPath })
     })
 }
+
+export function getLocalImageUrl(absolutePath: string): string {
+    return `${IMAGE_PROTOCOL_NAME}://${absolutePath}`
+}
