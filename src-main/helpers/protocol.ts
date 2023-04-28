@@ -10,6 +10,7 @@ export function registerRevealProtocol() {
         const allowedPaths = [
             { match: /^presentation\/(#\/\d+)?/, baseFile: presentationTargets.presentation.outFileName },
             { match: /^preview\/(#\/\d+)?/, baseFile: presentationTargets.preview.outFileName },
+            { match: /^export\/(\?print-pdf)?/, baseFile: presentationTargets.presentation.outFileName },
         ]
 
         for (const allowed of allowedPaths) {
