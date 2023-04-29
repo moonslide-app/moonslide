@@ -13,16 +13,9 @@ export async function clearPreviewFolder(): Promise<void> {
     console.log('Cleared presentation folder.')
 }
 
-export async function prepareTemplateForPreview(templateFolderPath: string): Promise<void> {
-    await clearPreviewFolder()
-    const template = await loadTemplate(templateFolderPath)
-    await template.copyTo(previewFolderPath)
-    console.log('Prepared template folder.')
-}
-
 export async function preparePresentationForPreview(presentation: Presentation): Promise<void> {
     const template = await loadTemplate(presentation.resolvedPaths.templateFolder)
-    const templateConfig = template.getConfig()
+    const templateConfig = template.getConfigLocalFile()
 
     const targets = [
         {

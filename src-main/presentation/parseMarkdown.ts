@@ -6,7 +6,7 @@ import sanitizeHtml from './sanitize'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { isAbsolute, resolve, dirname, extname, relative } from 'path'
 import { parse } from 'url'
-import { getLocalImageUrl } from '../helpers/protocol'
+import { getLocalFileUrl } from '../helpers/protocol'
 import { MEDIA_FOLDER_NAME } from './media'
 
 export type LocalImage = {
@@ -60,7 +60,7 @@ export function parseMarkdown(request: ParseRequest): ParseMarkdownResult {
         let transformedPath = ''
         let requiredCopyAction: RequiredCopyAction | undefined = undefined
         if (request.imageMode === 'preview') {
-            transformedPath = getLocalImageUrl(resolvedPath)
+            transformedPath = getLocalFileUrl(resolvedPath)
         } else if (request.imageMode === 'export-standalone') {
             transformedPath = `./${MEDIA_FOLDER_NAME}/${simpleHash(resolvedPath)}${extname(resolvedPath)}`
             requiredCopyAction = {

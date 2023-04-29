@@ -40,6 +40,11 @@ type EditorStore = {
      */
     updateParsedPresentation(newContent: Presentation | undefined): Promise<void>
     /**
+     * This function triggers a reload of all previews, the small ones and the preview window.
+     * This can be useful if files in the template have been changed.
+     */
+    reloadAllPreviews(): Promise<void>
+    /**
      * The `content` is saved to the file at `editingFilePath`.
      */
     saveContentToEditingFile(): Promise<void>
@@ -84,26 +89,23 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         const { parsedPresentation, slidesLastUpdate } = get()
         set(state => ({ ...state, parsedPresentation: newParsedPresentation }))
 
-        const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
-        if (comparison.templateChange) {
-            if (newParsedPresentation !== undefined) {
-                await window.ipc.presentation.prepareTemplateForPreview(
-                    newParsedPresentation.resolvedPaths.templateFolder
-                )
-            } else {
-                await window.ipc.presentation.clearPreviewFolder()
-            }
-        }
-
         if (newParsedPresentation) {
             await get().preparePresentation()
             window.ipc.presentation.reloadPreviewWindow()
+        } else {
+            await window.ipc.presentation.clearPreviewFolder()
         }
 
+        const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
         const newSlidesLastUpdate = comparison.slideChanges.map((update, idx) =>
             update ? Date.now() : slidesLastUpdate[idx]
         )
         set(state => ({ ...state, slidesLastUpdate: newSlidesLastUpdate }))
+    },
+    async reloadAllPreviews() {
+        await get().preparePresentation()
+        set(state => ({ slidesLastUpdate: state.slidesLastUpdate.map(() => Date.now()) }))
+        await window.ipc.presentation.reloadPreviewWindow()
     },
     async changeEditingFile(newFilePath) {
         if (newFilePath !== undefined) {

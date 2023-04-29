@@ -10,9 +10,6 @@ const presentation = {
     async clearPreviewFolder(): Promise<void> {
         await ipcRenderer.invoke('preview:clearOutFolder')
     },
-    async prepareTemplateForPreview(templateFolderPath: string): Promise<void> {
-        await ipcRenderer.invoke('preview:prepareTemplate', templateFolderPath)
-    },
     async preparePresentationForPreview(presentation: Presentation): Promise<void> {
         await ipcRenderer.invoke('preview:prepare', presentation)
     },

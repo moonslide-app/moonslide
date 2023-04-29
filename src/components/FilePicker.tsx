@@ -2,7 +2,7 @@ import { useEditorStore } from '../store'
 import { useEventListener } from 'usehooks-ts'
 
 export function FilePicker() {
-    const { editingFilePath, changeEditingFile, saveContentToEditingFile } = useEditorStore()
+    const { editingFilePath, changeEditingFile, saveContentToEditingFile, reloadAllPreviews } = useEditorStore()
 
     const selectMarkdownFile = () => window.ipc.files.selectFile().then(changeEditingFile)
 
@@ -36,6 +36,12 @@ export function FilePicker() {
             <div>
                 <button onClick={saveContentToEditingFile} className="text-violet-500 font-medium">
                     Save File (cmd + s)
+                </button>
+            </div>
+
+            <div>
+                <button onClick={reloadAllPreviews} className="text-violet-500 font-medium">
+                    Reload all previews
                 </button>
             </div>
         </div>

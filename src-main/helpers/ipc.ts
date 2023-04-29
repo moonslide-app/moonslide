@@ -7,7 +7,6 @@ import {
     clearPreviewFolder,
     openPreviewWindow,
     preparePresentationForPreview,
-    prepareTemplateForPreview,
     reloadPreviewWindow,
 } from '../presentation/preview'
 
@@ -19,7 +18,6 @@ export function registerIpc() {
     ipcMain.handle('file:getContent', (_, arg1) => getFileContent(arg1))
     ipcMain.handle('presentation:parse', (_, arg1) => parse(arg1))
     ipcMain.handle('preview:clearOutFolder', clearPreviewFolder)
-    ipcMain.handle('preview:prepareTemplate', (_, arg1) => prepareTemplateForPreview(arg1))
     ipcMain.handle('preview:prepare', (_, arg1) => preparePresentationForPreview(arg1))
     ipcMain.handle('preview:show', openPreviewWindow)
     ipcMain.handle('preview:reload', reloadPreviewWindow)
@@ -37,7 +35,6 @@ export function unregisterIpc() {
     ipcMain.removeHandler('file:getContent')
     ipcMain.removeHandler('presentation:parse')
     ipcMain.removeHandler('preview:clearOutFolder')
-    ipcMain.removeHandler('preview:prepareTemplate')
     ipcMain.removeHandler('preview:prepare')
     ipcMain.removeHandler('preview:show')
     ipcMain.removeHandler('preview:reload')

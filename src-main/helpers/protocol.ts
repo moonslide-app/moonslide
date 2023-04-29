@@ -2,7 +2,7 @@ import { app, protocol } from 'electron'
 import { resolve } from 'path'
 
 export const REVEAL_PROTOCOL_NAME = 'reveal'
-export const IMAGE_PROTOCOL_NAME = 'image'
+export const FILE_PROTOCOL_NAME = 'reveal-file'
 
 export const previewFolderPath = resolve(app.getPath('userData'), 'preview')
 
@@ -24,25 +24,23 @@ export function registerProtocols() {
             if (allowed.match.test(requestedPath)) {
                 const trimmedPath = requestedPath.replace(allowed.match, '')
                 if (trimmedPath === '') {
-                    console.log(`Base File Request to: ${request.url}`)
                     callback({ path: resolve(previewFolderPath, allowed.baseFile) })
                 } else {
-                    callback({ path: resolve(previewFolderPath, trimmedPath) })
+                    callback({ error: 404 })
                 }
                 return
             }
         }
-        console.warn('Could not handle request:')
-        console.log(request)
+
         callback({ error: 404 })
     })
 
-    protocol.registerFileProtocol(IMAGE_PROTOCOL_NAME, (request, callback) => {
-        const requestedPath = request.url.slice(`${IMAGE_PROTOCOL_NAME}://`.length)
+    protocol.registerFileProtocol(FILE_PROTOCOL_NAME, (request, callback) => {
+        const requestedPath = request.url.slice(`${FILE_PROTOCOL_NAME}://`.length)
         callback({ path: requestedPath })
     })
 }
 
-export function getLocalImageUrl(absolutePath: string): string {
-    return `${IMAGE_PROTOCOL_NAME}://${absolutePath}`
+export function getLocalFileUrl(absolutePath: string): string {
+    return `${FILE_PROTOCOL_NAME}://${absolutePath}`
 }
