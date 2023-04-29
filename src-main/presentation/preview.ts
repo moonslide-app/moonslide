@@ -48,14 +48,14 @@ export function openPreviewWindow() {
     if (currentPreviewWindow) currentPreviewWindow.destroy()
 
     const previewWindow = new BrowserWindow({
-        width: 1000,
+        width: 1280,
         height: 800,
         webPreferences: {
             webSecurity: false,
         },
     })
 
-    previewWindow.loadURL('reveal://presentation/')
+    previewWindow.loadURL('reveal://preview-fullscreen/')
     currentPreviewWindow = previewWindow
 }
 
