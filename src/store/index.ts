@@ -87,13 +87,18 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
         if (comparison.templateChange) {
             if (newParsedPresentation !== undefined) {
-                await window.ipc.presentation.prepareTemplate(newParsedPresentation.resolvedPaths.templateFolder)
+                await window.ipc.presentation.prepareTemplateForPreview(
+                    newParsedPresentation.resolvedPaths.templateFolder
+                )
             } else {
-                await window.ipc.presentation.clearOutputFolder()
+                await window.ipc.presentation.clearPreviewFolder()
             }
         }
 
-        if (newParsedPresentation) await get().preparePresentation()
+        if (newParsedPresentation) {
+            await get().preparePresentation()
+            window.ipc.presentation.reloadPreviewWindow()
+        }
 
         const newSlidesLastUpdate = comparison.slideChanges.map((update, idx) =>
             update ? Date.now() : slidesLastUpdate[idx]
@@ -117,7 +122,7 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     async preparePresentation() {
         const { parsedPresentation } = get()
         if (parsedPresentation) {
-            await window.ipc.presentation.preparePresentation(parsedPresentation)
+            await window.ipc.presentation.preparePresentationForPreview(parsedPresentation)
         } else console.warn('Could not prepare presentation, either parsedPresentation or editingFilePath was nullish.')
     },
     async exportHTMLPresentation(standalone = true) {

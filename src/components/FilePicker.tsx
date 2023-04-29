@@ -6,7 +6,7 @@ export function FilePicker() {
 
     const selectMarkdownFile = () => window.ipc.files.selectFile().then(changeEditingFile)
 
-    const openInWindow = () => window.open('reveal://presentation/', '_blank')
+    const openInWindow = () => window.ipc.presentation.openPreviewWindow()
 
     useEventListener('keydown', event => {
         const isMac = /Mac/.test(navigator.userAgent)

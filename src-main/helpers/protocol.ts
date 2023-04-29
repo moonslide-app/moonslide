@@ -4,34 +4,36 @@ import { resolve } from 'path'
 export const REVEAL_PROTOCOL_NAME = 'reveal'
 export const IMAGE_PROTOCOL_NAME = 'image'
 
-export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
+export const previewFolderPath = resolve(app.getPath('userData'), 'preview')
 
-export const presentationTargets = {
-    preview: 'preview.html',
-    presentation: 'presentation.html',
+export const previewTargets = {
+    small: 'preview.html',
+    fullscreen: 'presentation.html',
 }
 
 export function registerProtocols() {
     protocol.registerFileProtocol(REVEAL_PROTOCOL_NAME, (request, callback) => {
         const requestedPath = request.url.slice(`${REVEAL_PROTOCOL_NAME}://`.length)
         const allowedPaths = [
-            { match: /^presentation\/(#\/\d+)?/, baseFile: presentationTargets.presentation },
-            { match: /^preview\/(#\/\d+)?/, baseFile: presentationTargets.preview },
-            { match: /^export\/(\?print-pdf)?/, baseFile: presentationTargets.presentation },
+            { match: /^presentation\/(#(\/\d+)+)?/, baseFile: previewTargets.fullscreen },
+            { match: /^preview\/(#\/\d+)?/, baseFile: previewTargets.small },
+            { match: /^export\/(\?print-pdf)?/, baseFile: previewTargets.fullscreen },
         ]
 
         for (const allowed of allowedPaths) {
             if (allowed.match.test(requestedPath)) {
                 const trimmedPath = requestedPath.replace(allowed.match, '')
                 if (trimmedPath === '') {
-                    callback({ path: resolve(presentationFolderPath, allowed.baseFile) })
+                    console.log(`Base File Request to: ${request.url}`)
+                    callback({ path: resolve(previewFolderPath, allowed.baseFile) })
                 } else {
-                    callback({ path: resolve(presentationFolderPath, trimmedPath) })
+                    callback({ path: resolve(previewFolderPath, trimmedPath) })
                 }
                 return
             }
         }
-
+        console.warn('Could not handle request:')
+        console.log(request)
         callback({ error: 404 })
     })
 

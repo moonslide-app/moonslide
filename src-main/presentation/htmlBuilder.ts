@@ -1,7 +1,8 @@
 import {
     BASE_FILE_NAME,
     PRESENTATION_SCRIPT_FILENAME,
-    PREVIEW_SCRIPT_FILENAME,
+    PREVIEW_FULLSCREEN_SCRIPT_FILENAME,
+    PREVIEW_SMALL_SCRIPT_FILENAME,
     loadAssetContent,
 } from '../../src-main/helpers/assets'
 import { Presentation } from '../../src-shared/entities/Presentation'
@@ -33,7 +34,7 @@ export type HTMLPresentationBulidConfig = {
     type: HTMLPresentationBuildType
 }
 
-export type HTMLPresentationBuildType = 'presentation' | 'preview'
+export type HTMLPresentationBuildType = 'presentation' | 'preview-small' | 'preview-fullscreen'
 
 export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
     const { presentation, templateConfig } = config
@@ -57,7 +58,11 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
 }
 
 async function getRevealEditorScriptContent(type: HTMLPresentationBuildType): Promise<string> {
-    const scriptName = type === 'presentation' ? PRESENTATION_SCRIPT_FILENAME : PREVIEW_SCRIPT_FILENAME
+    let scriptName = ''
+    if (type === 'presentation') scriptName = PRESENTATION_SCRIPT_FILENAME
+    else if (type === 'preview-fullscreen') scriptName = PREVIEW_FULLSCREEN_SCRIPT_FILENAME
+    else if (type === 'preview-small') scriptName = PREVIEW_SMALL_SCRIPT_FILENAME
+
     const scriptContent = await loadAssetContent(scriptName)
     return `<script>${scriptContent}</script>`
 }
