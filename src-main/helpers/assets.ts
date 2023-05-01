@@ -20,9 +20,10 @@ export async function loadAssetContent(fileName: string): Promise<string> {
 
 export const TEMPLATE_BASIC = 'basic'
 export const TEMPLATE_FANCY = 'fancy'
+export const TEMPLATE_STANDARD = 'standard'
 
 export function isTemplate(possibleTemplate: string): boolean {
-    return [TEMPLATE_BASIC, TEMPLATE_FANCY].includes(possibleTemplate)
+    return [TEMPLATE_BASIC, TEMPLATE_FANCY, TEMPLATE_STANDARD].includes(possibleTemplate)
 }
 
 export function getTemplateFolder(template: string): string {

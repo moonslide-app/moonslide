@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 export const presentationConfigSchema = z.object({
     template: z.string().default(TEMPLATE_BASIC),
+    theme: z.string().optional(),
     title: z.string().optional(),
     author: z.string().optional(),
 })

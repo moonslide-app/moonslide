@@ -6,7 +6,7 @@ import {
     loadAssetContent,
 } from '../../src-main/helpers/assets'
 import { Presentation } from '../../src-shared/entities/Presentation'
-import { TemplateConfig } from './templateConfig'
+import { TemplateConfig, getThemeMatching } from './templateConfig'
 
 // presentation
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
@@ -48,7 +48,7 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
     replaceToken(AUTHOR_TOKEN, presentation.config.author)
     replaceToken(PRESESENTATION_TOKEN, presentation.html)
 
-    replaceToken(STYLESHEETS_TOKEN, generateStylesheets(templateConfig.stylesheets))
+    replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
     replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal))
     replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.plugins))
     replaceToken(REVEAL_EDITOR_TOKEN, await getRevealEditorScriptContent(config.type))
@@ -76,8 +76,11 @@ function scriptWithSource(src: string) {
     return `<script src="${src}"></script>`
 }
 
-function generateStylesheets(styleSheetPaths?: string[]): string {
-    if (!styleSheetPaths || styleSheetPaths.length == 0) return ''
+function generateStylesheets({ presentation, templateConfig }: HTMLPresentationBulidConfig): string {
+    const theme = getThemeMatching(templateConfig, presentation.config.theme)
+    const styleSheetPaths = [...(templateConfig.stylesheets ?? []), ...(theme?.stylesheets ?? [])]
+
+    if (styleSheetPaths.length == 0) return ''
     return styleSheetPaths
         .map(styleSheetPath => `<link rel="stylesheet" href="${styleSheetPath}">`)
         .reduce((prev, curr) => `${prev}\n${curr}`)

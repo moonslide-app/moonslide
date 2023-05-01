@@ -14,6 +14,14 @@ const templateConfigSchema = z.object({
         .array()
         .optional(),
     plugins: z.string().array().optional(),
+    themes: z
+        .object({
+            name: z.string(),
+            default: z.boolean().optional(),
+            stylesheets: z.string().array(),
+        })
+        .array()
+        .optional(),
 })
 
 export type TemplateConfig = z.infer<typeof templateConfigSchema>
@@ -23,13 +31,20 @@ export function parseTemplateConfig(yamlString: string): TemplateConfig {
     return templateConfigSchema.parse(parsedObject)
 }
 
-export function mapTemplateConfigPaths(config: TemplateConfig, map: (path: string) => string): TemplateConfig {
+export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: string) => string): TemplateConfig {
     return {
-        entry: map(config.entry),
-        reveal: map(config.reveal),
-        presentation: map(config.presentation),
-        stylesheets: config.stylesheets?.map(styleSheet => map(styleSheet)),
-        layouts: config.layouts?.map(layout => ({ ...layout, path: map(layout.path) })),
-        plugins: config.plugins?.map(plugin => map(plugin)),
+        entry: mapPath(config.entry),
+        reveal: mapPath(config.reveal),
+        presentation: mapPath(config.presentation),
+        stylesheets: config.stylesheets?.map(mapPath),
+        layouts: config.layouts?.map(layout => ({ ...layout, path: mapPath(layout.path) })),
+        plugins: config.plugins?.map(mapPath),
+        themes: config.themes?.map(theme => ({ ...theme, stylesheets: theme.stylesheets.map(mapPath) })),
     }
+}
+
+export function getThemeMatching(config: TemplateConfig, match: string | undefined) {
+    const firstMatch = config.themes?.filter(theme => theme.name === match)[0]
+    const firstDefault = config.themes?.filter(theme => theme.default)[0]
+    return firstMatch ?? firstDefault
 }

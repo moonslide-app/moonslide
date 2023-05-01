@@ -54,6 +54,7 @@ export type Slide = {
 
 export type PresentationComparison = {
     templateChange: boolean
+    themeChange: boolean
     slideChanges: boolean[]
 }
 
@@ -62,11 +63,13 @@ export function comparePresentations(
     newVersion: Presentation | undefined
 ): PresentationComparison {
     const templateChange = lastVersion?.resolvedPaths.templateFolder !== newVersion?.resolvedPaths.templateFolder
+    const themeChange = lastVersion?.config.theme !== newVersion?.config.theme
+
     const slideChanges =
         newVersion?.slides.map((slide, idx) => {
-            if (templateChange) return true
+            if (templateChange || themeChange) return true
             const lastVersionSlide = lastVersion?.slides[idx]
             return lastVersionSlide?.html !== slide.html
         }) ?? []
-    return { templateChange, slideChanges }
+    return { templateChange, themeChange, slideChanges }
 }
