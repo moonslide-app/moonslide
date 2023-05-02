@@ -1,4 +1,3 @@
-import { marked } from 'marked'
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
 import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
 import { parseSlideConfig } from '../../src-shared/entities/SlideConfig'
@@ -6,6 +5,7 @@ import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from './template'
 import { buildHTMLLayout, buildHTMLPresentationContent } from './htmlBuilder'
+import { LocalImage, parseMarkdown } from './parseMarkdown'
 
 const SLIDE_SEPARATOR = '\n---\n'
 const SLOT_SEPERATOR = '\n\n'
@@ -22,12 +22,16 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         else return layouts.layoutsHtml[name]
     }
 
+    const localImages: LocalImage[] = []
     const parsedSlides: Slide[] = slidesConfig.map((slideConfig, i) => {
         const markdown = slidesMarkdown[i] || ''
-        const slots = markdown.split(SLOT_SEPERATOR).map(slot => {
-            const parsed = marked.parse(slot)
-            return parsed // DOMPurify.sanitize(parsed)
-        })
+        const parseResults = markdown
+            .split(SLOT_SEPERATOR)
+            .map(slot => parseMarkdown({ ...request, markdownContent: slot }))
+
+        const slots = parseResults.map(res => res.html)
+        const images = parseResults.flatMap(res => res.localImages)
+        localImages.push(...images)
 
         const htmlLayout = getLayout(slideConfig.layout)
         const html = buildHTMLLayout(htmlLayout, { slots })
@@ -45,6 +49,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         slides: parsedSlides,
         html,
         layoutsHtml: layouts.layoutsHtml,
+        images: localImages,
         resolvedPaths: {
             templateFolder: template.folderPath,
             markdownFile: markdownFilePath,

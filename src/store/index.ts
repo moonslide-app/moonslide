@@ -47,6 +47,11 @@ type EditorStore = {
      * This methods calls the ipc function to rebuild the presentation (and preview) files.
      */
     preparePresentation(): Promise<void>
+    /**
+     * Exports the presentation as html.
+     * @param standalone If `true` the whole template folder is copied with the presentation.
+     */
+    exportHTMLPresentation(standalone?: boolean): Promise<void>
 }
 
 export const useEditorStore = create<EditorStore>()((set, get) => ({
@@ -56,9 +61,10 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     parsedPresentation: undefined,
     slidesLastUpdate: [],
     updateContent: async newContent => {
+        const { editingFilePath } = get()
         set(state => ({ ...state, content: newContent }))
 
-        if (!newContent) {
+        if (!newContent || !editingFilePath) {
             await get().updateParsedPresentation(undefined)
             return
         }
@@ -66,7 +72,8 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         try {
             const parsedPresentation = await window.ipc.presentation.parsePresentation({
                 markdownContent: newContent,
-                markdownFilePath: get().editingFilePath,
+                markdownFilePath: editingFilePath,
+                imageMode: 'preview',
             })
             get().updateParsedPresentation(parsedPresentation)
         } catch (error) {
@@ -112,5 +119,22 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         if (parsedPresentation) {
             await window.ipc.presentation.preparePresentation(parsedPresentation)
         } else console.warn('Could not prepare presentation, either parsedPresentation or editingFilePath was nullish.')
+    },
+    async exportHTMLPresentation(standalone = true) {
+        const { editingFilePath, content } = get()
+        if (editingFilePath && content) {
+            const outputPath = await (standalone
+                ? window.ipc.files.selectOutputFolder()
+                : window.ipc.files.selectOutputFile({ name: 'HTML', extension: '.html' }))
+
+            if (outputPath) {
+                await window.ipc.presentation.exportHtml({
+                    markdownContent: content,
+                    markdownFilePath: editingFilePath,
+                    outputPath,
+                    mode: standalone ? 'export-standalone' : 'export-relative',
+                })
+            }
+        }
     },
 }))

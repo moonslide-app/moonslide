@@ -3,6 +3,7 @@ import { getFileContent, saveFile, selectFile, selectFolder, selectOutputFile, s
 import { clearPresentationFolder, preparePresentation, prepareTemplate } from '../presentation/presentation'
 import { parse } from '../presentation/parser'
 import { exportPdf } from '../export/exportPdf'
+import { exportHtml } from '../export/exportHtml'
 
 export function registerIpc() {
     ipcMain.handle('dialog:selectFile', selectFile)
@@ -15,6 +16,7 @@ export function registerIpc() {
     ipcMain.handle('presentation:prepare', (_, arg1) => preparePresentation(arg1))
     ipcMain.handle('presentation:parse', (_, arg1) => parse(arg1))
     ipcMain.handle('dialog:selectOutputFile', (_, filter) => selectOutputFile(filter))
+    ipcMain.handle('export:html', (_, arg1) => exportHtml(arg1))
     ipcMain.handle('export:pdf', (_, arg1) => exportPdf(arg1))
 }
 
@@ -29,5 +31,6 @@ export function unregisterIpc() {
     ipcMain.removeHandler('presentation:prepareTemplate')
     ipcMain.removeHandler('presentation:prepare')
     ipcMain.removeHandler('presentation:parse')
+    ipcMain.removeHandler('export:html')
     ipcMain.removeHandler('export:pdf')
 }

@@ -1,8 +1,9 @@
-import { readFile, rm } from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { copy } from 'fs-extra'
-import { TemplateConfig, parseTemplateConfig } from './templateConfig'
-import { resolve, dirname } from 'path'
-import { getTemplateFolder, isTemplate } from './assets'
+import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from './templateConfig'
+import { resolve, dirname, relative } from 'path'
+import { getTemplateFolder, isTemplate } from '../helpers/assets'
+import sanitizeHtml from './sanitize'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
@@ -13,8 +14,15 @@ export type Template = {
     folderPath: string
     /**
      * Returns the loaded config of this template.
+     * All paths of the config are resolved absolute paths.
      */
-    getConfig(): TemplateConfig
+    getConfigAbsolute(): TemplateConfig
+    /**
+     * Returns the loaded config of this template.
+     * All paths of the config are relative from the path `relativeFromPath`.
+     * If omitted the paths are loaded relative to the templates folder.
+     */
+    getConfig(relativeFromPath?: string): TemplateConfig
     /**
      * Returns the content of the presentation html file.
      */
@@ -25,10 +33,9 @@ export type Template = {
     getLayouts(): Promise<Layouts>
     /**
      * Copies the whole template folder to a new location,
-     * removing unneded files like the config or the template slide file.
      * @param newLocation the new location where the template should be copied to. The folder should be empty.
      */
-    copyForPresentation(newLocation: string): Promise<void>
+    copyTo(newLocation: string): Promise<void>
 }
 
 export type Layouts = {
@@ -48,9 +55,8 @@ export async function loadTemplate(templateFolderPath: string): Promise<Template
 /**
  * Tries to find the requested template relative to the markdownfile (or uses standard template if it is a known template).
  */
-export function findAndLoadTemplate(template: string, markdownFilePath: string | undefined): Promise<Template> {
+export function findAndLoadTemplate(template: string, markdownFilePath: string): Promise<Template> {
     if (isTemplate(template)) return loadTemplate(getTemplateFolder(template))
-    else if (!markdownFilePath) return Promise.reject('Could not find template, markdownfilePath was not specified')
     else return loadTemplate(resolve(dirname(markdownFilePath), template))
 }
 
@@ -60,15 +66,18 @@ class TemplateImpl implements Template {
 
     constructor(folderPath: string, config: TemplateConfig) {
         this.folderPath = folderPath
-        this.config = config
+        this.config = mapTemplateConfigPaths(config, path => resolve(folderPath, path))
     }
 
-    getConfig = () => this.config
+    getConfigAbsolute = () => this.config
+
+    getConfig(relativeFromPath = this.folderPath) {
+        return mapTemplateConfigPaths(this.config, path => relative(relativeFromPath, path))
+    }
 
     async getPresentationHtml() {
-        const slidePath = resolve(this.folderPath, this.config.presentation)
-        const fileContents = (await readFile(slidePath)).toString()
-        return fileContents // DOMPurify.sanitize(fileContents)
+        const fileContents = (await readFile(this.config.presentation)).toString()
+        return sanitizeHtml(fileContents)
     }
 
     async getLayouts() {
@@ -78,20 +87,14 @@ class TemplateImpl implements Template {
 
         for (let i = 0; i < availableLayouts.length; i++) {
             const layoutName = availableLayouts[i]
-            const layoutPath = resolve(this.folderPath, layoutPaths[i])
-            const fileContents = (await readFile(layoutPath)).toString()
-            layoutsHtml[layoutName] = fileContents // DOMPurify.sanitize(fileContents)
+            const fileContents = (await readFile(layoutPaths[i])).toString()
+            layoutsHtml[layoutName] = sanitizeHtml(fileContents)
         }
 
         return { availableLayouts, layoutsHtml }
     }
 
-    async copyForPresentation(presentationLocation: string): Promise<void> {
-        // Copy all files from template folder
-        await copy(this.folderPath, presentationLocation)
-
-        // Remove config and slide file
-        await rm(resolve(presentationLocation, CONFIG_FILE_NAME))
-        await rm(resolve(presentationLocation, this.config.presentation))
+    async copyTo(newLocation: string): Promise<void> {
+        await copy(this.folderPath, newLocation)
     }
 }

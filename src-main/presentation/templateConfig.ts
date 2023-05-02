@@ -22,3 +22,14 @@ export function parseTemplateConfig(yamlString: string): TemplateConfig {
     const parsedObject = parse(yamlString)
     return templateConfigSchema.parse(parsedObject)
 }
+
+export function mapTemplateConfigPaths(config: TemplateConfig, map: (path: string) => string): TemplateConfig {
+    return {
+        entry: map(config.entry),
+        reveal: map(config.reveal),
+        presentation: map(config.presentation),
+        stylesheets: config.stylesheets?.map(styleSheet => map(styleSheet)),
+        layouts: config.layouts?.map(layout => ({ ...layout, path: map(layout.path) })),
+        plugins: config.plugins?.map(plugin => map(plugin)),
+    }
+}

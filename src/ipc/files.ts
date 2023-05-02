@@ -19,9 +19,6 @@ const files = {
     async saveFile(filePath: string, content: string): Promise<void> {
         await ipcRenderer.invoke('file:save', filePath, content)
     },
-    async exportPdf(outputPath: string): Promise<string> {
-        return await ipcRenderer.invoke('export:pdf', outputPath)
-    },
 } as const
 
 export default files
