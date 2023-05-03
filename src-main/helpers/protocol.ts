@@ -15,19 +15,14 @@ export function registerProtocols() {
     protocol.registerFileProtocol(REVEAL_PROTOCOL_NAME, (request, callback) => {
         const requestedPath = request.url.slice(`${REVEAL_PROTOCOL_NAME}://`.length)
         const allowedPaths = [
-            { match: /^preview-fullscreen\/((#\/)(\d+\/?)*)?/, baseFile: previewTargets.fullscreen },
-            { match: /^preview-small\/((#\/)(\d+\/?)*)?/, baseFile: previewTargets.small },
-            { match: /^export\/(\?print-pdf)?/, baseFile: previewTargets.fullscreen },
+            { match: /^preview-fullscreen(.*)/, baseFile: previewTargets.fullscreen },
+            { match: /^preview-small(.*)/, baseFile: previewTargets.small },
+            { match: /^export(.*)/, baseFile: previewTargets.fullscreen },
         ]
 
         for (const allowed of allowedPaths) {
             if (allowed.match.test(requestedPath)) {
-                const trimmedPath = requestedPath.replace(allowed.match, '')
-                if (trimmedPath === '') {
-                    callback({ path: resolve(previewFolderPath, allowed.baseFile) })
-                } else {
-                    callback({ error: 404 })
-                }
+                callback({ path: resolve(previewFolderPath, allowed.baseFile) })
                 return
             }
         }
