@@ -34,7 +34,7 @@ export type HTMLPresentationBulidConfig = {
     type: HTMLPresentationBuildType
 }
 
-export type HTMLPresentationBuildType = 'presentation' | 'preview-small' | 'preview-fullscreen'
+export type HTMLPresentationBuildType = 'export' | 'preview-small' | 'preview-fullscreen'
 
 export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
     const { presentation, templateConfig } = config
@@ -59,7 +59,7 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
 
 async function getRevealEditorScriptContent(type: HTMLPresentationBuildType): Promise<string> {
     let scriptName = ''
-    if (type === 'presentation') scriptName = PRESENTATION_SCRIPT_FILENAME
+    if (type === 'export') scriptName = PRESENTATION_SCRIPT_FILENAME
     else if (type === 'preview-fullscreen') scriptName = PREVIEW_FULLSCREEN_SCRIPT_FILENAME
     else if (type === 'preview-small') scriptName = PREVIEW_SMALL_SCRIPT_FILENAME
 
