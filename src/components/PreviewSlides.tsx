@@ -7,7 +7,7 @@ export function PreviewSlides() {
         <div className="space-y-4 max-h-[600px] overflow-y-auto">
             {slidesLastUpdate.map((update, idx) => (
                 <div key={idx}>
-                    <iframe src={`reveal://preview/#/${idx}`} className="w-full h-48" key={update}></iframe>
+                    <iframe src={`reveal://preview-small/#/${idx}`} className="w-full h-48" key={update}></iframe>
                 </div>
             ))}
         </div>

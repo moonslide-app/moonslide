@@ -1,8 +1,9 @@
 import { resolve } from 'path'
 import { readFile } from 'fs/promises'
 
-export const PREVIEW_SCRIPT_FILENAME = 'preview.js'
 export const PRESENTATION_SCRIPT_FILENAME = 'presentation.js'
+export const PREVIEW_SMALL_SCRIPT_FILENAME = 'preview-small.js'
+export const PREVIEW_FULLSCREEN_SCRIPT_FILENAME = 'preview-fullscreen.js'
 export const BASE_FILE_NAME = 'base.html'
 
 export function resolveAsset(fileName: string): string {

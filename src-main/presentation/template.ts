@@ -4,6 +4,7 @@ import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from './t
 import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import sanitizeHtml from './sanitize'
+import { getLocalFileUrl } from '../helpers/protocol'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
@@ -23,6 +24,12 @@ export type Template = {
      * If omitted the paths are loaded relative to the templates folder.
      */
     getConfig(relativeFromPath?: string): TemplateConfig
+    /**
+     * Returns the loaded config of this template.
+     * All paths are urls with the cutsom file protocol and absolute paths,
+     * so they can be loaded from the electron app.
+     */
+    getConfigLocalFile(): TemplateConfig
     /**
      * Returns the content of the presentation html file.
      */
@@ -73,6 +80,10 @@ class TemplateImpl implements Template {
 
     getConfig(relativeFromPath = this.folderPath) {
         return mapTemplateConfigPaths(this.config, path => relative(relativeFromPath, path))
+    }
+
+    getConfigLocalFile() {
+        return mapTemplateConfigPaths(this.config, getLocalFileUrl)
     }
 
     async getPresentationHtml() {

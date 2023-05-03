@@ -2,32 +2,27 @@ import { app, protocol } from 'electron'
 import { resolve } from 'path'
 
 export const REVEAL_PROTOCOL_NAME = 'reveal'
-export const IMAGE_PROTOCOL_NAME = 'image'
+export const FILE_PROTOCOL_NAME = 'reveal-file'
 
-export const presentationFolderPath = resolve(app.getPath('userData'), 'presentation')
+export const previewFolderPath = resolve(app.getPath('userData'), 'preview')
 
-export const presentationTargets = {
-    preview: 'preview.html',
-    presentation: 'presentation.html',
+export const previewTargets = {
+    small: 'preview.html',
+    fullscreen: 'presentation.html',
 }
 
 export function registerProtocols() {
     protocol.registerFileProtocol(REVEAL_PROTOCOL_NAME, (request, callback) => {
         const requestedPath = request.url.slice(`${REVEAL_PROTOCOL_NAME}://`.length)
         const allowedPaths = [
-            { match: /^presentation\/(#\/\d+)?/, baseFile: presentationTargets.presentation },
-            { match: /^preview\/(#\/\d+)?/, baseFile: presentationTargets.preview },
-            { match: /^export\/(\?print-pdf)?/, baseFile: presentationTargets.presentation },
+            { match: /^preview-fullscreen(.*)/, baseFile: previewTargets.fullscreen },
+            { match: /^preview-small(.*)/, baseFile: previewTargets.small },
+            { match: /^export(.*)/, baseFile: previewTargets.fullscreen },
         ]
 
         for (const allowed of allowedPaths) {
             if (allowed.match.test(requestedPath)) {
-                const trimmedPath = requestedPath.replace(allowed.match, '')
-                if (trimmedPath === '') {
-                    callback({ path: resolve(presentationFolderPath, allowed.baseFile) })
-                } else {
-                    callback({ path: resolve(presentationFolderPath, trimmedPath) })
-                }
+                callback({ path: resolve(previewFolderPath, allowed.baseFile) })
                 return
             }
         }
@@ -35,12 +30,12 @@ export function registerProtocols() {
         callback({ error: 404 })
     })
 
-    protocol.registerFileProtocol(IMAGE_PROTOCOL_NAME, (request, callback) => {
-        const requestedPath = request.url.slice(`${IMAGE_PROTOCOL_NAME}://`.length)
+    protocol.registerFileProtocol(FILE_PROTOCOL_NAME, (request, callback) => {
+        const requestedPath = request.url.slice(`${FILE_PROTOCOL_NAME}://`.length)
         callback({ path: requestedPath })
     })
 }
 
-export function getLocalImageUrl(absolutePath: string): string {
-    return `${IMAGE_PROTOCOL_NAME}://${absolutePath}`
+export function getLocalFileUrl(absolutePath: string): string {
+    return `${FILE_PROTOCOL_NAME}://${absolutePath}`
 }

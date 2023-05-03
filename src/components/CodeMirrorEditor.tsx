@@ -14,7 +14,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
     const editingFilePath = useEditorStore(state => state.editingFilePath)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
     const [editingContent, setEditingContent] = useState<string>()
-    const debouncedContent = useDebounce(editingContent, 500)
+    const debouncedContent = useDebounce(editingContent, 1000)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
     const [editor, setEditor] = useState<EditorView>()

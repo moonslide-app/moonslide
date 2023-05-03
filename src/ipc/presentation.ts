@@ -4,17 +4,20 @@ import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { ExportRequest } from '../../src-shared/entities/ExportRequest'
 
 const presentation = {
-    async clearOutputFolder(): Promise<void> {
-        await ipcRenderer.invoke('presentation:clearOutFolder')
-    },
     async parsePresentation(request: ParseRequest): Promise<Presentation> {
         return await ipcRenderer.invoke('presentation:parse', request)
     },
-    async prepareTemplate(templateFolderPath: string): Promise<void> {
-        await ipcRenderer.invoke('presentation:prepareTemplate', templateFolderPath)
+    async clearPreviewFolder(): Promise<void> {
+        await ipcRenderer.invoke('preview:clearOutFolder')
     },
-    async preparePresentation(presentation: Presentation): Promise<void> {
-        await ipcRenderer.invoke('presentation:prepare', presentation)
+    async preparePresentationForPreview(presentation: Presentation): Promise<void> {
+        await ipcRenderer.invoke('preview:prepare', presentation)
+    },
+    async openPreviewWindow() {
+        await ipcRenderer.invoke('preview:show')
+    },
+    async reloadPreviewWindow() {
+        await ipcRenderer.invoke('preview:reload')
     },
     async exportPdf(outputPath: string): Promise<string> {
         return await ipcRenderer.invoke('export:pdf', outputPath)
