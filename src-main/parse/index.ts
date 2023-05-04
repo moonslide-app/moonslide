@@ -3,9 +3,10 @@ import { parsePresentationConfig } from '../../src-shared/entities/PresentationC
 import { parseSlideConfig } from '../../src-shared/entities/SlideConfig'
 import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
-import { findAndLoadTemplate } from './template'
-import { buildHTMLLayout, buildHTMLPresentationContent } from './htmlBuilder'
-import { LocalImage, parseMarkdown } from './parseMarkdown'
+import { findAndLoadTemplate } from '../presentation/template'
+import { buildHTMLLayout, buildHTMLPresentationContent } from '../presentation/htmlBuilder'
+import { parseMarkdown } from './markdown'
+import { LocalImage } from './imagePath'
 
 const SLIDE_SEPARATOR = '\n---\n'
 const SLOT_SEPERATOR = '\n\n'

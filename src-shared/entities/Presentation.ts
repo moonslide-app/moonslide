@@ -1,4 +1,4 @@
-import { LocalImage } from '../../src-main/presentation/parseMarkdown'
+import { LocalImage } from '../../src-main/parse/imagePath'
 import { PresentationConfig } from './PresentationConfig'
 import { SlideConfig } from './SlideConfig'
 
