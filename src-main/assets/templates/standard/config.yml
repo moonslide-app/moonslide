@@ -1,0 +1,30 @@
+entry: ./index.js
+reveal: ./reveal_js/dist/reveal.js
+presentation: ./presentation.html
+stylesheets:
+  - ./reveal_js/dist/reveal.css
+  - ./reveal_js/plugin/highlight/monokai.css
+  - ./layouts/index.css
+plugins:
+  - ./reveal_js/plugin/highlight/highlight.js
+  - ./reveal_js/plugin/math/math.js
+themes: 
+  - name: black
+    default: true
+    stylesheets: 
+      - ./reveal_js/dist/theme/black.css
+  - name: white
+    stylesheets: 
+      - ./reveal_js/dist/theme/white.css
+  - name: beige
+    stylesheets: 
+      - ./reveal_js/dist/theme/beige.css
+layouts: 
+  - name: cols-2
+    path: ./layouts/cols-2.html
+  - name: cols-3
+    path: ./layouts/cols-3.html
+  - name: cols-4
+    path: ./layouts/cols-4.html
+  - name: grid-2x2
+    path: ./layouts/grid-2x2.html

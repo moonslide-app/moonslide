@@ -1,28 +1,35 @@
-template: fancy
-title: Hallo ihr lieben
+template: standard
+theme: black
+title: Hallo, Du Kostbare
 author: Dein bester Freund
-layout: three-col
+
+---
+# Hoi {style="color: salmon; font-size: 10rem;"}
+## Gerri {style="color: cyan;"}
 
 ---
 
-# Links{.test-class}
-Das hier ist links.
+layout: 
 
-# Mitte
+---
+
+### Links 
+Das hier ist links. 
+
+## Mitte
 Das ist in der Mitte.
 
-# Rechts
-
+## Rechts
 Das hier ist rechts.
 
 ---
 
-layout: two-col
+layout: grid-2x2
 
 ---
 
-#### Absolut Allmann
-![allmann](/Users/timo/Desktop/collection/allmann.jpeg)
+![allmann](/Users/timo/Desktop/collection/allmann.jpeg) {.cover}
 
-#### Relativ Allmann
-![allmann](../../../../../../Desktop/collection/allmann.jpeg)
+![allmann](/Users/timo/Desktop/collection/allmann.jpeg) {.cover}
+
+![allmann](/Users/timo/Desktop/collection/allmann.jpeg) {.cover}
