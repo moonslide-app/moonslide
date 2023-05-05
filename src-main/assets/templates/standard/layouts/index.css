@@ -11,8 +11,19 @@ div.slot {
     flex-direction: column;
 }
 
-.base {
-    height: 100%;
+/* Title layouts */
+
+.title {
+    display: flex;
+    flex-direction: column;
+}
+
+.title > .title-heading {
+    margin-bottom: 40px;
+}
+
+.title > .title-content {
+    flex-grow: 1;
 }
 
 /* Grid And Cols Layouts */
@@ -41,12 +52,20 @@ div.slot {
     grid-area: large;
 }
 
-.grid-3 {
+.grid-3-left {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     grid-template-areas:
         'large .'
         'large .';
+}
+
+.grid-3-right {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas:
+        '. large'
+        '. large';
 }
 
 .grid-4 {
