@@ -21,11 +21,27 @@ themes:
     stylesheets: 
       - ./reveal_js/dist/theme/beige.css
 layouts: 
+  - name: base
+    default: true
+    path: ./layouts/base.html
   - name: cols-2
     path: ./layouts/cols-2.html
   - name: cols-3
     path: ./layouts/cols-3.html
   - name: cols-4
     path: ./layouts/cols-4.html
-  - name: grid-2x2
-    path: ./layouts/grid-2x2.html
+  - name: grid-3
+    path: ./layouts/grid-3.html
+  - name: grid-4
+    path: ./layouts/grid-4.html
+  - name: grid-5
+    path: ./layouts/grid-5.html
+  - name: grid-6
+    path: ./layouts/grid-6.html
+  - name: grid-7
+    path: ./layouts/grid-7.html
+  - name: grid-8
+    path: ./layouts/grid-8.html
+  - name: grid-9
+    path: ./layouts/grid-9.html
+  

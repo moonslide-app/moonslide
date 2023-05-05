@@ -48,6 +48,7 @@ export type Template = {
 export type Layouts = {
     availableLayouts: string[]
     layoutsHtml: Record<string, string>
+    defaultLayoutHtml?: string
 }
 
 /**
@@ -94,15 +95,20 @@ class TemplateImpl implements Template {
     async getLayouts() {
         const availableLayouts = this.config.layouts?.map(layout => layout.name) ?? []
         const layoutPaths = this.config.layouts?.map(layout => layout.path) ?? []
+        const isDefault = this.config.layouts?.map(layout => layout.default ?? false) ?? []
+
         const layoutsHtml: Record<string, string> = {}
+        let defaultLayoutHtml: string | undefined = undefined
 
         for (let i = 0; i < availableLayouts.length; i++) {
             const layoutName = availableLayouts[i]
             const fileContents = (await readFile(layoutPaths[i])).toString()
-            layoutsHtml[layoutName] = sanitizeHtml(fileContents)
+            const sanitized = sanitizeHtml(fileContents)
+            layoutsHtml[layoutName] = sanitized
+            if (isDefault[i]) defaultLayoutHtml = defaultLayoutHtml ?? sanitized
         }
 
-        return { availableLayouts, layoutsHtml }
+        return { availableLayouts, layoutsHtml, defaultLayoutHtml }
     }
 
     async copyTo(newLocation: string): Promise<void> {

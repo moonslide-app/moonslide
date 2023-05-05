@@ -3,6 +3,11 @@ section {
     max-height: 100%;
 }
 
+.image {
+    flex-grow: 1;
+    background-repeat: no-repeat;
+}
+
 .image-cover {
     background-size: cover;
 }

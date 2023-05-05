@@ -1,29 +1,91 @@
+/* All Layouts are full height*/
+
 .layout {
     height: 100%;
-    max-height: 100%;
 }
 
-.layout.cols-2 {
+/* All slots are wrapped by a flex div-container   */
+
+div.slot {
+    display: flex;
+    flex-direction: column;
+}
+
+.base {
+    height: 100%;
+}
+
+/* Grid And Cols Layouts */
+
+.cols,
+.grid {
     display: grid;
+    gap: 20px;
+}
+
+/* Cols Layouts */
+.cols-2 {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
 }
 
-.layout.cols-3 {
-    display: grid;
+.cols-3 {
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
 }
 
-.layout.cols-4 {
-    display: grid;
+.cols-4 {
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
 }
 
-.layout.grid-2x2 {
-    display: grid;
+/* Grid Layouts */
+.grid > .large-item {
+    grid-area: large;
+}
+
+.grid-3 {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-areas:
+        'large .'
+        'large .';
+}
+
+.grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.grid-5 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas:
+        '. . large'
+        '. . large';
+}
+
+.grid-6 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.grid-7 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-areas:
+        '. . large'
+        '. . large'
+        '. . large';
+}
+
+.grid-8 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-areas:
+        '. . .'
+        '. . large'
+        '. . large';
+}
+
+.grid-9 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
 }

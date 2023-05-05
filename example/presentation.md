@@ -4,12 +4,12 @@ title: Hallo, Du Kostbare
 author: Dein bester Freund
 
 ---
-# Hoi {style="color: salmon; font-size: 10rem;"}
-## Gerri {style="color: cyan;"}
+
+# Hello {style="color: salmon"}
 
 ---
 
-layout: 
+layout: cols-3
 
 ---
 
@@ -20,16 +20,23 @@ Das hier ist links.
 Das ist in der Mitte.
 
 ## Rechts
-Das hier ist rechts.
+Das ist rechts.
 
 ---
 
-layout: grid-2x2
+layout: grid-3
 
 ---
 
-![allmann](/Users/timo/Desktop/collection/allmann.jpeg) {.cover}
+![allmann](/Users/timo/Desktop/collection/allmann.jpeg)
+{.image-cover}
 
-![allmann](/Users/timo/Desktop/collection/allmann.jpeg) {.cover}
+![allmann](/Users/timo/Desktop/collection/allmann.jpeg)
+{.image-cover}
 
-![allmann](/Users/timo/Desktop/collection/allmann.jpeg) {.cover}
+# Hello
+## Test
+### michi
+#### michi
+![allmann](/Users/timo/Desktop/collection/allmann.jpeg)
+{.image-cover .image-left}

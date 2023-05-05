@@ -42,11 +42,10 @@ function replaceBgImages(tokens: Token[]): Token[] {
         const src = token.attrGet('src') ?? ''
         token.attrs.splice(token.attrIndex('src'), 1)
 
-        const style = joinStyles(
-            token.attrGet('style'),
-            `background-image: url(${src}); width: 100%; height: 100%; background-repeat: no-repeat;`
-        )
+        const style = joinStyles(token.attrGet('style'), `background-image: url(${src});`)
         token.attrSet('style', style)
+
+        token.attrJoin('class', 'image')
 
         const closingTag = new Token('image_closing_tag', 'div', -1)
         return [token, closingTag]

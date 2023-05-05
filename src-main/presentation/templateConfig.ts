@@ -10,6 +10,7 @@ const templateConfigSchema = z.object({
         .object({
             name: z.string(),
             path: z.string(),
+            default: z.boolean().optional(),
         })
         .array()
         .optional(),

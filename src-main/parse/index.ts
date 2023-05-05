@@ -19,8 +19,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
 
     const layouts = await template.getLayouts()
     function getLayout(name: string | undefined) {
-        if (!name) return undefined
-        else return layouts.layoutsHtml[name]
+        return layouts.layoutsHtml[name ?? ''] ?? layouts.defaultLayoutHtml
     }
 
     const localImages: LocalImage[] = []
