@@ -4,6 +4,7 @@ presentation: ./presentation.html
 stylesheets:
   - ./reveal_js/dist/reveal.css
   - ./reveal_js/plugin/highlight/monokai.css
+  - ./index.css
   - ./layouts/index.css
 plugins:
   - ./reveal_js/plugin/highlight/highlight.js

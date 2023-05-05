@@ -1,0 +1,32 @@
+section {
+    height: 100%;
+    max-height: 100%;
+}
+
+.image-cover {
+    background-size: cover;
+}
+
+.image-contain {
+    background-size: contain;
+}
+
+.image-center {
+    background-position: center;
+}
+
+.image-top {
+    background-position-y: top;
+}
+
+.image-bottom {
+    background-position-y: bottom;
+}
+
+.image-left {
+    background-position-x: left;
+}
+
+.image-right {
+    background-position-x: right;
+}

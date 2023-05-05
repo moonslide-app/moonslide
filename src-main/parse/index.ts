@@ -28,6 +28,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         const markdown = slidesMarkdown[i] || ''
         const parseResults = markdown
             .split(SLOT_SEPERATOR)
+            .map(slot => slot.trim())
             .map(slot => parseMarkdown({ ...request, markdownContent: slot }))
 
         const slots = parseResults.map(res => res.html)

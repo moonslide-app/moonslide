@@ -1,5 +1,6 @@
 .layout {
-    max-height: 100px;
+    height: 100%;
+    max-height: 100%;
 }
 
 .layout.cols-2 {

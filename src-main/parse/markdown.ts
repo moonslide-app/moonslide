@@ -5,6 +5,7 @@ import MarkdownItReplaceLink from 'markdown-it-replace-link'
 import sanitizeHtml from '../presentation/sanitize'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { LocalImage, transformImagePath } from './imagePath'
+import { transformTokens } from './transformTokens'
 
 export type ParseMarkdownResult = {
     html: string
@@ -27,7 +28,9 @@ export function parseMarkdown(request: ParseRequest): ParseMarkdownResult {
         .use(MarkdownItBracketedSpans)
         .use(MarkdownItReplaceLink)
 
-    const parsed = markdownIt.render(request.markdownContent)
-    const sanitized = sanitizeHtml(parsed)
+    const parsed = markdownIt.parse(request.markdownContent, {})
+    const transformed = transformTokens(parsed)
+    const rendered = markdownIt.renderer.render(transformed, {}, {})
+    const sanitized = sanitizeHtml(rendered)
     return { html: sanitized, localImages }
 }
