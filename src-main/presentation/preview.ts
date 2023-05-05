@@ -6,7 +6,6 @@ import { buildHTMLPresentation } from './htmlBuilder'
 import { Presentation } from '../../src-shared/entities/Presentation'
 import { previewFolderPath, previewTargets } from '../helpers/protocol'
 import { BrowserWindow } from 'electron'
-import pretty from 'pretty'
 
 export async function clearPreviewFolder(): Promise<void> {
     if (existsSync(previewFolderPath)) await rm(previewFolderPath, { recursive: true })
@@ -31,8 +30,7 @@ export async function preparePresentationForPreview(presentation: Presentation):
 
     for (const target of Object.values(targets)) {
         const htmlPresentation = await buildHTMLPresentation({ presentation, templateConfig, type: target.name })
-        const prettified = pretty(htmlPresentation)
-        await writeFile(resolve(previewFolderPath, target.file), prettified)
+        await writeFile(resolve(previewFolderPath, target.file), htmlPresentation)
     }
 
     console.log('Generated new presentation files.')
