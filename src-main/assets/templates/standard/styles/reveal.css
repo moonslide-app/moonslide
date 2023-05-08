@@ -8,7 +8,7 @@ Configurable Variables of Reveal
     --r-main-font-size: 2rem;
     /* --r-main-color: VALUE; */
     --r-block-margin: 0;
-    --r-heading-margin: 0;
+    --r-heading-margin: 0 0 1rem 0;
     /* --r-heading-font: VALUE; */
     --r-heading-color: inherit;
     --r-heading-line-height: 1;

@@ -1,6 +1,6 @@
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
 import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
-import { parseSlideConfig } from '../../src-shared/entities/SlideConfig'
+import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/SlideConfig'
 import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
@@ -67,7 +67,9 @@ function parseConfig(markdownContent: string) {
     const yamlConfigParts = trimmed.filter((_, idx) => idx % 2 == 0)
     const jsonConfigParts = yamlConfigParts.map(yml => yamlParse(yml))
     const presentationConfig = parsePresentationConfig(jsonConfigParts[0])
-    const slidesConfig = jsonConfigParts.map(json => parseSlideConfig(json))
+    const slidesConfig = jsonConfigParts
+        .map(json => parseSlideConfig(json))
+        .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults ?? {}))
 
     return {
         presentationConfig,
