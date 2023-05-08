@@ -1,25 +1,23 @@
-entry: ./index.js
-reveal: ./reveal_js/dist/reveal.js
-presentation: ./presentation.html
-stylesheets:
-  - ./reveal_js/dist/reveal.css
-  - ./reveal_js/plugin/highlight/monokai.css
-  - ./index.css
-  - ./layouts/index.css
+template: 
+  entry: ./index.js
+  presentation: ./presentation.html
+  stylesheets:
+    - ./reveal_js/plugin/highlight/monokai.css
+    - ./styles/index.css
+reveal: 
+  entry: ./reveal_js/dist/reveal.js
+  stylesheets: ./reveal_js/dist/reveal.css
 plugins:
   - ./reveal_js/plugin/highlight/highlight.js
   - ./reveal_js/plugin/math/math.js
 themes: 
   - name: black
     default: true
-    stylesheets: 
-      - ./reveal_js/dist/theme/black.css
+    stylesheets: ./reveal_js/dist/theme/black.css
   - name: white
-    stylesheets: 
-      - ./reveal_js/dist/theme/white.css
+    stylesheets: ./reveal_js/dist/theme/white.css
   - name: beige
-    stylesheets: 
-      - ./reveal_js/dist/theme/beige.css
+    stylesheets: ./reveal_js/dist/theme/beige.css
 layouts: 
   - name: base
     default: true

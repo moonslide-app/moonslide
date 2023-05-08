@@ -1,0 +1,9 @@
+@import './reveal.css';
+@import './layouts.css';
+@import './image.css';
+@import './margin.css';
+
+section {
+    height: 100%;
+    max-height: 100%;
+}

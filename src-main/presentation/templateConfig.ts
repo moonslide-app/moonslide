@@ -1,11 +1,25 @@
 import { parse } from 'yaml'
 import { z } from 'zod'
 
+const stringOrArray = z
+    .string()
+    .array()
+    .or(z.string())
+    .transform(input => {
+        if (typeof input === 'string') return [input]
+        else return input
+    })
+
 const templateConfigSchema = z.object({
-    entry: z.string(),
-    reveal: z.string(),
-    presentation: z.string(),
-    stylesheets: z.string().array().optional(),
+    template: z.object({
+        entry: z.string(),
+        presentation: z.string(),
+        stylesheets: stringOrArray.optional(),
+    }),
+    reveal: z.object({
+        entry: z.string(),
+        stylesheets: stringOrArray,
+    }),
     layouts: z
         .object({
             name: z.string(),
@@ -19,7 +33,7 @@ const templateConfigSchema = z.object({
         .object({
             name: z.string(),
             default: z.boolean().optional(),
-            stylesheets: z.string().array(),
+            stylesheets: stringOrArray,
         })
         .array()
         .optional(),
@@ -34,10 +48,15 @@ export function parseTemplateConfig(yamlString: string): TemplateConfig {
 
 export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: string) => string): TemplateConfig {
     return {
-        entry: mapPath(config.entry),
-        reveal: mapPath(config.reveal),
-        presentation: mapPath(config.presentation),
-        stylesheets: config.stylesheets?.map(mapPath),
+        template: {
+            entry: mapPath(config.template.entry),
+            presentation: mapPath(config.template.presentation),
+            stylesheets: config.template.stylesheets?.map(mapPath),
+        },
+        reveal: {
+            entry: mapPath(config.reveal.entry),
+            stylesheets: config.reveal.stylesheets.map(mapPath),
+        },
         layouts: config.layouts?.map(layout => ({ ...layout, path: mapPath(layout.path) })),
         plugins: config.plugins?.map(mapPath),
         themes: config.themes?.map(theme => ({ ...theme, stylesheets: theme.stylesheets.map(mapPath) })),

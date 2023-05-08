@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
 import { copy } from 'fs-extra'
-import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from './templateConfig'
+import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from './TemplateConfig'
 import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import sanitizeHtml from './sanitize'
@@ -88,7 +88,7 @@ class TemplateImpl implements Template {
     }
 
     async getPresentationHtml() {
-        const fileContents = (await readFile(this.config.presentation)).toString()
+        const fileContents = (await readFile(this.config.template.presentation)).toString()
         return sanitizeHtml(fileContents)
     }
 

@@ -1,8 +1,14 @@
-section {
-    height: 100%;
-    max-height: 100%;
-}
+/* This class is added to all images. */
+/* .image { 
 
+} */
+
+/* This class is added to inline images. */
+/* .image-inline {
+
+} */
+
+/* This class is added to all block images. */
 .image-block {
     flex-grow: 1;
     background-repeat: no-repeat;
