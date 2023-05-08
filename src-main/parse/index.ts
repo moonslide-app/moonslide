@@ -35,7 +35,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         localImages.push(...images)
 
         const htmlLayout = getLayout(slideConfig.layout)
-        const html = buildHTMLLayout(htmlLayout, { slots })
+        const html = buildHTMLLayout(htmlLayout, { slots, slideConfig })
 
         return { config: slideConfig, markdown, html }
     })

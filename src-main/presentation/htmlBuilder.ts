@@ -1,3 +1,4 @@
+import { SlideConfig } from '../../src-shared/entities/SlideConfig'
 import {
     BASE_FILE_NAME,
     PRESENTATION_SCRIPT_FILENAME,
@@ -98,10 +99,7 @@ export function buildHTMLPresentationContent(
     presentationContentBaseHtml: string,
     content: HTMLPresentationContent
 ): string {
-    const slides =
-        content.slidesHtml.length === 0
-            ? ''
-            : content.slidesHtml.map(slide => `<section>${slide}</section>`).reduce((prev, next) => `${prev}\n${next}`)
+    const slides = content.slidesHtml.length === 0 ? '' : content.slidesHtml.reduce((prev, next) => `${prev}\n${next}`)
     return presentationContentBaseHtml.replace(CONTENT_TOKEN, slides)
 }
 
@@ -111,6 +109,7 @@ export function buildHTMLPresentationContent(
 
 export type HTMLLayoutContent = {
     slots: string[]
+    slideConfig: SlideConfig
 }
 
 export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTMLLayoutContent): string {
@@ -137,5 +136,21 @@ export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTM
             buildingFile = buildingFile.replace(LAYOUT_SLOT_TOKEN, slot)
         })
     }
+
+    const classes = [...(content.slideConfig.class ?? [])]
+    const stylesObject = { ...(content.slideConfig.style ?? {}) }
+    const styles = Object.entries(stylesObject).map(([key, value]) => `${key}: ${value};`)
+    const transition = content.slideConfig.transition
+    const transitionSpeed = content.slideConfig['transition-speed']
+
+    let sectionOpenTag = `<section`
+    if (classes.length > 0) sectionOpenTag += ` class="${classes.reduce((prev, next) => `${prev} ${next}`)}"`
+    if (styles.length > 0) sectionOpenTag += ` style="${styles.reduce((prev, next) => `${prev} ${next}`)}"`
+    if (transition) sectionOpenTag += ` data-transition="${transition}"`
+    if (transitionSpeed) sectionOpenTag += `data-transition-speed="${transitionSpeed}"`
+    sectionOpenTag += '>'
+
+    buildingFile = `${sectionOpenTag}${buildingFile}</section>`
+
     return buildingFile
 }

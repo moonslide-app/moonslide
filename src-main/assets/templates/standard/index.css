@@ -6,6 +6,7 @@ section {
 .image {
     flex-grow: 1;
     background-repeat: no-repeat;
+    background-position: center;
 }
 
 .image-cover {
