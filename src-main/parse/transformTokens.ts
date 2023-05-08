@@ -1,10 +1,6 @@
 import Token from 'markdown-it/lib/token'
 
 export function transformTokens(initialTokens: Token[]): Token[] {
-    console.log('TRANSFORM START')
-    initialTokens.forEach(token => console.log(token))
-    console.log('TRANSFORM END')
-
     let tokens = initialTokens
 
     // Remove paragraphs, which only contain an image
@@ -15,6 +11,7 @@ export function transformTokens(initialTokens: Token[]): Token[] {
         const imageChild = nextTokenChildren.at(0)
 
         if (token.type === 'paragraph_open' && isBlockImage(nextToken) && imageChild) {
+            imageChild.meta = 'block'
             imageChild.attrSet('style', joinStyles(token.attrGet('style'), imageChild.attrGet('style')))
             if (token.attrGet('class')) imageChild.attrJoin('class', token.attrGet('class') ?? '')
             return false
@@ -49,6 +46,13 @@ function replaceBgImages(tokens: Token[]): Token[] {
         if (token.type !== 'image') return [token]
         if (!token.attrs) token.attrs = []
 
+        if (token.meta !== 'block') {
+            token.attrJoin('class', 'image image-inline')
+            return [token]
+        } else {
+            token.attrJoin('class', 'image image-block')
+        }
+
         token.tag = 'div'
         token.nesting = 1
 
@@ -57,8 +61,6 @@ function replaceBgImages(tokens: Token[]): Token[] {
 
         const style = joinStyles(token.attrGet('style'), `background-image: url(${src});`)
         token.attrSet('style', style)
-
-        token.attrJoin('class', 'image')
 
         const closingTag = new Token('image_closing_tag', 'div', -1)
         return [token, closingTag]

@@ -3,7 +3,7 @@ section {
     max-height: 100%;
 }
 
-.image {
+.image-block {
     flex-grow: 1;
     background-repeat: no-repeat;
     background-position: center;
