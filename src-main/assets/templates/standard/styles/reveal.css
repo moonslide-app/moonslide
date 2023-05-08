@@ -29,6 +29,7 @@ Configurable Variables of Reveal
     /* --r-selection-color: VALUE; */
 }
 
-.reveal ul {
+.reveal ul,
+.reveal ol {
     margin: 0;
 }
