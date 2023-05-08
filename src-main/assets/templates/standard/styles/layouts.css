@@ -1,8 +1,8 @@
 /* All Layouts are full height*/
 
 .layout {
-    height: 100%;
-    padding: 10px;
+    height: calc(100% - 4rem);
+    padding: 2rem;
 }
 
 /* All slots are wrapped by a flex div-container   */
@@ -10,6 +10,18 @@
 div.slot {
     display: flex;
     flex-direction: column;
+}
+
+.position-top div.slot {
+    justify-content: start;
+}
+
+.position-center div.slot {
+    justify-content: center;
+}
+
+.position-bottom div.slot {
+    justify-content: end;
 }
 
 /* Title layouts */
@@ -20,7 +32,7 @@ div.slot {
 }
 
 .title > .title-heading {
-    margin-bottom: 40px;
+    margin-bottom: 2rem;
 }
 
 .title > .title-content {
@@ -32,7 +44,7 @@ div.slot {
 .cols,
 .grid {
     display: grid;
-    gap: 20px;
+    gap: 1rem;
 }
 
 /* Cols Layouts */
