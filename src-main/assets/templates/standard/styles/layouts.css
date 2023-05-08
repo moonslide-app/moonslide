@@ -2,6 +2,7 @@
 
 .layout {
     height: 100%;
+    padding: 10px;
 }
 
 /* All slots are wrapped by a flex div-container   */

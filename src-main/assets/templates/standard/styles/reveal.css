@@ -5,17 +5,17 @@ Configurable Variables of Reveal
 :root {
     /* --r-background-color: VALUE; */
     /* --r-main-font: VALUE ; */
-    /* --r-main-font-size: VALUE; */
+    --r-main-font-size: 40px;
     /* --r-main-color: VALUE; */
-    /* --r-block-margin: VALUE; */
-    /* --r-heading-margin: VALUE; */
+    --r-block-margin: 0;
+    --r-heading-margin: 0;
     /* --r-heading-font: VALUE; */
     /* --r-heading-color: VALUE; */
     /* --r-heading-line-height: VALUE; */
     /* --r-heading-letter-spacing: VALUE; */
-    /* --r-heading-text-transform: VALUE; */
+    --r-heading-text-transform: none;
     /* --r-heading-text-shadow: VALUE; */
-    /* --r-heading-font-weight: VALUE; */
+    --r-heading-font-weight: 400;
     /* --r-heading1-text-shadow: VALUE; */
     /* --r-heading1-size: VALUE; */
     /* --r-heading2-size: VALUE; */
