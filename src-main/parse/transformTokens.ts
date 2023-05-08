@@ -1,33 +1,46 @@
 import Token from 'markdown-it/lib/token'
 
 export function transformTokens(initialTokens: Token[]): Token[] {
+    console.log('TRANSFORM START')
+    initialTokens.forEach(token => console.log(token))
+    console.log('TRANSFORM END')
+
     let tokens = initialTokens
+
+    // Remove paragraphs, which only contain an image
+    // Move images to top-level
     tokens = tokens.filter((token, idx, array) => {
         const nextToken = array.at(idx + 1)
-        const imageChild = nextToken?.children?.at(0)
-        if (token.type === 'paragraph_open' && nextToken?.type === 'inline' && imageChild?.type === 'image') {
+        const nextTokenChildren = nextToken?.children ?? []
+        const imageChild = nextTokenChildren.at(0)
+
+        if (token.type === 'paragraph_open' && isBlockImage(nextToken) && imageChild) {
             imageChild.attrSet('style', joinStyles(token.attrGet('style'), imageChild.attrGet('style')))
             if (token.attrGet('class')) imageChild.attrJoin('class', token.attrGet('class') ?? '')
             return false
+        } else {
+            return true
         }
-
-        return true
     })
 
     tokens = tokens.filter((token, idx, array) => {
         const lastToken = array.at(idx - 1)
-        if (
-            token.type === 'paragraph_close' &&
-            lastToken?.type === 'inline' &&
-            lastToken?.children?.at(0)?.type === 'image'
-        )
+        if (token.type === 'paragraph_close' && isBlockImage(lastToken)) {
             return false
-        return true
+        } else {
+            return true
+        }
     })
 
     tokens = replaceBgImages(tokens)
 
     return tokens
+}
+
+function isBlockImage(token: Token | undefined): boolean {
+    const children = token?.children?.filter(token => !!token.content.trim()) ?? []
+    const imageChild = children.at(0)
+    return token?.type === 'inline' && children.length == 1 && imageChild?.type === 'image'
 }
 
 function replaceBgImages(tokens: Token[]): Token[] {

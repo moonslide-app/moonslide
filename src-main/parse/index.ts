@@ -8,8 +8,8 @@ import { buildHTMLLayout, buildHTMLPresentationContent } from '../presentation/h
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
 
-const SLIDE_SEPARATOR = '\n---\n'
-const SLOT_SEPERATOR = '\n\n'
+const SLIDE_SEPARATOR = '==='
+const SLOT_SEPERATOR = '---'
 
 export async function parse(request: ParseRequest): Promise<Presentation> {
     const { markdownContent, markdownFilePath } = request
