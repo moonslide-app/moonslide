@@ -5,7 +5,7 @@ import { PreviewSlides } from './components/PreviewSlides'
 
 function App() {
     return (
-        <div className="p-8 md:p-12 max-w-6xl m-auto">
+        <div className="p-8 md:p-12 m-auto">
             <h1 className="text-4xl font-semibold mb-8">Reveal Editor</h1>
             <FilePicker />
             <ExportButton />
