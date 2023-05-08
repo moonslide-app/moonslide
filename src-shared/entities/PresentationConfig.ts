@@ -1,8 +1,8 @@
-import { TEMPLATE_BASIC } from '../../src-main/helpers/assets'
+import { TEMPLATE_STANDARD } from '../../src-main/helpers/assets'
 import { z } from 'zod'
 
 export const presentationConfigSchema = z.object({
-    template: z.string().default(TEMPLATE_BASIC),
+    template: z.string().default(TEMPLATE_STANDARD),
     theme: z.string().optional(),
     title: z.string().optional(),
     author: z.string().optional(),
