@@ -10,7 +10,7 @@ Configurable Variables of Reveal
     --r-block-margin: 0;
     --r-heading-margin: 0;
     /* --r-heading-font: VALUE; */
-    /* --r-heading-color: VALUE; */
+    --r-heading-color: inherit;
     /* --r-heading-line-height: VALUE; */
     /* --r-heading-letter-spacing: VALUE; */
     --r-heading-text-transform: none;

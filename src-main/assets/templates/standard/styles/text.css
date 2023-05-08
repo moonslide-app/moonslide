@@ -1,0 +1,108 @@
+/* Text Align */
+
+.reveal .text-left {
+    text-align: left;
+}
+
+.reveal .text-center {
+    text-align: center;
+}
+
+.reveal .text-right {
+    text-align: right;
+}
+
+/* Take reveal standard color*/
+.reveal .text-main {
+    color: var(--r-main-color);
+}
+
+/* Other colors */
+
+.reveal .text-slate {
+    color: var(--color-slate);
+}
+
+.reveal .text-gray {
+    color: var(--color-gray);
+}
+
+.reveal .text-zinc {
+    color: var(--color-zinc);
+}
+
+.reveal .text-neutral {
+    color: var(--color-neutral);
+}
+
+.reveal .text-stone {
+    color: var(--color-stone);
+}
+
+.reveal .text-red {
+    color: var(--color-red);
+}
+
+.reveal .text-orange {
+    color: var(--color-orange);
+}
+
+.reveal .text-amber {
+    color: var(--color-amber);
+}
+
+.reveal .text-yellow {
+    color: var(--color-yellow);
+}
+
+.reveal .text-lime {
+    color: var(--color-lime);
+}
+
+.reveal .text-green {
+    color: var(--color-green);
+}
+
+.reveal .text-emerald {
+    color: var(--color-emerald);
+}
+
+.reveal .text-teal {
+    color: var(--color-teal);
+}
+
+.reveal .text-cyan {
+    color: var(--color-cyan);
+}
+
+.reveal .text-sky {
+    color: var(--color-sky);
+}
+
+.reveal .text-blue {
+    color: var(--color-blue);
+}
+
+.reveal .text-indigo {
+    color: var(--color-inidgo);
+}
+
+.reveal .text-violet {
+    color: var(--color-violet);
+}
+
+.reveal .text-purple {
+    color: var(--color-purple);
+}
+
+.reveal .text-fuchsia {
+    color: var(--color-fuchsia);
+}
+
+.reveal .text-pink {
+    color: var(--color-pink);
+}
+
+.reveal .text-rose {
+    color: var(--color-rose);
+}

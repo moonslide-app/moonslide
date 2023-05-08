@@ -13,11 +13,13 @@ plugins:
 themes: 
   - name: black
     default: true
-    stylesheets: ./reveal_js/dist/theme/black.css
+    stylesheets: 
+      - ./reveal_js/dist/theme/black.css
+      - ./styles/colors/black.css
   - name: white
-    stylesheets: ./reveal_js/dist/theme/white.css
-  - name: beige
-    stylesheets: ./reveal_js/dist/theme/beige.css
+    stylesheets: 
+      - ./reveal_js/dist/theme/white.css
+      - ./styles/colors/white.css
 layouts: 
   - name: base
     default: true
