@@ -59,7 +59,7 @@ Das ist ein riesiges Gebiet! {.fragment .text-red .mt-10}
 -   Komplett neu aufgebauter Kurs
 
 Falls noch nicht alles ganz rund läuft:  
-Beschwerden an bkrt@zhaw.ch 😉 {.fragment .text-blue .mt-12}
+Beschwerden an xyz 😉 {.fragment .text-blue .mt-12}
 
 ---
 layout: title-grid-3-right
