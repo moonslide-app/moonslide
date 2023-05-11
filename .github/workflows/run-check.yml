@@ -7,4 +7,9 @@ on:
 
 jobs:
   check:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
     uses: ./.github/workflows/check.yml
+    with:
+      os: ${{ matrix.os }}
