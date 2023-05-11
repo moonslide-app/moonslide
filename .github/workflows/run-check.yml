@@ -1,0 +1,11 @@
+name: Run Checks
+
+on:
+  push:
+    branches-ignore:
+      - 'main'
+
+jobs:
+  check:
+    name: Lint, TypeCheck & Build
+    uses: ./github/workflows/check.yml
