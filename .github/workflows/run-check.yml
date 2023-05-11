@@ -8,4 +8,4 @@ on:
 jobs:
   check:
     name: Lint, TypeCheck & Build
-    uses: ./github/workflows/check.yml
+    uses: ./.github/workflows/check.yml
