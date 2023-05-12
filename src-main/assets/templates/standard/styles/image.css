@@ -1,0 +1,44 @@
+/* This class is added to all images. */
+/* .image { 
+
+} */
+
+/* This class is added to inline images. */
+/* .image-inline {
+
+} */
+
+/* This class is added to all block images. */
+.image-block {
+    flex-grow: 1;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.image-cover {
+    background-size: cover;
+}
+
+.image-contain {
+    background-size: contain;
+}
+
+.image-center {
+    background-position: center;
+}
+
+.image-top {
+    background-position-y: top;
+}
+
+.image-bottom {
+    background-position-y: bottom;
+}
+
+.image-left {
+    background-position-x: left;
+}
+
+.image-right {
+    background-position-x: right;
+}

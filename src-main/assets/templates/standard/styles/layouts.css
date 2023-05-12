@@ -1,0 +1,123 @@
+/* All Layouts are full height*/
+
+.layout {
+    height: calc(100% - 4rem);
+    padding: 2rem;
+}
+
+/* All slots are wrapped by a flex div-container   */
+
+div.slot {
+    display: flex;
+    flex-direction: column;
+}
+
+.position-top div.slot {
+    justify-content: start;
+}
+
+.position-center div.slot {
+    justify-content: center;
+}
+
+.position-bottom div.slot {
+    justify-content: end;
+}
+
+/* Title layouts */
+
+.title {
+    display: flex;
+    flex-direction: column;
+}
+
+.title > .title-heading {
+    margin-bottom: 2rem;
+}
+
+.title > .title-content {
+    flex-grow: 1;
+}
+
+/* Grid And Cols Layouts */
+
+.cols,
+.grid {
+    display: grid;
+    gap: 2rem;
+}
+
+/* Cols Layouts */
+.cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Grid Layouts */
+.grid > .large-item {
+    grid-area: large;
+}
+
+.grid-3-left {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas:
+        'large .'
+        'large .';
+}
+
+.grid-3-right {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas:
+        '. large'
+        '. large';
+}
+
+.grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.grid-5 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas:
+        '. . large'
+        '. . large';
+}
+
+.grid-6 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.grid-7 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-areas:
+        '. . large'
+        '. . large'
+        '. . large';
+}
+
+.grid-8 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-areas:
+        '. . .'
+        '. . large'
+        '. . large';
+}
+
+.grid-9 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}

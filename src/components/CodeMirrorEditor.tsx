@@ -53,7 +53,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
 
         const state = EditorState.create({
             doc: content,
-            extensions: [oneDark, myTheme, markdown(), updatePlugin],
+            extensions: [oneDark, myTheme, updatePlugin],
         })
 
         const parent = editorDomNode.current

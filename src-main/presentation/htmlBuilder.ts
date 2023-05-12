@@ -1,3 +1,4 @@
+import { SlideConfig } from '../../src-shared/entities/SlideConfig'
 import {
     BASE_FILE_NAME,
     PRESENTATION_SCRIPT_FILENAME,
@@ -6,7 +7,7 @@ import {
     loadAssetContent,
 } from '../../src-main/helpers/assets'
 import { Presentation } from '../../src-shared/entities/Presentation'
-import { TemplateConfig } from './templateConfig'
+import { TemplateConfig, getThemeMatching } from './TemplateConfig'
 
 // presentation
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
@@ -48,11 +49,11 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
     replaceToken(AUTHOR_TOKEN, presentation.config.author)
     replaceToken(PRESESENTATION_TOKEN, presentation.html)
 
-    replaceToken(STYLESHEETS_TOKEN, generateStylesheets(templateConfig.stylesheets))
-    replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal))
+    replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
+    replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal.entry))
     replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.plugins))
     replaceToken(REVEAL_EDITOR_TOKEN, await getRevealEditorScriptContent(config.type))
-    replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.entry))
+    replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.template.entry))
 
     return buildingFile
 }
@@ -76,8 +77,15 @@ function scriptWithSource(src: string) {
     return `<script src="${src}"></script>`
 }
 
-function generateStylesheets(styleSheetPaths?: string[]): string {
-    if (!styleSheetPaths || styleSheetPaths.length == 0) return ''
+function generateStylesheets({ presentation, templateConfig }: HTMLPresentationBulidConfig): string {
+    const theme = getThemeMatching(templateConfig, presentation.config.theme)
+    const styleSheetPaths = [
+        ...templateConfig.reveal.stylesheets,
+        ...(theme?.stylesheets ?? []),
+        ...(templateConfig.template.stylesheets ?? []),
+    ]
+
+    if (styleSheetPaths.length == 0) return ''
     return styleSheetPaths
         .map(styleSheetPath => `<link rel="stylesheet" href="${styleSheetPath}">`)
         .reduce((prev, curr) => `${prev}\n${curr}`)
@@ -95,10 +103,7 @@ export function buildHTMLPresentationContent(
     presentationContentBaseHtml: string,
     content: HTMLPresentationContent
 ): string {
-    const slides =
-        content.slidesHtml.length === 0
-            ? ''
-            : content.slidesHtml.map(slide => `<section>${slide}</section>`).reduce((prev, next) => `${prev}\n${next}`)
+    const slides = content.slidesHtml.length === 0 ? '' : content.slidesHtml.reduce((prev, next) => `${prev}\n${next}`)
     return presentationContentBaseHtml.replace(CONTENT_TOKEN, slides)
 }
 
@@ -108,6 +113,7 @@ export function buildHTMLPresentationContent(
 
 export type HTMLLayoutContent = {
     slots: string[]
+    slideConfig: SlideConfig
 }
 
 export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTMLLayoutContent): string {
@@ -134,5 +140,21 @@ export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTM
             buildingFile = buildingFile.replace(LAYOUT_SLOT_TOKEN, slot)
         })
     }
+
+    const classes = [...(content.slideConfig.class ?? [])]
+    const stylesObject = { ...(content.slideConfig.style ?? {}) }
+    const styles = Object.entries(stylesObject).map(([key, value]) => `${key}: ${value};`)
+    const transition = content.slideConfig.transition
+    const transitionSpeed = content.slideConfig['transition-speed']
+
+    let sectionOpenTag = `<section`
+    if (classes.length > 0) sectionOpenTag += ` class="${classes.reduce((prev, next) => `${prev} ${next}`)}"`
+    if (styles.length > 0) sectionOpenTag += ` style="${styles.reduce((prev, next) => `${prev} ${next}`)}"`
+    if (transition) sectionOpenTag += ` data-transition="${transition}"`
+    if (transitionSpeed) sectionOpenTag += `data-transition-speed="${transitionSpeed}"`
+    sectionOpenTag += '>'
+
+    buildingFile = `${sectionOpenTag}${buildingFile}</section>`
+
     return buildingFile
 }
