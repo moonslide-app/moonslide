@@ -6,6 +6,9 @@ runs:
     - name: Install Packages (npm ci)
       run: npm ci
       shell: bash
+    - name: Electron Rebuild
+      run: $(npm bin)/electron-rebuild
+      shell: bash
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
