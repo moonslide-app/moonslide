@@ -4,14 +4,11 @@ inputs:
   os:
     description: The OS on which the action runs on
     required: true
-  GITHUB_TOKEN:
-    description: A GitHub token
-    required: true
 runs:
   using: 'composite'
   steps:
     - name: Publish Linux
-      if: ${{ inputs.os }} == 'ubuntu-latest'
+      if: inputs.os == 'ubuntu-latest'
       run: >
         npm run publish 
         -- 
@@ -19,7 +16,7 @@ runs:
         --arch "x64,arm64,armv7l"
       shell: bash
     - name: Publish macOS
-      if: ${{ inputs.os }} == 'macOS-latest'
+      if: inputs.os == 'macOS-latest'
       run: >
         npm run publish 
         -- 
@@ -27,7 +24,7 @@ runs:
         --arch "x64,arm64"
       shell: bash
     - name: Publish Windows
-      if: ${{ inputs.os }} == 'windows-latest'
+      if: inputs.os == 'windows-latest'
       run: >
         npm run publish 
         -- 
