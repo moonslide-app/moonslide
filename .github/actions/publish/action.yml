@@ -1,14 +1,36 @@
 name: Publish
 description: Publish the application
 inputs:
+  os:
+    description: The OS on which the action runs on
+    required: true
   GITHUB_TOKEN:
     description: A GitHub token
     required: true
 runs:
   using: 'composite'
   steps:
-    - name: Publish GitHub Release
-      run: npm run publish -- --target "@electron-forge/publisher-github"
+    - name: Publish Linux
+      if: ${{ inputs.os }} == 'ubuntu-latest'
+      run: >
+        npm run publish 
+        -- 
+        --target "@electron-forge/publisher-github" 
+        --arch "x64,arm64,armv7l"
       shell: bash
-      env:
-        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+    - name: Publish macOS
+      if: ${{ inputs.os }} == 'macOS-latest'
+      run: >
+        npm run publish 
+        -- 
+        --target "@electron-forge/publisher-github" 
+        --arch "x64,arm64"
+      shell: bash
+    - name: Publish Windows
+      if: ${{ inputs.os }} == 'windows-latest'
+      run: >
+        npm run publish 
+        -- 
+        --target "@electron-forge/publisher-github" 
+        --arch "x64,arm64,ia32"
+      shell: bash
