@@ -3,14 +3,11 @@ description: Configure the environment & install NPM dependencies
 runs:
   using: 'composite'
   steps:
-    - name: Install Packages (npm ci)
-      run: npm ci
-      shell: bash
-    - name: Node version
-      run: node --version
-      shell: bash
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '19'
         cache: 'npm'
+    - name: Install Packages (npm ci)
+      run: npm ci
+      shell: bash
