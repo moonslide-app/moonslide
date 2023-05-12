@@ -1,11 +1,8 @@
 name: Run Checks
-description: Install NPM dependencies, lint, type-check & build
+description: Lint, type-check & build
 runs:
   using: 'composite'
   steps:
-    - name: Install Packages (npm ci)
-      run: npm ci
-      shell: bash
     - name: Lint
       run: npm run lint
       shell: bash
