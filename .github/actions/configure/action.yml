@@ -7,10 +7,10 @@ runs:
       run: npm ci
       shell: bash
     - name: Electron Rebuild
-      run: $(npm bin)/electron-rebuild
+      run: ./node_modules/.bin/electron-rebuild
       shell: bash
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
-        node-version: '19.6'
-        # cache: 'npm'
+        node-version: '19'
+        cache: 'npm'
