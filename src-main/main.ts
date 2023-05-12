@@ -3,6 +3,7 @@ import path from 'path'
 import { registerIpc, unregisterIpc } from './helpers/ipc'
 import { registerProtocols, REVEAL_PROTOCOL_NAME } from './helpers/protocol'
 import { clearPreviewFolder } from './presentation/preview'
+import { setupMenu } from './menu/menu'
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -31,6 +32,7 @@ const createWindow = () => {
 }
 
 protocol.registerSchemesAsPrivileged([{ scheme: REVEAL_PROTOCOL_NAME, privileges: { bypassCSP: true } }])
+setupMenu()
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
