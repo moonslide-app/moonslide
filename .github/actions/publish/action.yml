@@ -20,8 +20,7 @@ runs:
       run: >
         npm run publish 
         -- 
-        --target "@electron-forge/publisher-github" 
-        --arch "x64"
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish Windows
       if: inputs.os == 'windows-latest'
