@@ -8,9 +8,9 @@ on:
 jobs:
   check:
     name: Run Checks
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-    uses: ./.github/workflows/check.yml
-    with:
-      os: ${{ matrix.os }}
+    steps:
+      - uses: ./.github/actions/check.yml
