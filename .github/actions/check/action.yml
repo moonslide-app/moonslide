@@ -1,4 +1,5 @@
 name: Run Checks
+description: Install NPM dependencies, Lint, TypeCheck & Build
 
 runs:
   using: 'composite'
@@ -10,9 +11,13 @@ runs:
         cache: 'npm'
     - name: Install Packages (npm ci)
       run: npm ci
+      shell: bash
     - name: Lint
       run: npm run lint
+      shell: bash
     - name: Type Check
       run: npm run type-check
+      shell: bash
     - name: Build
       run: npm run package
+      shell: bash
