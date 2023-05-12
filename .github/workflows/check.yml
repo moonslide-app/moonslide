@@ -9,7 +9,7 @@ on:
 
 jobs:
   check:
-    name: Run Checks
+    name: ${{ inputs.os }}
     runs-on: ${{ inputs.os }}
     steps:
       - name: Checkout

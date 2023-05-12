@@ -7,6 +7,7 @@ on:
 
 jobs:
   check:
+    name: Run Checks
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
