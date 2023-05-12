@@ -1,11 +1,13 @@
 name: Run CI/CD
 on:
   push:
-    branches:
-      - 'main'
     tags:
       - v*
   workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
 
 jobs:
   deploy:
