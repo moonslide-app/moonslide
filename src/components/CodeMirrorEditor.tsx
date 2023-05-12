@@ -1,10 +1,10 @@
+import { undo, redo, history, indentWithTab } from '@codemirror/commands'
 import { EditorState } from '@codemirror/state'
-import { EditorView, ViewPlugin } from '@codemirror/view'
+import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef, useState } from 'react'
 import { useDebounce, useEffectOnce } from 'usehooks-ts'
 import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { markdown } from '@codemirror/lang-markdown'
 
 export type CodeMirrorEditorProps = {
     className?: string
@@ -53,7 +53,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
 
         const state = EditorState.create({
             doc: content,
-            extensions: [oneDark, myTheme, updatePlugin],
+            extensions: [oneDark, myTheme, updatePlugin, keymap.of([indentWithTab]), history()],
         })
 
         const parent = editorDomNode.current

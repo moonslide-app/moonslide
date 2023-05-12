@@ -71,8 +71,20 @@ const template: Electron.MenuItemConstructorOptions[] = [
     {
         role: 'editMenu',
         submenu: [
-            // { role: 'undo' },
-            // { role: 'redo' },
+            {
+                label: 'Undo',
+                accelerator: isMac ? 'Cmd+Z' : 'Ctrl+Z',
+                click: () => {
+                    console.log('undo')
+                },
+            },
+            {
+                label: 'Redo',
+                accelerator: isMac ? 'Cmd+Shift+Z' : 'Ctrl+Shift+Z',
+                click: () => {
+                    console.log('redo')
+                },
+            },
             { type: 'separator' },
             { role: 'cut' },
             { role: 'copy' },
@@ -84,6 +96,9 @@ const template: Electron.MenuItemConstructorOptions[] = [
     {
         role: 'viewMenu',
         submenu: [
+            { role: 'reload' },
+            { role: 'forceReload' },
+            { role: 'toggleDevTools' },
             {
                 label: 'Show Presentation Window',
                 accelerator: isMac ? 'Cmd+Enter' : 'Ctrl+Enter',

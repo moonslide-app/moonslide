@@ -8,16 +8,6 @@ export function FilePicker() {
 
     const openInWindow = () => window.ipc.presentation.openPreviewWindow()
 
-    useEventListener('keydown', event => {
-        const isMac = /Mac/.test(navigator.userAgent)
-        const cmdSOnMac = isMac && event.metaKey && event.key === 's'
-        const ctrlSOnOther = !isMac && event.ctrlKey && event.key === 's'
-        if (cmdSOnMac || ctrlSOnOther) {
-            event.preventDefault()
-            saveContentToEditingFile()
-        }
-    })
-
     return (
         <div className="space-y-2 mb-4">
             <div className="flex space-x-2 items-baseline">
