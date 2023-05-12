@@ -1,5 +1,9 @@
 name: Publish
 description: Publish the application
+inputs:
+  GITHUB_TOKEN:
+    description: A GitHub token
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -7,4 +11,4 @@ runs:
       run: npm run publish -- --target github
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
