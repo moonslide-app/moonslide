@@ -4,7 +4,7 @@ runs:
   using: 'composite'
   steps:
     - name: Install Packages (npm ci)
-      run: npm ci
+      run: npm install
       shell: bash
     - name: Electron Rebuild
       run: ./node_modules/.bin/electron-rebuild
