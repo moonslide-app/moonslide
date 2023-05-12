@@ -42,7 +42,7 @@ const config: ForgeConfig = {
     ],
     publishers: [
         {
-            name: 'github',
+            name: '@electron-forge/publisher-github',
             config: gitHubConfig,
         },
     ],

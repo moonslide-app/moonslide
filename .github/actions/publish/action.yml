@@ -8,7 +8,7 @@ runs:
   using: 'composite'
   steps:
     - name: Publish GitHub Release
-      run: npm run publish -- --target github
+      run: npm run publish -- --target "@electron-forge/publisher-github"
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
