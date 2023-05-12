@@ -19,7 +19,3 @@ jobs:
         uses: ./.github/actions/configure
       - name: Run Checks
         uses: ./.github/actions/check
-      - name: Publish
-        uses: ./.github/actions/publish
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
