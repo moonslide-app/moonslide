@@ -96,9 +96,6 @@ const template: Electron.MenuItemConstructorOptions[] = [
     {
         role: 'viewMenu',
         submenu: [
-            { role: 'reload' },
-            { role: 'forceReload' },
-            { role: 'toggleDevTools' },
             {
                 label: 'Show Presentation Window',
                 accelerator: isMac ? 'Cmd+Enter' : 'Ctrl+Enter',
@@ -106,6 +103,11 @@ const template: Electron.MenuItemConstructorOptions[] = [
                     console.log('show presentation window')
                 },
             },
+            { type: 'separator' },
+            { role: 'reload' },
+            { role: 'forceReload' },
+            { role: 'toggleDevTools' },
+
             { type: 'separator' },
             { role: 'resetZoom' },
             { role: 'zoomIn' },
