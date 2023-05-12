@@ -1,8 +1,9 @@
 name: Run CI
 on:
-  push:
-    branches-ignore:
-      - 'main'
+  # push:
+  #   branches-ignore:
+  #     - 'main'
+  workflow_dispatch:
 jobs:
   check:
     name: Run Checks
