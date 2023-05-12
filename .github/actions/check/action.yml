@@ -1,5 +1,5 @@
 name: Run Checks
-description: Install NPM dependencies, Lint, TypeCheck & Build
+description: Install NPM dependencies, lint, type-check & build
 
 runs:
   using: 'composite'
