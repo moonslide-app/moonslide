@@ -1,14 +1,8 @@
 name: Run Checks
 description: Install NPM dependencies, lint, type-check & build
-
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: '19'
-        cache: 'npm'
     - name: Install Packages (npm ci)
       run: npm ci
       shell: bash

@@ -1,0 +1,10 @@
+name: Publish
+description: Publish the application
+runs:
+  using: 'composite'
+  steps:
+    - name: Publish GitHub Release
+      run: npm run publish -- --target github
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
