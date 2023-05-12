@@ -1,5 +1,4 @@
 import { useEditorStore } from '../store'
-import { useEventListener } from 'usehooks-ts'
 
 export function FilePicker() {
     const { editingFilePath, changeEditingFile, saveContentToEditingFile, reloadAllPreviews } = useEditorStore()

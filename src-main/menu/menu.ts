@@ -1,4 +1,4 @@
-import { app, shell, Menu } from 'electron'
+import { shell, Menu } from 'electron'
 
 const isMac = process.platform === 'darwin'
 
@@ -107,7 +107,6 @@ const template: Electron.MenuItemConstructorOptions[] = [
             { role: 'reload' },
             { role: 'forceReload' },
             { role: 'toggleDevTools' },
-
             { type: 'separator' },
             { role: 'resetZoom' },
             { role: 'zoomIn' },

@@ -1,4 +1,4 @@
-import { undo, redo, history, indentWithTab } from '@codemirror/commands'
+import { history, indentWithTab } from '@codemirror/commands'
 import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef, useState } from 'react'
