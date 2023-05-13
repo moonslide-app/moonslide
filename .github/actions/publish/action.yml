@@ -50,8 +50,8 @@ runs:
     - name: Windows specific dependencies
       if: inputs.os == 'windows-latest'
       run: |
-        npm install -g exe-icon-extractor
-        echo "$WIX" >> $GITHUB_PATH
+        npm install --save-dev exe-icon-extractor
+        echo "${WIX}bin" >> $GITHUB_PATH
       shell: bash
     - name: Publish Windows x64
       if: inputs.os == 'windows-latest'
