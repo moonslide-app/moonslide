@@ -9,5 +9,5 @@ runs:
         node-version: '19'
         cache: 'npm'
     - name: Install Packages (npm ci)
-      run: npm ci
       shell: bash
+      run: npm ci

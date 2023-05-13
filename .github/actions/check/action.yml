@@ -4,11 +4,11 @@ runs:
   using: 'composite'
   steps:
     - name: Lint
+      shell: bash
       run: npm run lint
-      shell: bash
     - name: Type Check
+      shell: bash
       run: npm run type-check
-      shell: bash
     - name: Build
-      run: npm run package
       shell: bash
+      run: npm run package
