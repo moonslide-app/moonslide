@@ -11,23 +11,40 @@ runs:
       if: inputs.os == 'ubuntu-latest'
       run: >
         npm run publish 
-        -- 
-        --target "@electron-forge/publisher-github" 
         --arch "x64,arm64,armv7l"
+        --dry-run
       shell: bash
     - name: Publish macOS
       if: inputs.os == 'macOS-latest'
       run: >
         npm run publish 
-        -- 
-        --target "@electron-forge/publisher-github" 
         --arch "x64,arm64"
+        --dry-run
       shell: bash
-    - name: Publish Windows
+    - name: Publish Windows x64
       if: inputs.os == 'windows-latest'
       run: >
         npm run publish 
-        -- 
+        --arch "x64"
+        --dry-run
+      shell: bash
+    - name: Publish Windows arm64
+      if: inputs.os == 'windows-latest'
+      run: >
+        npm run publish 
+        --arch "arm64"
+        --dry-run
+      shell: bash
+    - name: Publish Windows x64 ia32
+      if: inputs.os == 'windows-latest'
+      run: >
+        npm run publish 
+        --arch "ia32"
+        --dry-run
+      shell: bash
+    - name: Publish to GitHub
+      run: >
+        npm run publish 
         --target "@electron-forge/publisher-github" 
-        --arch "x64,arm64,ia32"
+        --from-dry-run
       shell: bash
