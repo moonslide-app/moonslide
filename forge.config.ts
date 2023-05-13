@@ -24,7 +24,7 @@ const keepWindowsArtifact = (artifact: string) => {
     return filename !== 'RELEASES' && extension !== '.nupkg'
 }
 
-const renameArtifact = ({ artifact, newName }: { artifact: string; newName: string }) => {
+const renameArtifact = (artifact: string, newName: string) => {
     const resolvedPath = resolve(artifact)
     const fileDir = dirname(resolvedPath)
     const fileExtension = extname(resolvedPath)
@@ -44,11 +44,7 @@ const config: ForgeConfig = {
                 noMsi: true,
             }
         }),
-        new MakerDMG(arch => {
-            return {
-                name: `${packageJSON.name}-${packageJSON.version}-macos-${arch}`,
-            }
-        }),
+        new MakerDMG({}),
         new MakerRpm({}),
         new MakerDeb({}),
     ],
@@ -84,17 +80,19 @@ const config: ForgeConfig = {
     hooks: {
         postMake: async (_, results) => {
             results.forEach(result => {
-                if (result.platform === 'win32') {
-                    // filter out nupkg resources, as they cause naming conflicts
-                    result.artifacts = result.artifacts.filter(keepWindowsArtifact)
-                } else if (result.platform === 'linux') {
+                if (result.platform === 'linux') {
                     // rename linux artifacts, as it's not possible to set filename in maker config
                     result.artifacts = result.artifacts.map(artifact =>
-                        renameArtifact({
-                            artifact,
-                            newName: `${packageJSON.name}-${packageJSON.version}-linux-${result.arch}`,
-                        })
+                        renameArtifact(artifact, `${packageJSON.name}-${packageJSON.version}-linux-${result.arch}`)
                     )
+                } else if (result.platform === 'darwin') {
+                    // rename macos artifacts to avoid 27 character limit
+                    result.artifacts = result.artifacts.map(artifact =>
+                        renameArtifact(artifact, `${packageJSON.name}-${packageJSON.version}-macos-${result.arch}`)
+                    )
+                } else if (result.platform === 'win32') {
+                    // filter out nupkg resources, as they cause naming conflicts
+                    result.artifacts = result.artifacts.filter(keepWindowsArtifact)
                 }
             })
             return results
