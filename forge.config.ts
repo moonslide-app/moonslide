@@ -5,6 +5,7 @@ import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
 import { PublisherGitHubConfig } from '@electron-forge/publisher-github'
+import { productName, version } from './package.json'
 
 const gitHubConfig: PublisherGitHubConfig = {
     repository: {
@@ -16,7 +17,17 @@ const gitHubConfig: PublisherGitHubConfig = {
 const config: ForgeConfig = {
     packagerConfig: {},
     rebuildConfig: {},
-    makers: [new MakerSquirrel({}), new MakerDMG({}), new MakerRpm({}), new MakerDeb({})],
+    makers: [
+        new MakerSquirrel(arch => {
+            return {
+                noMsi: true,
+                setupExe: `${productName}-${version}-win32-${arch} Setup.exe`,
+            }
+        }),
+        new MakerDMG({}),
+        new MakerRpm({}),
+        new MakerDeb({}),
+    ],
     plugins: [
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
