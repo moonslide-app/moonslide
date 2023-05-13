@@ -1,5 +1,6 @@
 import { ForgeConfig } from '@electron-forge/shared-types'
 import { MakerSquirrel } from '@electron-forge/maker-squirrel'
+import { MakerWix } from '@electron-forge/maker-wix'
 import { MakerDMG } from '@electron-forge/maker-dmg'
 import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
@@ -34,10 +35,23 @@ const renameArtifact = (artifact: string, newName: string) => {
     return newPath
 }
 
+const normalizeWindowsVersion = (version: string) => {
+    if (version.includes('-')) return version.replace(/-.*/, '')
+    return version
+}
+
 const config: ForgeConfig = {
     packagerConfig: {},
     rebuildConfig: {},
-    makers: [new MakerSquirrel({ noMsi: true }), new MakerDMG({}), new MakerRpm({}), new MakerDeb({})],
+    makers: [
+        new MakerSquirrel({ noMsi: true }),
+        new MakerWix({
+            version: normalizeWindowsVersion(packageJSON.version),
+        }),
+        new MakerDMG({}),
+        new MakerRpm({}),
+        new MakerDeb({}),
+    ],
     plugins: [
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.

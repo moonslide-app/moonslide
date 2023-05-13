@@ -47,6 +47,12 @@ runs:
         --arch "arm64"
         --target "@electron-forge/publisher-github"
       shell: bash
+    - name: Windows specific dependencies
+      if: inputs.os == 'windows-latest'
+      run: |
+        npm install --save-dev exe-icon-extractor
+        echo "${WIX}bin" >> $GITHUB_PATH
+      shell: bash
     - name: Publish Windows x64
       if: inputs.os == 'windows-latest'
       run: >
