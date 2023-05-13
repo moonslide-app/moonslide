@@ -7,7 +7,7 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: '19'
-        cache: 'npm'
+        cache: '' # disable cache
     - name: Install Packages (npm ci)
       run: npm ci
       shell: bash
