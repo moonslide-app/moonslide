@@ -37,17 +37,7 @@ const renameArtifact = (artifact: string, newName: string) => {
 const config: ForgeConfig = {
     packagerConfig: {},
     rebuildConfig: {},
-    makers: [
-        new MakerSquirrel(arch => {
-            return {
-                setupExe: `${packageJSON.name}-${packageJSON.version}-windows-${arch}-setup.exe`,
-                noMsi: true,
-            }
-        }),
-        new MakerDMG({}),
-        new MakerRpm({}),
-        new MakerDeb({}),
-    ],
+    makers: [new MakerSquirrel({ noMsi: false }), new MakerDMG({}), new MakerRpm({}), new MakerDeb({})],
     plugins: [
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
@@ -81,7 +71,7 @@ const config: ForgeConfig = {
         postMake: async (_, results) => {
             results.forEach(result => {
                 if (result.platform === 'linux') {
-                    // rename linux artifacts, as it's not possible to set filename in maker config
+                    // rename linux artifacts
                     result.artifacts = result.artifacts.map(artifact =>
                         renameArtifact(artifact, `${packageJSON.name}-${packageJSON.version}-linux-${result.arch}`)
                     )
@@ -91,8 +81,15 @@ const config: ForgeConfig = {
                         renameArtifact(artifact, `${packageJSON.name}-${packageJSON.version}-macos-${result.arch}`)
                     )
                 } else if (result.platform === 'win32') {
-                    // filter out nupkg resources, as they cause naming conflicts
+                    // filter out nupkg resources, as they cause duplicate naming conflicts
                     result.artifacts = result.artifacts.filter(keepWindowsArtifact)
+                    // rename windows artifacts
+                    result.artifacts = result.artifacts.map(artifact =>
+                        renameArtifact(
+                            artifact,
+                            `${packageJSON.name}-${packageJSON.version}-windows-${result.arch}-setup`
+                        )
+                    )
                 }
             })
             return results
