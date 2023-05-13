@@ -6,6 +6,9 @@ import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
 import { PublisherGitHubConfig } from '@electron-forge/publisher-github'
 import { productName, version } from './package.json'
+import { resolve, extname, basename, dirname, join } from 'path'
+import { rename } from 'fs-extra'
+import { renameSync } from 'fs-extra'
 
 const gitHubConfig: PublisherGitHubConfig = {
     repository: {
@@ -14,20 +17,21 @@ const gitHubConfig: PublisherGitHubConfig = {
     },
 }
 
+const addArchToFilename = ({ filePath, platform, arch }: { filePath: string; platform: string; arch: string }) => {
+    const resolvedPath = resolve(filePath)
+    const fileDir = dirname(resolvedPath)
+    const fileExtension = extname(resolvedPath)
+    const originalBasename = basename(resolvedPath, fileExtension)
+    const newFilename = `${originalBasename}-${platform}-${arch}.${fileExtension}`
+    const newPath = join(fileDir, newFilename)
+    renameSync(resolvedPath, newPath)
+    return newPath
+}
+
 const config: ForgeConfig = {
     packagerConfig: {},
     rebuildConfig: {},
-    makers: [
-        new MakerSquirrel(arch => {
-            return {
-                noMsi: true,
-                setupExe: `${productName}-${version}-win32-${arch} Setup.exe`,
-            }
-        }),
-        new MakerDMG({}),
-        new MakerRpm({}),
-        new MakerDeb({}),
-    ],
+    makers: [new MakerSquirrel({}), new MakerDMG({}), new MakerRpm({}), new MakerDeb({})],
     plugins: [
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
@@ -57,6 +61,22 @@ const config: ForgeConfig = {
             config: gitHubConfig,
         },
     ],
+    hooks: {
+        postMake: async (_, results) => {
+            results.forEach(result => {
+                if (result.platform === 'win32') {
+                    result.artifacts = result.artifacts.map(artifact => {
+                        return addArchToFilename({
+                            filePath: artifact,
+                            platform: 'win32',
+                            arch: result.arch,
+                        })
+                    })
+                }
+            })
+            return results
+        },
+    },
 }
 
 export default config
