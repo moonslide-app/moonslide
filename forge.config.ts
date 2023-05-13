@@ -5,7 +5,8 @@ import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
 import { PublisherGitHubConfig } from '@electron-forge/publisher-github'
-import { basename, extname } from 'path'
+import { basename, extname, join, resolve, dirname } from 'path'
+import { renameSync } from 'fs-extra'
 import packageJSON from './package.json'
 
 const gitHubConfig: PublisherGitHubConfig = {
@@ -17,12 +18,20 @@ const gitHubConfig: PublisherGitHubConfig = {
     prerelease: false,
 }
 
-const filterWindowsArtifacts = (artifacts: string[]) => {
-    return artifacts.filter(artifact => {
-        const filename = basename(artifact)
-        const extension = extname(artifact)
-        return filename !== 'RELEASES' && extension !== '.nupkg'
-    })
+const keepWindowsArtifact = (artifact: string) => {
+    const filename = basename(artifact)
+    const extension = extname(artifact)
+    return filename !== 'RELEASES' && extension !== '.nupkg'
+}
+
+const renameArtifact = ({ artifact, newName }: { artifact: string; newName: string }) => {
+    const resolvedPath = resolve(artifact)
+    const fileDir = dirname(resolvedPath)
+    const fileExtension = extname(resolvedPath)
+    const newFilename = [newName, fileExtension].join('')
+    const newPath = join(fileDir, newFilename)
+    renameSync(resolvedPath, newPath)
+    return newPath
 }
 
 const config: ForgeConfig = {
@@ -31,11 +40,15 @@ const config: ForgeConfig = {
     makers: [
         new MakerSquirrel(arch => {
             return {
-                setupExe: `${packageJSON.name}-windows-${arch}-setup.exe`,
+                setupExe: `${packageJSON.name}-${packageJSON.version}-windows-${arch}-setup.exe`,
                 noMsi: true,
             }
         }),
-        new MakerDMG({}),
+        new MakerDMG(arch => {
+            return {
+                name: `${packageJSON.name}-${packageJSON.version}-macos-${arch}`,
+            }
+        }),
         new MakerRpm({}),
         new MakerDeb({}),
     ],
@@ -73,7 +86,15 @@ const config: ForgeConfig = {
             results.forEach(result => {
                 if (result.platform === 'win32') {
                     // filter out nupkg resources, as they cause naming conflicts
-                    result.artifacts = filterWindowsArtifacts(result.artifacts)
+                    result.artifacts = result.artifacts.filter(keepWindowsArtifact)
+                } else if (result.platform === 'linux') {
+                    // rename linux artifacts, as it's not possible to set filename in maker config
+                    result.artifacts = result.artifacts.map(artifact =>
+                        renameArtifact({
+                            artifact,
+                            newName: `${packageJSON.name}-${packageJSON.version}-linux-${result.arch}`,
+                        })
+                    )
                 }
             })
             return results
