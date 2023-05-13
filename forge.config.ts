@@ -6,6 +6,7 @@ import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
 import { PublisherGitHubConfig } from '@electron-forge/publisher-github'
 import { basename, extname } from 'path'
+import packageJSON from './package.json'
 
 const gitHubConfig: PublisherGitHubConfig = {
     repository: {
@@ -25,7 +26,17 @@ const filterWindowsArtifacts = (artifacts: string[]) => {
 const config: ForgeConfig = {
     packagerConfig: {},
     rebuildConfig: {},
-    makers: [new MakerSquirrel({}), new MakerDMG({}), new MakerRpm({}), new MakerDeb({})],
+    makers: [
+        new MakerSquirrel(arch => {
+            return {
+                setupExe: `${packageJSON.name}-win32-${arch} Setup.exe`,
+                noMsi: true,
+            }
+        }),
+        new MakerDMG({}),
+        new MakerRpm({}),
+        new MakerDeb({}),
+    ],
     plugins: [
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
@@ -59,6 +70,7 @@ const config: ForgeConfig = {
         postMake: async (_, results) => {
             results.forEach(result => {
                 if (result.platform === 'win32') {
+                    // filter out nupkg resources, as they cause naming conflicts
                     result.artifacts = filterWindowsArtifacts(result.artifacts)
                 }
             })
