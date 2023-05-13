@@ -13,6 +13,8 @@ const gitHubConfig: PublisherGitHubConfig = {
         owner: 'reveal-editor',
         name: 'reveal-editor',
     },
+    draft: false,
+    prerelease: false,
 }
 
 const filterWindowsArtifacts = (artifacts: string[]) => {
