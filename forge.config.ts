@@ -5,7 +5,7 @@ import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
 import { PublisherGitHubConfig } from '@electron-forge/publisher-github'
-import packageJSON from './package.json'
+import { basename, extname } from 'path'
 
 const gitHubConfig: PublisherGitHubConfig = {
     repository: {
@@ -14,21 +14,18 @@ const gitHubConfig: PublisherGitHubConfig = {
     },
 }
 
+const filterWindowsArtifacts = (artifacts: string[]) => {
+    return artifacts.filter(artifact => {
+        const filename = basename(artifact)
+        const extension = extname(artifact)
+        return filename !== 'RELEASES' && extension !== '.nupkg'
+    })
+}
+
 const config: ForgeConfig = {
     packagerConfig: {},
     rebuildConfig: {},
-    makers: [
-        new MakerSquirrel(arch => {
-            return {
-                name: `${packageJSON.name.replace(/-/g, '_')}-win32-${arch}`,
-                setupExe: `${packageJSON.name}-win32-${arch} Setup.exe`,
-                noMsi: true,
-            }
-        }),
-        new MakerDMG({}),
-        new MakerRpm({}),
-        new MakerDeb({}),
-    ],
+    makers: [new MakerSquirrel({}), new MakerDMG({}), new MakerRpm({}), new MakerDeb({})],
     plugins: [
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
@@ -58,6 +55,16 @@ const config: ForgeConfig = {
             config: gitHubConfig,
         },
     ],
+    hooks: {
+        postMake: async (_, results) => {
+            results.forEach(result => {
+                if (result.platform === 'win32') {
+                    result.artifacts = filterWindowsArtifacts(result.artifacts)
+                }
+            })
+            return results
+        },
+    },
 }
 
 export default config
