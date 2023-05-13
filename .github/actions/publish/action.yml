@@ -13,7 +13,7 @@ runs:
         npm run publish 
         --
         --arch "x64"
-        --dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish Linux arm64
       if: inputs.os == 'ubuntu-latest'
@@ -21,7 +21,7 @@ runs:
         npm run publish 
         --
         --arch "arm64"
-        --dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish Linux armv7l
       if: inputs.os == 'ubuntu-latest'
@@ -29,7 +29,7 @@ runs:
         npm run publish 
         --
         --arch "armv7l"
-        --dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish macOS x64
       if: inputs.os == 'macOS-latest'
@@ -37,7 +37,7 @@ runs:
         npm run publish
         --
         --arch "x64"
-        --dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish macOS arm64
       if: inputs.os == 'macOS-latest'
@@ -45,7 +45,7 @@ runs:
         npm run publish
         --
         --arch "arm64"
-        --dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish Windows x64
       if: inputs.os == 'windows-latest'
@@ -53,7 +53,7 @@ runs:
         npm run publish
         --
         --arch "x64"
-        --dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish Windows arm64
       if: inputs.os == 'windows-latest'
@@ -61,7 +61,7 @@ runs:
         npm run publish
         --
         --arch "arm64"
-        --dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
     - name: Publish Windows ia32
       if: inputs.os == 'windows-latest'
@@ -69,12 +69,5 @@ runs:
         npm run publish
         --
         --arch "ia32"
-        --dry-run
-      shell: bash
-    - name: Publish to GitHub
-      run: >
-        npm run publish
-        --
-        --target "@electron-forge/publisher-github" 
-        --from-dry-run
+        --target "@electron-forge/publisher-github"
       shell: bash
