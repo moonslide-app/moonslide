@@ -5,9 +5,7 @@ import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
 import { PublisherGitHubConfig } from '@electron-forge/publisher-github'
-import { productName, version } from './package.json'
 import { resolve, extname, basename, dirname, join } from 'path'
-import { rename } from 'fs-extra'
 import { renameSync } from 'fs-extra'
 
 const gitHubConfig: PublisherGitHubConfig = {
@@ -22,10 +20,7 @@ const addArchToFilename = ({ filePath, platform, arch }: { filePath: string; pla
     const fileDir = dirname(resolvedPath)
     const fileExtension = extname(resolvedPath)
     const originalBasename = basename(resolvedPath, fileExtension)
-
-    let newFilename = `${originalBasename}-${platform}-${arch}`
-    if (fileExtension) newFilename += `.${fileExtension}`
-
+    const newFilename = [`${originalBasename}-${platform}-${arch}`, fileExtension].join('')
     const newPath = join(fileDir, newFilename)
     renameSync(resolvedPath, newPath)
     console.log(`Moved file from ${resolvedPath} to ${newPath}`)
