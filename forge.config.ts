@@ -22,9 +22,13 @@ const addArchToFilename = ({ filePath, platform, arch }: { filePath: string; pla
     const fileDir = dirname(resolvedPath)
     const fileExtension = extname(resolvedPath)
     const originalBasename = basename(resolvedPath, fileExtension)
-    const newFilename = `${originalBasename}-${platform}-${arch}.${fileExtension}`
+
+    let newFilename = `${originalBasename}-${platform}-${arch}`
+    if (fileExtension) newFilename += `.${fileExtension}`
+
     const newPath = join(fileDir, newFilename)
     renameSync(resolvedPath, newPath)
+    console.log(`Moved file from ${resolvedPath} to ${newPath}`)
     return newPath
 }
 
@@ -64,6 +68,7 @@ const config: ForgeConfig = {
     hooks: {
         postMake: async (_, results) => {
             results.forEach(result => {
+                console.log(`Platform is: ${result.platform}`)
                 if (result.platform === 'win32') {
                     result.artifacts = result.artifacts.map(artifact => {
                         return addArchToFilename({
