@@ -31,7 +31,7 @@ const config: ForgeConfig = {
     makers: [
         new MakerSquirrel(arch => {
             return {
-                setupExe: `${packageJSON.name}-win32-${arch} Setup.exe`,
+                setupExe: `${packageJSON.name}-windows-${arch}-setup.exe`,
                 noMsi: true,
             }
         }),
