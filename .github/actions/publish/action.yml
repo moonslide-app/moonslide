@@ -28,13 +28,13 @@ runs:
         --arch "x64"
         --dry-run
       shell: bash
-    - name: Publish Windows arm64
-      if: inputs.os == 'windows-latest'
-      run: >
-        npm run publish 
-        --arch "arm64"
-        --dry-run
-      shell: bash
+    # - name: Publish Windows arm64
+    #   if: inputs.os == 'windows-latest'
+    #   run: >
+    #     npm run publish
+    #     --arch "arm64"
+    #     --dry-run
+    #   shell: bash
     - name: Publish Windows x64 ia32
       if: inputs.os == 'windows-latest'
       run: >
