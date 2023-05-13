@@ -1,7 +1,7 @@
 {
     "name": "reveal-editor",
     "productName": "reveal-editor",
-    "version": "0.0.1-alpha.3",
+    "version": "0.0.1-alpha.4",
     "description": "Editor to create presentations with Markdown and Reveal.js",
     "main": ".vite/build/main.js",
     "scripts": {
@@ -24,7 +24,6 @@
         "@electron-forge/maker-dmg": "^6.1.1",
         "@electron-forge/maker-rpm": "^6.1.1",
         "@electron-forge/maker-squirrel": "^6.1.1",
-        "@electron-forge/maker-wix": "^6.1.1",
         "@electron-forge/maker-zip": "^6.1.1",
         "@electron-forge/plugin-vite": "^6.1.1",
         "@electron-forge/publisher-github": "^6.1.1",
