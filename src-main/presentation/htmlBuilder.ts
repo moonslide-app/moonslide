@@ -7,7 +7,7 @@ import {
     loadAssetContent,
 } from '../../src-main/helpers/assets'
 import { Presentation } from '../../src-shared/entities/Presentation'
-import { TemplateConfig, getThemeMatching } from './TemplateConfig'
+import { TemplateConfig, getThemeMatching } from './templateConfig'
 
 // presentation
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
