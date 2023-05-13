@@ -47,6 +47,10 @@ runs:
         --arch "arm64"
         --target "@electron-forge/publisher-github"
       shell: bash
+    - name: Set path for candle and light
+      if: inputs.os == 'windows-latest'
+      run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+      shell: bash
     - name: Publish Windows x64
       if: inputs.os == 'windows-latest'
       run: >
