@@ -5,8 +5,7 @@ import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
 import { PublisherGitHubConfig } from '@electron-forge/publisher-github'
-import { resolve, extname, basename, dirname, join } from 'path'
-import { renameSync } from 'fs-extra'
+import packageJSON from './package.json'
 
 const gitHubConfig: PublisherGitHubConfig = {
     repository: {
@@ -15,21 +14,21 @@ const gitHubConfig: PublisherGitHubConfig = {
     },
 }
 
-const addSuffixToFilename = ({ filePath, suffix }: { filePath: string; suffix: string }) => {
-    const resolvedPath = resolve(filePath)
-    const fileDir = dirname(resolvedPath)
-    const fileExtension = extname(resolvedPath)
-    const originalBasename = basename(resolvedPath, fileExtension)
-    const newFilename = [`${originalBasename}-${suffix}`, fileExtension].join('')
-    const newPath = join(fileDir, newFilename)
-    renameSync(resolvedPath, newPath)
-    return newPath
-}
-
 const config: ForgeConfig = {
     packagerConfig: {},
     rebuildConfig: {},
-    makers: [new MakerSquirrel({}), new MakerDMG({}), new MakerRpm({}), new MakerDeb({})],
+    makers: [
+        new MakerSquirrel(arch => {
+            return {
+                name: `${packageJSON.name.replace(/-/g, '_')}-win32-${arch}`,
+                setupExe: `${packageJSON.name}-win32-${arch} Setup.exe`,
+                noMsi: true,
+            }
+        }),
+        new MakerDMG({}),
+        new MakerRpm({}),
+        new MakerDeb({}),
+    ],
     plugins: [
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
@@ -59,21 +58,6 @@ const config: ForgeConfig = {
             config: gitHubConfig,
         },
     ],
-    hooks: {
-        postMake: async (_, results) => {
-            results.forEach(result => {
-                if (result.platform === 'win32') {
-                    result.artifacts = result.artifacts.map(artifact => {
-                        return addSuffixToFilename({
-                            filePath: artifact,
-                            suffix: `win32-${result.arch}`,
-                        })
-                    })
-                }
-            })
-            return results
-        },
-    },
 }
 
 export default config
