@@ -1,0 +1,162 @@
+/* Text Align */
+
+.reveal .text-left {
+    text-align: left;
+}
+
+.reveal .text-center {
+    text-align: center;
+}
+
+.reveal .text-right {
+    text-align: right;
+}
+
+/* Font Size */
+
+.text-xs {
+    font-size: calc(0.75 * var(--r-main-font-size));
+}
+
+.text-sm {
+    font-size: calc(0.875 * var(--r-main-font-size));
+}
+
+.text-base {
+    font-size: var(--r-main-font-size);
+}
+
+.text-lg {
+    font-size: calc(1.125 * var(--r-main-font-size));
+}
+
+.text-xl {
+    font-size: calc(1.25 * var(--r-main-font-size));
+}
+
+.text-2xl {
+    font-size: calc(1.5 * var(--r-main-font-size));
+}
+
+.text-3xl {
+    font-size: calc(1.75 * var(--r-main-font-size));
+}
+
+.text-4xl {
+    font-size: calc(2.25 * var(--r-main-font-size));
+}
+
+.text-5xl {
+    font-size: calc(3 * var(--r-main-font-size));
+}
+
+.text-6xl {
+    font-size: calc(3.75 * var(--r-main-font-size));
+}
+
+.text-7xl {
+    font-size: calc(4.5 * var(--r-main-font-size));
+}
+
+.text-8xl {
+    font-size: calc(6 * var(--r-main-font-size));
+}
+
+.text-9xl {
+    font-size: calc(8 * var(--r-main-font-size));
+}
+
+/* Take reveal standard color*/
+.reveal .text-main {
+    color: var(--r-main-color);
+}
+
+/* Other colors */
+
+.reveal .text-slate {
+    color: var(--color-slate);
+}
+
+.reveal .text-gray {
+    color: var(--color-gray);
+}
+
+.reveal .text-zinc {
+    color: var(--color-zinc);
+}
+
+.reveal .text-neutral {
+    color: var(--color-neutral);
+}
+
+.reveal .text-stone {
+    color: var(--color-stone);
+}
+
+.reveal .text-red {
+    color: var(--color-red);
+}
+
+.reveal .text-orange {
+    color: var(--color-orange);
+}
+
+.reveal .text-amber {
+    color: var(--color-amber);
+}
+
+.reveal .text-yellow {
+    color: var(--color-yellow);
+}
+
+.reveal .text-lime {
+    color: var(--color-lime);
+}
+
+.reveal .text-green {
+    color: var(--color-green);
+}
+
+.reveal .text-emerald {
+    color: var(--color-emerald);
+}
+
+.reveal .text-teal {
+    color: var(--color-teal);
+}
+
+.reveal .text-cyan {
+    color: var(--color-cyan);
+}
+
+.reveal .text-sky {
+    color: var(--color-sky);
+}
+
+.reveal .text-blue {
+    color: var(--color-blue);
+}
+
+.reveal .text-indigo {
+    color: var(--color-inidgo);
+}
+
+.reveal .text-violet {
+    color: var(--color-violet);
+}
+
+.reveal .text-purple {
+    color: var(--color-purple);
+}
+
+.reveal .text-fuchsia {
+    color: var(--color-fuchsia);
+}
+
+.reveal .text-pink {
+    color: var(--color-pink);
+}
+
+.reveal .text-rose {
+    color: var(--color-rose);
+}

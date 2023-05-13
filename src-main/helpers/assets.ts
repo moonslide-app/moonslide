@@ -7,7 +7,7 @@ export const PREVIEW_FULLSCREEN_SCRIPT_FILENAME = 'preview-fullscreen.js'
 export const BASE_FILE_NAME = 'base.html'
 
 export function resolveAsset(fileName: string): string {
-    return resolve(__dirname, fileName)
+    return resolve(__dirname, 'base', fileName)
 }
 
 export function loadAsset(fileName: string): Promise<Buffer> {
@@ -18,11 +18,10 @@ export async function loadAssetContent(fileName: string): Promise<string> {
     return (await loadAsset(fileName)).toString()
 }
 
-export const TEMPLATE_BASIC = 'basic'
-export const TEMPLATE_FANCY = 'fancy'
+export const TEMPLATE_STANDARD = 'standard'
 
 export function isTemplate(possibleTemplate: string): boolean {
-    return [TEMPLATE_BASIC, TEMPLATE_FANCY].includes(possibleTemplate)
+    return [TEMPLATE_STANDARD].includes(possibleTemplate)
 }
 
 export function getTemplateFolder(template: string): string {

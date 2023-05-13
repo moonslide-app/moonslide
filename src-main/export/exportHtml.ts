@@ -5,7 +5,7 @@ import { loadTemplate } from '../presentation/template'
 import { buildHTMLPresentation } from '../presentation/htmlBuilder'
 import pretty from 'pretty'
 import { ExportRequest } from '../../src-shared/entities/ExportRequest'
-import { parse } from '../presentation/parser'
+import { parse } from '../parse'
 import { prepareMedia } from '../presentation/media'
 
 export async function exportHtml(request: ExportRequest): Promise<void> {

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { getFileContent, saveFile, selectFile, selectFolder, selectOutputFile, selectOutputFolder } from './filePicker'
-import { parse } from '../presentation/parser'
+import { parse } from '../parse'
 import { exportPdf } from '../export/exportPdf'
 import { exportHtml } from '../export/exportHtml'
 import {

@@ -1,0 +1,29 @@
+/* 
+Tailwind Colors (variant 500) 
+see: https://tailwindcss.com/docs/customizing-colors
+*/
+
+:root {
+    --color-slate: #64748b;
+    --color-gray: #6b7280;
+    --color-zinc: #71717a;
+    --color-neutral: #737373;
+    --color-stone: #78716c;
+    --color-red: #ef4444;
+    --color-orange: #f97316;
+    --color-amber: #f59e0b;
+    --color-yellow: #eab308;
+    --color-lime: #84cc16;
+    --color-green: #22c55e;
+    --color-emerald: #10b981;
+    --color-teal: #14b8a6;
+    --color-cyan: #06b6d4;
+    --color-sky: #0ea5e9;
+    --color-blue: #3b82f6;
+    --color-inidgo: #6366f1;
+    --color-violet: #8b5cf6;
+    --color-purple: #a855f7;
+    --color-fuchsia: #d946ef;
+    --color-pink: #ec4899;
+    --color-rose: #f43f5e;
+}

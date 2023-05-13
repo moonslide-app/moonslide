@@ -1,5 +1,5 @@
 import { existsSync } from 'fs'
-import { LocalImage } from './parseMarkdown'
+import { LocalImage } from '../parse/imagePath'
 import { mkdir, cp } from 'fs/promises'
 import { resolve } from 'path'
 
