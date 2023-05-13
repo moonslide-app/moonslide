@@ -15,12 +15,12 @@ const gitHubConfig: PublisherGitHubConfig = {
     },
 }
 
-const addArchToFilename = ({ filePath, platform, arch }: { filePath: string; platform: string; arch: string }) => {
+const addSuffixToFilename = ({ filePath, suffix }: { filePath: string; suffix: string }) => {
     const resolvedPath = resolve(filePath)
     const fileDir = dirname(resolvedPath)
     const fileExtension = extname(resolvedPath)
     const originalBasename = basename(resolvedPath, fileExtension)
-    const newFilename = [`${originalBasename}-${platform}-${arch}`, fileExtension].join('')
+    const newFilename = [`${originalBasename}-${suffix}`, fileExtension].join('')
     const newPath = join(fileDir, newFilename)
     renameSync(resolvedPath, newPath)
     return newPath
@@ -64,10 +64,9 @@ const config: ForgeConfig = {
             results.forEach(result => {
                 if (result.platform === 'win32') {
                     result.artifacts = result.artifacts.map(artifact => {
-                        return addArchToFilename({
+                        return addSuffixToFilename({
                             filePath: artifact,
-                            platform: 'win32',
-                            arch: result.arch,
+                            suffix: `win32-${result.arch}`,
                         })
                     })
                 }
