@@ -2,7 +2,7 @@ import { history, indentWithTab, redo, undo } from '@codemirror/commands'
 import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef, useState } from 'react'
-import { useDebounce, useEffectOnce } from 'usehooks-ts'
+import { useDebounce } from 'usehooks-ts'
 import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
 

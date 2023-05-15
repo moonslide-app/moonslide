@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { Presentation, comparePresentations } from '../../src-shared/entities/Presentation'
 
-type EditorStore = {
+export type EditorStore = {
     /**
      * The absolute path of the current editing markdown file.
      */
@@ -10,6 +10,10 @@ type EditorStore = {
      * The file contents of the editing markdown file.
      */
     content: string | undefined
+    /**
+     * Indicates wheter the latest content has been saved to the editing file.
+     */
+    editingFileSaved: boolean
     /**
      * The presentation, which was parsed from the `content`.
      */
@@ -62,12 +66,13 @@ type EditorStore = {
 export const useEditorStore = create<EditorStore>()((set, get) => ({
     editingFilePath: undefined,
     templateFolderPath: undefined,
+    editingFileSaved: true,
     content: undefined,
     parsedPresentation: undefined,
     slidesLastUpdate: [],
     updateContent: async newContent => {
         const { editingFilePath } = get()
-        set(state => ({ ...state, content: newContent }))
+        set(state => ({ ...state, content: newContent, editingFileSaved: false }))
 
         if (!newContent || !editingFilePath) {
             await get().updateParsedPresentation(undefined)
@@ -118,8 +123,10 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     },
     async saveContentToEditingFile() {
         const { editingFilePath, content } = get()
-        if (editingFilePath && content) await window.ipc.files.saveFile(editingFilePath, content)
-        else console.error('Could not save editing file, either filePath or content was nullish.')
+        if (editingFilePath && content) {
+            await window.ipc.files.saveFile(editingFilePath, content)
+            set(state => ({ ...state, editingFileSaved: true }))
+        } else console.error('Could not save editing file, either filePath or content was nullish.')
     },
     async preparePresentation() {
         const { parsedPresentation } = get()
@@ -132,7 +139,7 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         if (editingFilePath && content) {
             const outputPath = await (standalone
                 ? window.ipc.files.selectOutputFolder()
-                : window.ipc.files.selectOutputFile({ name: 'HTML', extension: '.html' }))
+                : window.ipc.files.selectOutputFile([{ name: 'HTML', extensions: ['.html'] }]))
 
             if (outputPath) {
                 await window.ipc.presentation.exportHtml({
