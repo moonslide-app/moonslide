@@ -1,5 +1,5 @@
 import { shell, Menu, BrowserWindow, app } from 'electron'
-import { openPreviewWindow, reloadPreviewWindow } from '../presentation/preview'
+import { openPreviewWindow } from '../presentation/preview'
 
 const isMac = process.platform === 'darwin'
 
@@ -88,10 +88,7 @@ export function buildTemplate(window: BrowserWindow): Electron.MenuItemConstruct
                 {
                     label: 'Reload All Previews',
                     accelerator: isMac ? 'Cmd+R' : 'Ctrl+R',
-                    click: () => {
-                        window.webContents.send('menu:reload-previews')
-                        reloadPreviewWindow()
-                    },
+                    click: () => window.webContents.send('menu:reload-previews'),
                 },
                 { type: 'separator' },
                 ...(!app.isPackaged

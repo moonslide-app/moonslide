@@ -28,9 +28,10 @@ export type EditorStore = {
     /**
      * Changes the editing file path.
      * This will try to read the file from the new path and
-     * call `updateContent` with the new file content.
+     * call `updateContent` with the new file content
+     * if `updateContent` is not set to `false`.
      */
-    changeEditingFile(newFilePath: string | undefined): Promise<void>
+    changeEditingFile(newFilePath: string | undefined, updateContent?: boolean): Promise<void>
     /**
      * Updates the content in the store. The newContent is parsed and will
      * result in a call to `updateParsedPresentation` if successful.
@@ -54,9 +55,9 @@ export type EditorStore = {
      */
     saveContentToEditingFile(): Promise<void>
     /**
-     * Asks the user, if they want to save the content or discard it.
+     * Asks the user, if they want to save the changes or discard it.
      */
-    saveOrDiscardNewContent(): Promise<void>
+    saveOrDiscardChanges(): Promise<void>
     /**
      * This methods calls the ipc function to rebuild the presentation (and preview) files.
      */
@@ -116,16 +117,17 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         set(state => ({ slidesLastUpdate: state.slidesLastUpdate.map(() => Date.now()) }))
         await window.ipc.presentation.reloadPreviewWindow()
     },
-    async changeEditingFile(newFilePath) {
-        if (newFilePath !== undefined) {
-            const fileContent = await window.ipc.files.getFileContent(newFilePath)
-            await get().updateContent(fileContent)
-        } else {
-            await get().updateContent('')
+    async changeEditingFile(newFilePath, updateContent = true) {
+        if (updateContent) {
+            if (newFilePath !== undefined) {
+                const fileContent = await window.ipc.files.getFileContent(newFilePath)
+                await get().updateContent(fileContent)
+            } else {
+                await get().updateContent('')
+            }
         }
         set(state => ({ ...state, editingFilePath: newFilePath, editingFileSaved: true }))
     },
-
     async saveContentToEditingFile() {
         const { editingFilePath, content, changeEditingFile } = get()
         if (editingFilePath) {
@@ -137,9 +139,9 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
             await changeEditingFile(filePath)
         }
     },
-    async saveOrDiscardNewContent() {
-        const { editingFileSaved, saveContentToEditingFile } = get()
-        if (!editingFileSaved) {
+    async saveOrDiscardChanges() {
+        const { content, editingFileSaved, saveContentToEditingFile } = get()
+        if (!editingFileSaved && content.trim()) {
             const saveFile = await window.ipc.files.showSaveChangesDialog()
             if (saveFile) await saveContentToEditingFile()
         }

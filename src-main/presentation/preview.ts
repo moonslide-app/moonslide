@@ -55,5 +55,7 @@ export function openPreviewWindow() {
 }
 
 export function reloadPreviewWindow() {
-    currentPreviewWindow?.webContents.reload()
+    if (!currentPreviewWindow?.isDestroyed) {
+        currentPreviewWindow?.webContents.reload()
+    }
 }
