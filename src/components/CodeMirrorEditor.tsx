@@ -1,4 +1,4 @@
-import { history, indentWithTab } from '@codemirror/commands'
+import { history, indentWithTab, redo, undo } from '@codemirror/commands'
 import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef, useState } from 'react'
@@ -17,29 +17,12 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
     const debouncedContent = useDebounce(editingContent, 1000)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
-    const [editor, setEditor] = useState<EditorView>()
 
     useEffect(() => {
         updateContent(debouncedContent)
     }, [debouncedContent])
 
-    // This hook is and should only be called when the editing file changes
     useEffect(() => {
-        if (!editor) return
-        if (editor.state.doc.sliceString(0) !== content) {
-            const transaction = editor.state.update({
-                changes: {
-                    from: 0,
-                    to: editor.state.doc.length,
-                    insert: content,
-                },
-            })
-            editor.update([transaction])
-            setEditingContent(content)
-        }
-    }, [editingFilePath])
-
-    useEffectOnce(() => {
         const myTheme = EditorView.theme({
             '&': {
                 fontSize: '20px',
@@ -60,11 +43,13 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         let view: EditorView | undefined
         if (parent) {
             view = new EditorView({ state, parent })
-            setEditor(view)
         }
 
+        window.ipc.menu.onUndo(() => view && undo(view))
+        window.ipc.menu.onRedo(() => view && redo(view))
+
         return () => view?.destroy()
-    })
+    }, [editingFilePath])
 
     return <div ref={editorDomNode} className={props?.className}></div>
 }

@@ -20,6 +20,8 @@ const createWindow = () => {
         },
     })
 
+    setupMenu(mainWindow)
+
     // and load the index.html of the app.
     if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
         mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
@@ -32,7 +34,6 @@ const createWindow = () => {
 }
 
 protocol.registerSchemesAsPrivileged([{ scheme: REVEAL_PROTOCOL_NAME, privileges: { bypassCSP: true } }])
-setupMenu()
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
