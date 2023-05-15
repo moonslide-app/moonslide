@@ -1,5 +1,8 @@
 import { shell, Menu, BrowserWindow, app } from 'electron'
 import { openPreviewWindow } from '../presentation/preview'
+import { TEMPLATE_STANDARD, getTemplateFolder } from '../helpers/assets'
+import { selectOutputFolder } from '../helpers/files'
+import { loadTemplate } from '../presentation/template'
 
 const isMac = process.platform === 'darwin'
 
@@ -50,8 +53,11 @@ export function buildTemplate(window: BrowserWindow): Electron.MenuItemConstruct
                 },
                 {
                     label: 'Create Template',
-                    click: () => {
-                        console.log('Create New Template')
+                    click: async () => {
+                        const outFolder = await selectOutputFolder('Create Template')
+                        const templateFolder = getTemplateFolder(TEMPLATE_STANDARD)
+                        const template = await loadTemplate(templateFolder)
+                        template.copyTo(outFolder)
                     },
                 },
             ],
