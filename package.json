@@ -1,7 +1,7 @@
 {
     "name": "reveal-editor",
     "productName": "reveal-editor",
-    "version": "0.0.1-alpha.6",
+    "version": "0.0.1-alpha.7",
     "description": "Editor to create presentations with Markdown and Reveal.js",
     "main": ".vite/build/main.js",
     "scripts": {
