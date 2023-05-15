@@ -1,0 +1,14 @@
+name: Run Checks
+description: Lint, type-check & build
+runs:
+  using: 'composite'
+  steps:
+    - name: Lint
+      shell: bash
+      run: npm run lint
+    - name: Type Check
+      shell: bash
+      run: npm run type-check
+    - name: Build
+      shell: bash
+      run: npm run package

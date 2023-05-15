@@ -1,0 +1,79 @@
+name: Publish
+description: Publish the application
+inputs:
+  os:
+    description: The OS on which the action runs on
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Publish Linux x64
+      if: inputs.os == 'ubuntu-latest'
+      shell: bash
+      run: >
+        npm run publish 
+        --
+        --arch "x64"
+        --target "@electron-forge/publisher-github"
+    - name: Publish Linux arm64
+      if: inputs.os == 'ubuntu-latest'
+      shell: bash
+      run: >
+        npm run publish 
+        --
+        --arch "arm64"
+        --target "@electron-forge/publisher-github"
+    - name: Publish Linux armv7l
+      if: inputs.os == 'ubuntu-latest'
+      shell: bash
+      run: >
+        npm run publish 
+        --
+        --arch "armv7l"
+        --target "@electron-forge/publisher-github"
+    - name: Publish macOS x64
+      if: inputs.os == 'macOS-latest'
+      shell: bash
+      run: >
+        npm run publish
+        --
+        --arch "x64"
+        --target "@electron-forge/publisher-github"
+    - name: Publish macOS arm64
+      if: inputs.os == 'macOS-latest'
+      shell: bash
+      run: >
+        npm run publish
+        --
+        --arch "arm64"
+        --target "@electron-forge/publisher-github"
+    - name: Setup Windows specific dependencies
+      if: inputs.os == 'windows-latest'
+      shell: bash
+      run: |
+        npm install --save-dev exe-icon-extractor
+        echo "${WIX}bin" >> $GITHUB_PATH
+    - name: Publish Windows x64
+      if: inputs.os == 'windows-latest'
+      shell: bash
+      run: >
+        npm run publish
+        --
+        --arch "x64"
+        --target "@electron-forge/publisher-github"
+    - name: Publish Windows arm64
+      if: inputs.os == 'windows-latest'
+      shell: bash
+      run: >
+        npm run publish
+        --
+        --arch "arm64"
+        --target "@electron-forge/publisher-github"
+    - name: Publish Windows ia32
+      if: inputs.os == 'windows-latest'
+      shell: bash
+      run: >
+        npm run publish
+        --
+        --arch "ia32"
+        --target "@electron-forge/publisher-github"
