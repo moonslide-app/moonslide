@@ -2,9 +2,17 @@ import { CodeMirrorEditor } from './components/CodeMirrorEditor'
 import { PreviewSlides } from './components/PreviewSlides'
 import { MenuCallbacks } from './components/MenuCallbacks'
 import { useEditorStore } from './store'
+import { useEffectOnce } from 'usehooks-ts'
 
 function App() {
-    const editingFilePath = useEditorStore(state => state.editingFilePath)
+    const [editingFilePath, reloadAllPreviews] = useEditorStore(state => [
+        state.editingFilePath,
+        state.reloadAllPreviews,
+    ])
+
+    useEffectOnce(() => {
+        reloadAllPreviews()
+    })
 
     return (
         <div className="p-8 md:p-12 m-auto">
