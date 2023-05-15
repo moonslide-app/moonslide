@@ -57,7 +57,7 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
         osxNotarize: {
             appleId: process.env.APPLE_ID,
             appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
-            teamId: process.env.APPLE_TEAM_ID,
+            ascProvider: process.env.APPLE_TEAM_ID,
         },
     }
 }
