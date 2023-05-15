@@ -19,10 +19,10 @@ import {
 } from '../presentation/preview'
 
 export function registerIpc() {
-    ipcMain.handle('dialog:selectFile', (_, arg1) => selectFile(arg1))
-    ipcMain.handle('dialog:selectFolder', selectFolder)
-    ipcMain.handle('dialog:selectOutputFile', (_, filter) => selectOutputFile(filter))
-    ipcMain.handle('dialog:selectOutputFolder', selectOutputFolder)
+    ipcMain.handle('dialog:selectFile', (_, arg1, arg2) => selectFile(arg1, arg2))
+    ipcMain.handle('dialog:selectFolder', (_, arg1) => selectFolder(arg1))
+    ipcMain.handle('dialog:selectOutputFile', (_, arg1, arg2) => selectOutputFile(arg1, arg2))
+    ipcMain.handle('dialog:selectOutputFolder', (_, arg1) => selectOutputFolder(arg1))
     ipcMain.handle('dialog:saveChanges', saveChangesDialog)
     ipcMain.handle('file:save', (_, arg1, arg2) => saveFile(arg1, arg2))
     ipcMain.handle('file:getContent', (_, arg1) => getFileContent(arg1))

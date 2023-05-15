@@ -1,7 +1,8 @@
 import { ipcRenderer } from 'electron'
 
 function createCallback<Args extends Array<unknown> = []>(event: string) {
-    return (callback: (...args: Args) => void) => ipcRenderer.on(event, (_, ...args) => callback(...(args as Args)))
+    return (callback: (...args: Args) => unknown | Promise<unknown>) =>
+        ipcRenderer.on(event, (_, ...args) => callback(...(args as Args)))
 }
 
 const menu = {

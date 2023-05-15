@@ -2,7 +2,7 @@ import { useEditorStore } from '../store'
 
 export function ExportButton() {
     const exportToPath = () =>
-        window.ipc.files.selectOutputFile({ name: 'PDF', extension: 'pdf' }).then(async path => {
+        window.ipc.files.selectOutputFile([{ name: 'PDF', extensions: ['pdf'] }]).then(async path => {
             if (path) {
                 console.log(`exportPdf outputPath: ${path}`)
                 const outputPath = await window.ipc.presentation.exportPdf(path)

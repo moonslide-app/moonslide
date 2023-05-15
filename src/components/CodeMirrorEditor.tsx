@@ -1,8 +1,7 @@
 import { history, indentWithTab, redo, undo } from '@codemirror/commands'
 import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
-import { useEffect, useRef, useState } from 'react'
-import { useDebounce } from 'usehooks-ts'
+import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
 
@@ -13,14 +12,8 @@ export type CodeMirrorEditorProps = {
 export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
     const editingFilePath = useEditorStore(state => state.editingFilePath)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
-    const [editingContent, setEditingContent] = useState<string>()
-    const debouncedContent = useDebounce(editingContent, 1000)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
-
-    useEffect(() => {
-        updateContent(debouncedContent)
-    }, [debouncedContent])
 
     useEffect(() => {
         const myTheme = EditorView.theme({
@@ -31,7 +24,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         })
 
         const updatePlugin = ViewPlugin.define(() => ({
-            update: viewUpdate => setEditingContent(viewUpdate.state.doc.sliceString(0)),
+            update: viewUpdate => updateContent(viewUpdate.state.doc.sliceString(0)),
         }))
 
         const state = EditorState.create({

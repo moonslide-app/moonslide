@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { Presentation, comparePresentations } from '../../src-shared/entities/Presentation'
+import { htmlFilter, markdownFilter } from './FileFilters'
 
 export type EditorStore = {
     /**
@@ -9,7 +10,7 @@ export type EditorStore = {
     /**
      * The file contents of the editing markdown file.
      */
-    content: string | undefined
+    content: string
     /**
      * Indicates wheter the latest content has been saved to the editing file.
      */
@@ -34,7 +35,7 @@ export type EditorStore = {
      * Updates the content in the store. The newContent is parsed and will
      * result in a call to `updateParsedPresentation` if successful.
      */
-    updateContent(newContent: string | undefined): Promise<void>
+    updateContent(newContent: string): Promise<void>
     /**
      * Updates the parsed presentation in the store.
      * This will also update the `slidesLastUpdate`.
@@ -53,6 +54,10 @@ export type EditorStore = {
      */
     saveContentToEditingFile(): Promise<void>
     /**
+     * Asks the user, if they want to save the content or discard it.
+     */
+    saveOrDiscardNewContent(): Promise<void>
+    /**
      * This methods calls the ipc function to rebuild the presentation (and preview) files.
      */
     preparePresentation(): Promise<void>
@@ -63,32 +68,31 @@ export type EditorStore = {
     exportHTMLPresentation(standalone?: boolean): Promise<void>
 }
 
+let debounceTimeout: number | undefined = undefined
+const DEBOUNCE_INTERVAL = 1000
+
 export const useEditorStore = create<EditorStore>()((set, get) => ({
     editingFilePath: undefined,
     templateFolderPath: undefined,
     editingFileSaved: true,
-    content: undefined,
+    content: '',
     parsedPresentation: undefined,
     slidesLastUpdate: [],
     updateContent: async newContent => {
         const { editingFilePath } = get()
         set(state => ({ ...state, content: newContent, editingFileSaved: false }))
 
-        if (!newContent || !editingFilePath) {
-            await get().updateParsedPresentation(undefined)
-            return
-        }
-
-        try {
-            const parsedPresentation = await window.ipc.presentation.parsePresentation({
-                markdownContent: newContent,
-                markdownFilePath: editingFilePath,
-                imageMode: 'preview',
-            })
-            get().updateParsedPresentation(parsedPresentation)
-        } catch (error) {
-            console.warn(error)
-        }
+        window.clearTimeout(debounceTimeout)
+        debounceTimeout = window.setTimeout(() => {
+            window.ipc.presentation
+                .parsePresentation({
+                    markdownContent: newContent,
+                    markdownFilePath: editingFilePath ?? '.',
+                    imageMode: 'preview',
+                })
+                .then(get().updateParsedPresentation)
+                .catch(error => console.warn(error))
+        }, DEBOUNCE_INTERVAL)
     },
     updateParsedPresentation: async newParsedPresentation => {
         const { parsedPresentation, slidesLastUpdate } = get()
@@ -117,16 +121,28 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
             const fileContent = await window.ipc.files.getFileContent(newFilePath)
             await get().updateContent(fileContent)
         } else {
-            await get().updateContent(undefined)
+            await get().updateContent('')
         }
-        set(state => ({ ...state, editingFilePath: newFilePath }))
+        set(state => ({ ...state, editingFilePath: newFilePath, editingFileSaved: true }))
     },
+
     async saveContentToEditingFile() {
-        const { editingFilePath, content } = get()
-        if (editingFilePath && content) {
+        const { editingFilePath, content, changeEditingFile } = get()
+        if (editingFilePath) {
             await window.ipc.files.saveFile(editingFilePath, content)
             set(state => ({ ...state, editingFileSaved: true }))
-        } else console.error('Could not save editing file, either filePath or content was nullish.')
+        } else {
+            const filePath = await window.ipc.files.selectOutputFile('Save new presentation', [markdownFilter])
+            await window.ipc.files.saveFile(filePath, content)
+            await changeEditingFile(filePath)
+        }
+    },
+    async saveOrDiscardNewContent() {
+        const { editingFileSaved, saveContentToEditingFile } = get()
+        if (!editingFileSaved) {
+            const saveFile = await window.ipc.files.showSaveChangesDialog()
+            if (saveFile) await saveContentToEditingFile()
+        }
     },
     async preparePresentation() {
         const { parsedPresentation } = get()
@@ -136,10 +152,10 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     },
     async exportHTMLPresentation(standalone = true) {
         const { editingFilePath, content } = get()
-        if (editingFilePath && content) {
+        if (editingFilePath) {
             const outputPath = await (standalone
-                ? window.ipc.files.selectOutputFolder()
-                : window.ipc.files.selectOutputFile([{ name: 'HTML', extensions: ['.html'] }]))
+                ? window.ipc.files.selectOutputFolder('Export Presentation Bundle')
+                : window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter]))
 
             if (outputPath) {
                 await window.ipc.presentation.exportHtml({
