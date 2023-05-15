@@ -25,7 +25,7 @@ export async function selectFile(title: string, filters?: Electron.FileFilter[])
         properties: ['openFile'],
         filters,
     })
-    if (filePaths[0] !== undefined) return filePaths[0]
+    if (filePaths[0]) return filePaths[0]
     else throw new Error('No file was selected.')
 }
 
@@ -34,7 +34,7 @@ export async function selectFolder(title: string): Promise<string> {
         title,
         properties: ['openDirectory'],
     })
-    if (filePaths[0] !== undefined) return filePaths[0]
+    if (filePaths[0]) return filePaths[0]
     else throw new Error('No folder was selected.')
 }
 
@@ -44,16 +44,16 @@ export async function selectOutputFile(title: string, filters?: Electron.FileFil
         properties: ['createDirectory'],
         filters,
     })
-    if (filePath !== undefined) return filePath
+    if (filePath) return filePath
     else throw new Error('No output file was selected.')
 }
 
-export async function selectOutputFolder(title: string): Promise<string | undefined> {
+export async function selectOutputFolder(title: string): Promise<string> {
     const { filePath } = await dialog.showSaveDialog({
         title,
         properties: ['createDirectory'],
     })
-    if (filePath !== undefined) return filePath
+    if (filePath) return filePath
     else throw new Error('No output folder was selected.')
 }
 
