@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useDebounce, useEffectOnce } from 'usehooks-ts'
 import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { markdown } from '@codemirror/lang-markdown'
 
 export type CodeMirrorEditorProps = {
     className?: string

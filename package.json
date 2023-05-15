@@ -1,8 +1,8 @@
 {
     "name": "reveal-editor",
     "productName": "reveal-editor",
-    "version": "1.0.0",
-    "description": "My Electron application description",
+    "version": "0.0.1-alpha.6",
+    "description": "Editor to create presentations with Markdown and Reveal.js",
     "main": ".vite/build/main.js",
     "scripts": {
         "start": "electron-forge start",
@@ -15,17 +15,20 @@
     },
     "keywords": [],
     "author": {
-        "name": "Simon Schuhmacher",
-        "email": "simon@schuhmacher.im"
+        "name": "Simon Schuhmacher, Timo Siegenthaler"
     },
     "license": "MIT",
     "devDependencies": {
         "@electron-forge/cli": "^6.1.1",
         "@electron-forge/maker-deb": "^6.1.1",
+        "@electron-forge/maker-dmg": "^6.1.1",
         "@electron-forge/maker-rpm": "^6.1.1",
         "@electron-forge/maker-squirrel": "^6.1.1",
+        "@electron-forge/maker-wix": "^6.1.1",
         "@electron-forge/maker-zip": "^6.1.1",
         "@electron-forge/plugin-vite": "^6.1.1",
+        "@electron-forge/publisher-github": "^6.1.1",
+        "@electron/rebuild": "^3.2.13",
         "@types/markdown-it": "^12.2.3",
         "@types/markdown-it-attrs": "^4.1.0",
         "@types/marked": "^4.0.8",
