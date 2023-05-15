@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 
 KEY_CHAIN=build.keychain
-MACOS_CERT_PASSWORD=""
 MACOS_CERT_P12_FILE=certificate.p12
 
 # Recreate the certificate from the secure environment variable
