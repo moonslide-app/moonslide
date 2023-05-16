@@ -1,7 +1,7 @@
+import { history, indentWithTab, redo, undo } from '@codemirror/commands'
 import { EditorState } from '@codemirror/state'
-import { EditorView, ViewPlugin } from '@codemirror/view'
-import { useEffect, useRef, useState } from 'react'
-import { useDebounce, useEffectOnce } from 'usehooks-ts'
+import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
+import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { oneDark } from '@codemirror/theme-one-dark'
 
@@ -12,33 +12,10 @@ export type CodeMirrorEditorProps = {
 export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
     const editingFilePath = useEditorStore(state => state.editingFilePath)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
-    const [editingContent, setEditingContent] = useState<string>()
-    const debouncedContent = useDebounce(editingContent, 1000)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
-    const [editor, setEditor] = useState<EditorView>()
 
     useEffect(() => {
-        updateContent(debouncedContent)
-    }, [debouncedContent])
-
-    // This hook is and should only be called when the editing file changes
-    useEffect(() => {
-        if (!editor) return
-        if (editor.state.doc.sliceString(0) !== content) {
-            const transaction = editor.state.update({
-                changes: {
-                    from: 0,
-                    to: editor.state.doc.length,
-                    insert: content,
-                },
-            })
-            editor.update([transaction])
-            setEditingContent(content)
-        }
-    }, [editingFilePath])
-
-    useEffectOnce(() => {
         const myTheme = EditorView.theme({
             '&': {
                 fontSize: '20px',
@@ -47,23 +24,25 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         })
 
         const updatePlugin = ViewPlugin.define(() => ({
-            update: viewUpdate => setEditingContent(viewUpdate.state.doc.sliceString(0)),
+            update: viewUpdate => updateContent(viewUpdate.state.doc.sliceString(0)),
         }))
 
         const state = EditorState.create({
             doc: content,
-            extensions: [oneDark, myTheme, updatePlugin],
+            extensions: [oneDark, myTheme, updatePlugin, keymap.of([indentWithTab]), history()],
         })
 
         const parent = editorDomNode.current
         let view: EditorView | undefined
         if (parent) {
             view = new EditorView({ state, parent })
-            setEditor(view)
         }
 
+        window.ipc.menu.onUndo(() => view && undo(view))
+        window.ipc.menu.onRedo(() => view && redo(view))
+
         return () => view?.destroy()
-    })
+    }, [editingFilePath])
 
     return <div ref={editorDomNode} className={props?.className}></div>
 }
