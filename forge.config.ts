@@ -64,6 +64,7 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
 
 const config: ForgeConfig = {
     packagerConfig: {
+        appBundleId: 'ch.simonschuhmacher.reveal-editor',
         ...macOSPackagerConfig(),
     },
     rebuildConfig: {},
