@@ -1,19 +1,22 @@
 import { ipcRenderer } from 'electron'
 
 const files = {
-    async selectFile(): Promise<string | undefined> {
-        return await ipcRenderer.invoke('dialog:selectFile')
+    selectFile(title: string, filters?: Electron.FileFilter[]): Promise<string> {
+        return ipcRenderer.invoke('dialog:selectFile', title, filters)
     },
-    async selectFolder(): Promise<string | undefined> {
-        return await ipcRenderer.invoke('dialog:selectFolder')
+    selectFolder(title: string): Promise<string> {
+        return ipcRenderer.invoke('dialog:selectFolder', title)
     },
-    async selectOutputFolder(): Promise<string | undefined> {
-        return await ipcRenderer.invoke('dialog:selectOutputFolder')
+    selectOutputFile(title: string, filters?: Electron.FileFilter[]): Promise<string> {
+        return ipcRenderer.invoke('dialog:selectOutputFile', title, filters)
     },
-    async selectOutputFile(filter: { name: string; extension: string }): Promise<string | undefined> {
-        return await ipcRenderer.invoke('dialog:selectOutputFile', filter)
+    selectOutputFolder(title: string): Promise<string> {
+        return ipcRenderer.invoke('dialog:selectOutputFolder', title)
     },
-    async getFileContent(filePath: string): Promise<string | undefined> {
+    showSaveChangesDialog(): Promise<boolean> {
+        return ipcRenderer.invoke('dialog:saveChanges')
+    },
+    async getFileContent(filePath: string): Promise<string> {
         return await ipcRenderer.invoke('file:getContent', filePath)
     },
     async saveFile(filePath: string, content: string): Promise<void> {
