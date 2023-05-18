@@ -12,7 +12,7 @@ const stringOrArray = z
 
 const templateConfigSchema = z.object({
     entry: z.string(),
-    presentation: z.string(),
+    slide: z.string(),
     reveal: z.object({
         entry: z.string(),
         stylesheets: stringOrArray,
@@ -47,7 +47,7 @@ export function parseTemplateConfig(yamlString: string): TemplateConfig {
 export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: string) => string): TemplateConfig {
     return {
         entry: mapPath(config.entry),
-        presentation: mapPath(config.presentation),
+        slide: mapPath(config.slide),
         reveal: {
             entry: mapPath(config.reveal.entry),
             stylesheets: config.reveal.stylesheets.map(mapPath),

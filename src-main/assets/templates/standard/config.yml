@@ -1,7 +1,7 @@
 # entry point which configures RevealEditor
 entry: ./index.js
 # wrapper around presentation
-presentation: ./presentation.html
+slide: ./slide.html
 # reveal distribution
 reveal: 
   entry: ./reveal_js/dist/reveal.js
