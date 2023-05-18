@@ -88,7 +88,7 @@ class TemplateImpl implements Template {
     }
 
     async getPresentationHtml() {
-        const fileContents = (await readFile(this.config.template.presentation)).toString()
+        const fileContents = (await readFile(this.config.presentation)).toString()
         return sanitizeHtml(fileContents)
     }
 

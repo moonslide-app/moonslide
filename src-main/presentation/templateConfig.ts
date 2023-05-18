@@ -11,15 +11,14 @@ const stringOrArray = z
     })
 
 const templateConfigSchema = z.object({
-    template: z.object({
-        entry: z.string(),
-        presentation: z.string(),
-        stylesheets: stringOrArray.optional(),
-    }),
+    entry: z.string(),
+    presentation: z.string(),
     reveal: z.object({
         entry: z.string(),
         stylesheets: stringOrArray,
     }),
+    stylesheets: stringOrArray.optional(),
+    scripts: stringOrArray.optional(),
     layouts: z
         .object({
             name: z.string(),
@@ -28,7 +27,6 @@ const templateConfigSchema = z.object({
         })
         .array()
         .optional(),
-    plugins: z.string().array().optional(),
     themes: z
         .object({
             name: z.string(),
@@ -48,17 +46,15 @@ export function parseTemplateConfig(yamlString: string): TemplateConfig {
 
 export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: string) => string): TemplateConfig {
     return {
-        template: {
-            entry: mapPath(config.template.entry),
-            presentation: mapPath(config.template.presentation),
-            stylesheets: config.template.stylesheets?.map(mapPath),
-        },
+        entry: mapPath(config.entry),
+        presentation: mapPath(config.presentation),
         reveal: {
             entry: mapPath(config.reveal.entry),
             stylesheets: config.reveal.stylesheets.map(mapPath),
         },
+        stylesheets: config.stylesheets?.map(mapPath),
+        scripts: config.scripts?.map(mapPath),
         layouts: config.layouts?.map(layout => ({ ...layout, path: mapPath(layout.path) })),
-        plugins: config.plugins?.map(mapPath),
         themes: config.themes?.map(theme => ({ ...theme, stylesheets: theme.stylesheets.map(mapPath) })),
     }
 }

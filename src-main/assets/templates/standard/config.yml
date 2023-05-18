@@ -1,13 +1,17 @@
-template: 
-  entry: ./index.js
-  presentation: ./presentation.html
-  stylesheets:
-    - ./reveal_js/plugin/highlight/monokai.css
-    - ./styles/index.css
+# entry point which configures RevealEditor
+entry: ./index.js
+# wrapper around presentation
+presentation: ./presentation.html
+# reveal distribution
 reveal: 
   entry: ./reveal_js/dist/reveal.js
   stylesheets: ./reveal_js/dist/reveal.css
-plugins:
+# loaded after reveal & theme
+stylesheets:
+  - ./reveal_js/plugin/highlight/monokai.css
+  - ./styles/index.css
+# loaded after reveal, before entry, e.g, plugins
+scripts: 
   - ./reveal_js/plugin/highlight/highlight.js
   - ./reveal_js/plugin/math/math.js
 themes: 

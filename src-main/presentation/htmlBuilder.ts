@@ -51,9 +51,9 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
 
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
     replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal.entry))
-    replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.plugins))
+    replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.scripts))
     replaceToken(REVEAL_EDITOR_TOKEN, await getRevealEditorScriptContent(config.type))
-    replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.template.entry))
+    replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.entry))
 
     return buildingFile
 }
@@ -82,7 +82,7 @@ function generateStylesheets({ presentation, templateConfig }: HTMLPresentationB
     const styleSheetPaths = [
         ...templateConfig.reveal.stylesheets,
         ...(theme?.stylesheets ?? []),
-        ...(templateConfig.template.stylesheets ?? []),
+        ...(templateConfig.stylesheets ?? []),
     ]
 
     if (styleSheetPaths.length == 0) return ''
