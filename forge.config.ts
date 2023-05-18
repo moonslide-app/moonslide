@@ -1,7 +1,8 @@
-import { ForgeConfig } from '@electron-forge/shared-types'
+import { ForgeConfig, ForgePackagerOptions } from '@electron-forge/shared-types'
 import { MakerSquirrel } from '@electron-forge/maker-squirrel'
 import { MakerWix } from '@electron-forge/maker-wix'
 import { MakerDMG } from '@electron-forge/maker-dmg'
+import { MakerZIP } from '@electron-forge/maker-zip'
 import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
@@ -40,8 +41,32 @@ const normalizeWindowsVersion = (version: string) => {
     return version
 }
 
+const macOSPackagerConfig = (): ForgePackagerOptions => {
+    if (!process.env.CI) return {}
+    if (process.platform !== 'darwin') return {}
+
+    if (!process.env.APPLE_ID || !process.env.APPLE_APP_SPECIFIC_PASSWORD) {
+        console.warn('Should be notarizing, but environment variables APPLE_ID or APPLE_ID_PASSWORD are missing!')
+        return {}
+    }
+
+    return {
+        osxSign: {
+            identity: process.env.MACOS_CERT_IDENTITY,
+        },
+        osxNotarize: {
+            appleId: process.env.APPLE_ID,
+            appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+            ascProvider: process.env.APPLE_TEAM_ID,
+        },
+    }
+}
+
 const config: ForgeConfig = {
-    packagerConfig: {},
+    packagerConfig: {
+        appBundleId: 'ch.simonschuhmacher.reveal-editor',
+        ...macOSPackagerConfig(),
+    },
     rebuildConfig: {},
     makers: [
         new MakerSquirrel({ noMsi: true }),
@@ -49,6 +74,7 @@ const config: ForgeConfig = {
             version: normalizeWindowsVersion(packageJSON.version),
         }),
         new MakerDMG({}),
+        new MakerZIP({}, ['darwin']),
         new MakerRpm({}),
         new MakerDeb({}),
     ],

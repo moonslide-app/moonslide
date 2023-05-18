@@ -6,6 +6,7 @@ inputs:
     required: true
 runs:
   using: 'composite'
+  # Linux
   steps:
     - name: Publish Linux x64
       if: inputs.os == 'ubuntu-latest'
@@ -31,6 +32,13 @@ runs:
         --
         --arch "armv7l"
         --target "@electron-forge/publisher-github"
+    # macOS
+    - name: Install macOS Signing Certificate
+      if: inputs.os == 'macOS-latest'
+      shell: bash
+      run: |
+        chmod +x ./build-tools/add-macos-cert.sh
+        ./build-tools/add-macos-cert.sh
     - name: Publish macOS x64
       if: inputs.os == 'macOS-latest'
       shell: bash
@@ -47,6 +55,7 @@ runs:
         --
         --arch "arm64"
         --target "@electron-forge/publisher-github"
+    # Windows
     - name: Setup Windows specific dependencies
       if: inputs.os == 'windows-latest'
       shell: bash
