@@ -3,7 +3,6 @@ import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
-import { oneDark } from '@codemirror/theme-one-dark'
 
 export type CodeMirrorEditorProps = {
     className?: string
@@ -20,6 +19,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
             '&': {
                 fontSize: '20px',
                 minHeight: '100%',
+                padding: '1rem',
             },
         })
 
@@ -29,7 +29,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
 
         const state = EditorState.create({
             doc: content,
-            extensions: [oneDark, myTheme, updatePlugin, keymap.of([indentWithTab]), history()],
+            extensions: [myTheme, updatePlugin, keymap.of([indentWithTab]), history(), EditorView.lineWrapping],
         })
 
         const parent = editorDomNode.current
@@ -44,5 +44,5 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         return () => view?.destroy()
     }, [editingFilePath])
 
-    return <div ref={editorDomNode} className={props?.className}></div>
+    return <div ref={editorDomNode} className="h-full overflow-y-auto"></div>
 }

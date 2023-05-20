@@ -15,6 +15,11 @@ export type Presentation = {
      * The parsed html content of the whole presentation
      */
     html: string
+    /**
+     * Full HTML of the presentation (including header etc.)
+     */
+    fullHtml: string
+
     resolvedPaths: {
         /**
          * The absolute path of this presentations template folder

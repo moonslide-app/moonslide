@@ -19,7 +19,12 @@ export async function exportHtml(request: ExportRequest): Promise<void> {
 
     const templateConfig = isStandalone ? template.getConfig() : template.getConfig(outputFolderPath)
 
-    const htmlPresentation = await buildHTMLPresentation({ presentation, templateConfig, type: 'export' })
+    const htmlPresentation = await buildHTMLPresentation({
+        slidesHtml: presentation.html,
+        presentationConfig: presentation.config,
+        templateConfig,
+        type: 'export',
+    })
     const formatted = pretty(htmlPresentation, { ocd: true })
 
     if (!existsSync(outputFolderPath)) await mkdir(outputFolderPath)

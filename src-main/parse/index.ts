@@ -4,7 +4,7 @@ import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/S
 import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
-import { buildHTMLLayout, buildHTMLPresentationContent } from '../presentation/htmlBuilder'
+import { buildHTMLLayout, buildHTMLPresentation, buildHTMLPresentationContent } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
 
@@ -45,10 +45,18 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         slidesHtml: parsedSlides.map(slide => slide.html),
     })
 
+    const fullHtml = await buildHTMLPresentation({
+        slidesHtml: html,
+        presentationConfig: presentationConfig,
+        templateConfig: template.getConfigLocalFile(),
+        type: 'preview-small',
+    })
+
     return {
         config: presentationConfig,
         slides: parsedSlides,
         html,
+        fullHtml,
         layoutsHtml: layouts.layoutsHtml,
         images: localImages,
         resolvedPaths: {

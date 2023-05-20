@@ -30,7 +30,12 @@ export async function preparePresentationForPreview(presentation: Presentation):
     ] as const
 
     for (const target of Object.values(targets)) {
-        const htmlPresentation = await buildHTMLPresentation({ presentation, templateConfig, type: target.name })
+        const htmlPresentation = await buildHTMLPresentation({
+            slidesHtml: presentation.html,
+            presentationConfig: presentation.config,
+            templateConfig,
+            type: target.name,
+        })
         const prettified = pretty(htmlPresentation)
         await writeFile(resolve(previewFolderPath, target.file), prettified)
     }
@@ -55,7 +60,7 @@ export function openPreviewWindow() {
 }
 
 export function reloadPreviewWindow() {
-    if (!currentPreviewWindow?.isDestroyed) {
+    if (currentPreviewWindow && !currentPreviewWindow.isDestroyed()) {
         currentPreviewWindow?.webContents.reload()
     }
 }

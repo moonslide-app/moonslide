@@ -1,4 +1,5 @@
 template: standard
+theme: black
 title: WBE-Einführung
 defaults:
    class: text-left position-center
