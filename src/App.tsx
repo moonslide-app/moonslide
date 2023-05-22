@@ -5,6 +5,7 @@ import { useEditorStore } from './store'
 import { useEffectOnce } from 'usehooks-ts'
 import { Allotment } from 'allotment'
 import 'allotment/dist/style.css'
+import { PreviewWindow } from './components/PreviewWindow'
 
 function App() {
     const [editingFilePath, reloadAllPreviews] = useEditorStore(state => [
@@ -19,6 +20,7 @@ function App() {
     return (
         <div className="flex flex-col h-screen m-auto">
             <MenuCallbacks />
+            <PreviewWindow />
             <p className="text-sm font-medium">Editing File: {editingFilePath}</p>
             <div className="flex-grow">
                 <Allotment separator={false}>

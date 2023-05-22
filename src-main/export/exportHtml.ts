@@ -14,7 +14,7 @@ export async function exportHtml(request: ExportRequest): Promise<void> {
     const outputFolderPath = isStandalone ? request.outputPath : dirname(request.outputPath)
     const outputFileName = isStandalone ? 'presentation.html' : basename(request.outputPath)
 
-    const { parsedPresentation } = await parse({ ...request, imageMode: request.mode, outputFolderPath })
+    const parsedPresentation = await parse({ ...request, imageMode: request.mode, outputFolderPath })
 
     if (!parsedPresentation) {
         console.warn('No parsed presentation recevied')

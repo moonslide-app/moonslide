@@ -1,4 +1,4 @@
-import { Presentation, Slide, comparePresentations } from '../../src-shared/entities/Presentation'
+import { Presentation, Slide } from '../../src-shared/entities/Presentation'
 import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
 import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/SlideConfig'
 import { parse as yamlParse } from 'yaml'
@@ -7,13 +7,11 @@ import { findAndLoadTemplate } from '../presentation/template'
 import { buildHTMLLayout, buildHTMLPresentation, buildHTMLPresentationContent } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
-import { presentationStore } from '../store'
-import { PresentationStore } from '../../src-shared/entities/PresentationStore'
 
 const SLIDE_SEPARATOR = '\n---'
 const SLOT_SEPERATOR = '\n***'
 
-export async function parse(request: ParseRequest): Promise<PresentationStore> {
+export async function parse(request: ParseRequest): Promise<Presentation> {
     const { markdownContent, markdownFilePath } = request
     const { presentationConfig, slidesMarkdown, slidesConfig } = parseConfig(markdownContent)
 
@@ -63,7 +61,7 @@ export async function parse(request: ParseRequest): Promise<PresentationStore> {
         type: 'preview-fullscreen',
     })
 
-    const presentation = {
+    return {
         config: presentationConfig,
         slides: parsedSlides,
         contentHtml,
@@ -75,8 +73,6 @@ export async function parse(request: ParseRequest): Promise<PresentationStore> {
             markdownFile: markdownFilePath,
         },
     }
-
-    return updateStore(presentation)
 }
 
 function parseConfig(markdownContent: string) {
@@ -97,23 +93,4 @@ function parseConfig(markdownContent: string) {
         slidesMarkdown,
         slidesConfig,
     }
-}
-
-async function updateStore(newParsedPresentation: Presentation) {
-    const { parsedPresentation, templateLastUpdate, themeLastUpdate, slidesLastUpdate } = presentationStore
-
-    const newTimestamp = Date.now()
-    const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
-    const newTemplateLastUpdate = comparison.templateChange ? newTimestamp : templateLastUpdate
-    const newThemeLastUpdate = comparison.themeChange ? newTimestamp : themeLastUpdate
-    const newSlidesLastUpdate = comparison.slideChanges.map((update, idx) =>
-        update ? newTimestamp : slidesLastUpdate[idx]
-    )
-
-    presentationStore.parsedPresentation = newParsedPresentation
-    presentationStore.templateLastUpdate = newTemplateLastUpdate
-    presentationStore.themeLastUpdate = newThemeLastUpdate
-    presentationStore.slidesLastUpdate = newSlidesLastUpdate
-
-    return presentationStore
 }

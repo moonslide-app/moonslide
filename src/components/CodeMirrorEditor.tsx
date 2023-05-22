@@ -4,11 +4,7 @@ import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 
-export type CodeMirrorEditorProps = {
-    className?: string
-}
-
-export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
+export function CodeMirrorEditor() {
     const editingFilePath = useEditorStore(state => state.editingFilePath)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
 

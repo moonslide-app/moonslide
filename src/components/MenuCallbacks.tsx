@@ -1,6 +1,7 @@
 import { useEditorStore } from '../store'
 import { useEffect } from 'react'
 import { markdownFilter } from '../store/FileFilters'
+import { openPreviewWindow } from './PreviewWindow'
 
 export function MenuCallbacks() {
     const [
@@ -28,6 +29,7 @@ export function MenuCallbacks() {
         window.ipc.menu.onOpen(async () => {
             const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
             await saveOrDiscardChanges()
+            changeEditingFile(undefined) // TODO: workaround if same file is opened, improve this
             changeEditingFile(filePath)
         })
 
@@ -51,6 +53,7 @@ export function MenuCallbacks() {
         window.ipc.menu.onExportPresentationBundle(() => exportHTMLPresentation(true))
         window.ipc.menu.onExportPresentationOnly(() => exportHTMLPresentation(false))
         window.ipc.menu.onReloadPreviews(reloadAllPreviews)
+        window.ipc.menu.onOpenPreviews(openPreviewWindow)
     }, [changeEditingFile, saveContentToEditingFile, saveOrDiscardChanges])
 
     return <></>
