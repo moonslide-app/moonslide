@@ -7,6 +7,7 @@ import { findAndLoadTemplate } from '../presentation/template'
 import { buildHTMLLayout, buildHTMLPresentation, buildHTMLPresentationContent } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
+import { presentationStore } from '../store'
 
 const SLIDE_SEPARATOR = '\n---'
 const SLOT_SEPERATOR = '\n***'
@@ -23,40 +24,49 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
     }
 
     const localImages: LocalImage[] = []
-    const parsedSlides: Slide[] = slidesConfig.map((slideConfig, i) => {
-        const markdown = slidesMarkdown[i] || ''
-        const parseResults = markdown
-            .split(SLOT_SEPERATOR)
-            .map(slot => slot.trim())
-            .map(slot => parseMarkdown({ ...request, markdownContent: slot }))
-
-        const slots = parseResults.map(res => res.html)
-        const images = parseResults.flatMap(res => res.localImages)
-        localImages.push(...images)
-
-        const htmlLayout = getLayout(slideConfig.layout)
-        const html = buildHTMLLayout(htmlLayout, { slots, slideConfig })
-
-        return { config: slideConfig, markdown, html }
-    })
-
     const presentationBase = await template.getPresentationHtml()
-    const html = buildHTMLPresentationContent(presentationBase, {
-        slidesHtml: parsedSlides.map(slide => slide.html),
+    const parsedSlides: Slide[] = await Promise.all(
+        slidesConfig.map(async (slideConfig, i) => {
+            const markdown = slidesMarkdown[i] || ''
+            const parseResults = markdown
+                .split(SLOT_SEPERATOR)
+                .map(slot => slot.trim())
+                .map(slot => parseMarkdown({ ...request, markdownContent: slot }))
+
+            const slots = parseResults.map(res => res.html)
+            const images = parseResults.flatMap(res => res.localImages)
+            localImages.push(...images)
+
+            const htmlLayout = getLayout(slideConfig.layout)
+            const contentHtml = buildHTMLLayout(htmlLayout, { slots, slideConfig })
+
+            const previewHtml = await buildHTMLPresentation({
+                contentHtml: buildHTMLPresentationContent(presentationBase, { slidesHtml: [contentHtml] }),
+                presentationConfig: presentationConfig,
+                templateConfig: template.getConfigLocalFile(),
+                type: 'preview-small',
+            })
+
+            return { config: slideConfig, markdown, contentHtml, previewHtml }
+        })
+    )
+
+    const contentHtml = buildHTMLPresentationContent(presentationBase, {
+        slidesHtml: parsedSlides.map(slide => slide.contentHtml),
     })
 
-    const fullHtml = await buildHTMLPresentation({
-        slidesHtml: html,
+    const previewHtml = await buildHTMLPresentation({
+        contentHtml,
         presentationConfig: presentationConfig,
         templateConfig: template.getConfigLocalFile(),
-        type: 'preview-small',
+        type: 'preview-fullscreen',
     })
 
-    return {
+    const presentation = {
         config: presentationConfig,
         slides: parsedSlides,
-        html,
-        fullHtml,
+        contentHtml,
+        previewHtml,
         layoutsHtml: layouts.layoutsHtml,
         images: localImages,
         resolvedPaths: {
@@ -64,6 +74,10 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
             markdownFile: markdownFilePath,
         },
     }
+
+    presentationStore.parsedPresentation = presentation
+
+    return presentation
 }
 
 function parseConfig(markdownContent: string) {

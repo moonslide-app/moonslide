@@ -1,17 +1,28 @@
+import { useEffect, useState } from 'react'
 import { useEditorStore } from '../store'
-import { Frame } from './Frame'
+import { PreviewSlide } from './PreviewSlide'
 
 export function PreviewSlides() {
-    const slidesLastUpdate = useEditorStore(state => state.slidesLastUpdate)
-    const slidesHtml = useEditorStore(state => state.parsedPresentation?.fullHtml)
+    const templateLastUpdate = useEditorStore(state => state.templateLastUpdate)
+    const themeLastUpdate = useEditorStore(state => state.themeLastUpdate)
+
+    const slides = useEditorStore(state => state.parsedPresentation?.slides)
+    const currentPresentationsHtml = slides?.map(slide => slide.previewHtml)
+    const [cachedPresentationsHtml, setCachedPresentationsHtml] = useState(currentPresentationsHtml)
+
+    useEffect(() => {
+        setCachedPresentationsHtml(currentPresentationsHtml)
+    }, [templateLastUpdate, themeLastUpdate])
 
     return (
         <div className="space-y-4 px-4 h-full overflow-y-auto">
-            {slidesLastUpdate.map((update, idx) => (
-                <div key={idx}>
-                    <Frame content={slidesHtml ?? ''}></Frame>
-                </div>
-            ))}
+            {slides &&
+                slides.map((slide, idx) => (
+                    <PreviewSlide
+                        presentationHtml={(cachedPresentationsHtml && cachedPresentationsHtml[idx]) ?? ''}
+                        slideHtml={slide.contentHtml ?? ''}
+                    ></PreviewSlide>
+                ))}
         </div>
     )
 }

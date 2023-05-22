@@ -30,7 +30,7 @@ const LAYOUT_SLOT_TOKEN = '@@slot@@'
  */
 
 export type HTMLPresentationBulidConfig = {
-    slidesHtml: string
+    contentHtml: string
     presentationConfig: PresentationConfig
     templateConfig: TemplateConfig
     type: HTMLPresentationBuildType
@@ -39,7 +39,7 @@ export type HTMLPresentationBulidConfig = {
 export type HTMLPresentationBuildType = 'export' | 'preview-small' | 'preview-fullscreen'
 
 export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
-    const { slidesHtml, presentationConfig, templateConfig } = config
+    const { contentHtml: slidesHtml, presentationConfig, templateConfig } = config
 
     let buildingFile = await loadAssetContent(BASE_FILE_NAME)
     const replaceToken = (token: string, content?: string) => {

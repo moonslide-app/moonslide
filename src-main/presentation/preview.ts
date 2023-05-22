@@ -31,7 +31,7 @@ export async function preparePresentationForPreview(presentation: Presentation):
 
     for (const target of Object.values(targets)) {
         const htmlPresentation = await buildHTMLPresentation({
-            slidesHtml: presentation.html,
+            contentHtml: presentation.contentHtml,
             presentationConfig: presentation.config,
             templateConfig,
             type: target.name,
@@ -50,9 +50,6 @@ export function openPreviewWindow() {
     const previewWindow = new BrowserWindow({
         width: 1280,
         height: 800,
-        webPreferences: {
-            webSecurity: false,
-        },
     })
 
     previewWindow.loadURL('reveal://preview-fullscreen/')

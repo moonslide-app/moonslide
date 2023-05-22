@@ -14,11 +14,11 @@ export type Presentation = {
     /**
      * The parsed html content of the whole presentation
      */
-    html: string
+    contentHtml: string
     /**
-     * Full HTML of the presentation (including header etc.)
+     * Full HTML each slide for previewing
      */
-    fullHtml: string
+    previewHtml: string
 
     resolvedPaths: {
         /**
@@ -54,7 +54,12 @@ export type Slide = {
     /**
      * The parsed html content of the slide
      */
-    html: string
+    contentHtml: string
+    /**
+     * A full presentation HTML containing just this slide,
+     * used for previews.
+     */
+    previewHtml: string
 }
 
 export type PresentationComparison = {
@@ -74,7 +79,7 @@ export function comparePresentations(
         newVersion?.slides.map((slide, idx) => {
             if (templateChange || themeChange) return true
             const lastVersionSlide = lastVersion?.slides[idx]
-            return lastVersionSlide?.html !== slide.html
+            return lastVersionSlide?.contentHtml !== slide.contentHtml
         }) ?? []
     return { templateChange, themeChange, slideChanges }
 }

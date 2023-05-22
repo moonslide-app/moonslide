@@ -1,3 +1,4 @@
+---
 template: standard
 theme: black
 title: WBE-Einführung

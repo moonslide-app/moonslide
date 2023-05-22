@@ -4,7 +4,7 @@ var RevealEditor = {
         const newConfig = {
             ...config,
             plugins: [],
-            hash: true,
+            hash: false,
             controls: false,
             progress: false,
             history: false,
@@ -16,7 +16,15 @@ var RevealEditor = {
             autoAnimate: false,
             autoSlide: false,
             transition: 'none',
+            slideNumber: false,
         }
         Reveal.initialize(newConfig, ...args)
     },
 }
+
+window.addEventListener('message', event => {
+    if (event.data === 'reveal:reload') {
+        Reveal.sync()
+        Reveal.layout()
+    }
+})
