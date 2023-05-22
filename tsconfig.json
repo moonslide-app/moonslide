@@ -1,5 +1,6 @@
 {
     "include": ["src", "src-main", "src-shared", "vite.config.*", "forge.config.*"],
+    "exclude": ["src-main/assets"],
     "compilerOptions": {
         // base config
         "target": "ESNext",
