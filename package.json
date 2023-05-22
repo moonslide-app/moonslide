@@ -11,7 +11,9 @@
         "publish": "electron-forge publish",
         "lint": "eslint --ext .ts,.tsx .",
         "format": "prettier --write .",
-        "type-check": "tsc -p tsconfig.json --noEmit"
+        "type-check": "tsc -p tsconfig.json --noEmit",
+        "lezer-generate": "lezer-generator src/parser/slides.grammar -o src/parser/slidesParser.ts",
+        "lezer-test": "npm run lezer-generate && ts-node src/parser/tests.ts"
     },
     "keywords": [],
     "author": {
@@ -29,6 +31,7 @@
         "@electron-forge/plugin-vite": "^6.1.1",
         "@electron-forge/publisher-github": "^6.1.1",
         "@electron/rebuild": "^3.2.13",
+        "@lezer/generator": "^1.2.3",
         "@types/markdown-it": "^12.2.3",
         "@types/markdown-it-attrs": "^4.1.0",
         "@types/marked": "^4.0.8",
@@ -46,14 +49,20 @@
         "postcss": "^8.4.23",
         "prettier": "^2.8.8",
         "tailwindcss": "^3.3.1",
+        "ts-node": "^10.9.1",
         "typescript": "^5.0.4"
     },
     "dependencies": {
         "@codemirror/commands": "^6.2.4",
         "@codemirror/lang-markdown": "^6.1.1",
+        "@codemirror/language": "^6.7.0",
+        "@codemirror/legacy-modes": "^6.3.2",
         "@codemirror/state": "^6.2.0",
         "@codemirror/theme-one-dark": "^6.1.2",
         "@codemirror/view": "^6.9.6",
+        "@lezer/common": "^1.0.2",
+        "@lezer/highlight": "^1.1.4",
+        "@lezer/markdown": "^1.0.2",
         "codemirror": "^6.0.1",
         "electron-squirrel-startup": "^1.0.0",
         "fs-extra": "^11.1.1",
