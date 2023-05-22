@@ -8,8 +8,6 @@ export function PreviewSlide(props: { presentationHtml: string; slideHtml: strin
         slideHtml.current = props.slideHtml
     }
 
-    console.log('render')
-
     useEffect(() => {
         if (iframeRef.current?.contentWindow) {
             const message = {

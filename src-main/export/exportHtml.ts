@@ -16,11 +16,6 @@ export async function exportHtml(request: ExportRequest): Promise<void> {
 
     const parsedPresentation = await parse({ ...request, imageMode: request.mode, outputFolderPath })
 
-    if (!parsedPresentation) {
-        console.warn('No parsed presentation recevied')
-        return
-    }
-
     const template = await loadTemplate(parsedPresentation.resolvedPaths.templateFolder)
 
     const templateConfig = isStandalone ? template.getConfig() : template.getConfig(outputFolderPath)
