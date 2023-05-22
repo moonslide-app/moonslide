@@ -24,7 +24,6 @@ var RevealEditor = {
 
 window.addEventListener('message', event => {
     if (event.data === 'reveal:reload') {
-        Reveal.sync()
-        Reveal.layout()
+        Reveal.configure({})
     }
 })

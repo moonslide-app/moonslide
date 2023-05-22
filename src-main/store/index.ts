@@ -1,9 +1,8 @@
-import { Presentation } from '../../src-shared/entities/Presentation'
-
-export type PresentationStore = {
-    parsedPresentation: Presentation | undefined
-}
+import { PresentationStore } from '../../src-shared/entities/PresentationStore'
 
 export const presentationStore: PresentationStore = {
     parsedPresentation: undefined,
+    templateLastUpdate: 0,
+    themeLastUpdate: 0,
+    slidesLastUpdate: [],
 }

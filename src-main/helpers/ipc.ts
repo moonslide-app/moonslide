@@ -11,12 +11,7 @@ import {
 import { parse } from '../parse'
 import { exportPdf } from '../export/exportPdf'
 import { exportHtml } from '../export/exportHtml'
-import {
-    clearPreviewFolder,
-    openPreviewWindow,
-    preparePresentationForPreview,
-    reloadPreviewWindow,
-} from '../presentation/preview'
+import { openPreviewWindow, reloadPreviewWindow } from '../presentation/preview'
 
 export function registerIpc() {
     ipcMain.handle('dialog:selectFile', (_, title, filters) => selectFile(title, filters))
@@ -27,8 +22,6 @@ export function registerIpc() {
     ipcMain.handle('file:save', (_, filePath, content) => saveFile(filePath, content))
     ipcMain.handle('file:getContent', (_, filePath) => getFileContent(filePath))
     ipcMain.handle('presentation:parse', (_, parseRequest) => parse(parseRequest))
-    ipcMain.handle('preview:clearOutFolder', clearPreviewFolder)
-    ipcMain.handle('preview:prepare', (_, presentation) => preparePresentationForPreview(presentation))
     ipcMain.handle('preview:show', openPreviewWindow)
     ipcMain.handle('preview:reload', reloadPreviewWindow)
     ipcMain.handle('export:html', (_, exportRequest) => exportHtml(exportRequest))
@@ -44,8 +37,6 @@ export function unregisterIpc() {
     ipcMain.removeHandler('file:save')
     ipcMain.removeHandler('file:getContent')
     ipcMain.removeHandler('presentation:parse')
-    ipcMain.removeHandler('preview:clearOutFolder')
-    ipcMain.removeHandler('preview:prepare')
     ipcMain.removeHandler('preview:show')
     ipcMain.removeHandler('preview:reload')
     ipcMain.removeHandler('export:html')

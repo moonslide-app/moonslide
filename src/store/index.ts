@@ -1,7 +1,7 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { Presentation, comparePresentations } from '../../src-shared/entities/Presentation'
+import { Presentation } from '../../src-shared/entities/Presentation'
 import { htmlFilter, markdownFilter } from './FileFilters'
+import { PresentationStore } from '../../src-shared/entities/PresentationStore'
 
 export type EditorStore = {
     /**
@@ -55,7 +55,7 @@ export type EditorStore = {
      * the presentation (and template) files are updated by calling the
      * appropriate ipc functions in the backend.
      */
-    updateParsedPresentation(newContent: Presentation | undefined): Promise<void>
+    updateParsedPresentation(newContent: PresentationStore): Promise<void>
     /**
      * This function triggers a reload of all previews, the small ones and the preview window.
      * This can be useful if files in the template have been changed.
@@ -69,10 +69,6 @@ export type EditorStore = {
      * Asks the user, if they want to save the changes or discard it.
      */
     saveOrDiscardChanges(): Promise<void>
-    /**
-     * This methods calls the ipc function to rebuild the presentation (and preview) files.
-     */
-    preparePresentation(): Promise<void>
     /**
      * Exports the presentation as html.
      * @param standalone If `true` the whole template folder is copied with the presentation.
@@ -108,33 +104,20 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
                 .catch(error => console.warn(error))
         }, DEBOUNCE_INTERVAL)
     },
-    updateParsedPresentation: async newParsedPresentation => {
-        const { parsedPresentation, templateLastUpdate, themeLastUpdate, slidesLastUpdate } = get()
-        set(state => ({ ...state, parsedPresentation: newParsedPresentation }))
-
-        if (newParsedPresentation) {
-            await get().preparePresentation()
+    updateParsedPresentation: async newStore => {
+        if (newStore) {
             window.ipc.presentation.reloadPreviewWindow()
-        } else {
-            await window.ipc.presentation.clearPreviewFolder()
         }
 
-        const newTimestamp = Date.now()
-        const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
-        const newTemplateLastUpdate = comparison.templateChange ? newTimestamp : templateLastUpdate
-        const newThemeLastUpdate = comparison.themeChange ? newTimestamp : themeLastUpdate
-        const newSlidesLastUpdate = comparison.slideChanges.map((update, idx) =>
-            update ? newTimestamp : slidesLastUpdate[idx]
-        )
         set(state => ({
             ...state,
-            templateLastUpdate: newTemplateLastUpdate,
-            themeLastUpdate: newThemeLastUpdate,
-            slidesLastUpdate: newSlidesLastUpdate,
+            parsedPresentation: newStore.parsedPresentation,
+            templateLastUpdate: newStore.templateLastUpdate,
+            themeLastUpdate: newStore.themeLastUpdate,
+            slidesLastUpdate: newStore.slidesLastUpdate,
         }))
     },
     async reloadAllPreviews() {
-        await get().preparePresentation()
         set(state => ({ slidesLastUpdate: state.slidesLastUpdate.map(() => Date.now()) }))
         await window.ipc.presentation.reloadPreviewWindow()
     },
@@ -166,12 +149,6 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
             const saveFile = await window.ipc.files.showSaveChangesDialog()
             if (saveFile) await saveContentToEditingFile()
         }
-    },
-    async preparePresentation() {
-        const { parsedPresentation } = get()
-        if (parsedPresentation) {
-            await window.ipc.presentation.preparePresentationForPreview(parsedPresentation)
-        } else console.log('Could not prepare presentation, either parsedPresentation or editingFilePath was nullish.')
     },
     async exportHTMLPresentation(standalone = true) {
         const { editingFilePath, content } = get()
