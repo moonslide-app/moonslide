@@ -77,8 +77,3 @@ layout: title-grid-3-right
 ***
 ### Architektur 3
 ![Architecture 2](images/architecture2.png) {.fragment .image-contain .image-top}
-
----
----
-
-test
