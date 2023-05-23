@@ -29,7 +29,7 @@ window.addEventListener('message', event => {
 })
 
 function updatePreview(newSlides) {
-    const slidesContainer = document.getElementById('slides')
+    const slidesContainer = document.querySelector('.reveal>.slides')
     const parsedNewSlides = createSlideContents(newSlides ?? '')
     removeAllChildren(slidesContainer)
     slidesContainer.appendChild(parsedNewSlides)

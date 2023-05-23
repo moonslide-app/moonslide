@@ -4,7 +4,12 @@ import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/S
 import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
-import { buildHTMLLayout, buildHTMLPresentation, buildHTMLPresentationContent } from '../presentation/htmlBuilder'
+import {
+    buildHTMLLayout,
+    buildHTMLPresentation,
+    buildHTMLPresentationContent,
+    concatSlidesHtml,
+} from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
 
@@ -38,24 +43,24 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
 
             const htmlLayout = getLayout(slideConfig.layout)
             const contentHtml = buildHTMLLayout(htmlLayout, { slots, slideConfig })
+            const presentationHtml = buildHTMLPresentationContent(presentationBase, contentHtml)
 
             const previewHtml = await buildHTMLPresentation({
-                contentHtml: buildHTMLPresentationContent(presentationBase, { slidesHtml: [contentHtml] }),
+                presentationHtml,
                 presentationConfig: presentationConfig,
                 templateConfig: template.getConfigLocalFile(),
                 type: 'preview-small',
             })
 
-            return { config: slideConfig, markdown, contentHtml, previewHtml }
+            return { config: slideConfig, markdown, contentHtml, presentationHtml, previewHtml }
         })
     )
 
-    const contentHtml = buildHTMLPresentationContent(presentationBase, {
-        slidesHtml: parsedSlides.map(slide => slide.contentHtml),
-    })
+    const contentHtml = concatSlidesHtml(parsedSlides.map(slide => slide.contentHtml))
+    const presentationHtml = buildHTMLPresentationContent(presentationBase, contentHtml)
 
     const previewHtml = await buildHTMLPresentation({
-        contentHtml,
+        presentationHtml,
         presentationConfig: presentationConfig,
         templateConfig: template.getConfigLocalFile(),
         type: 'preview-fullscreen',
@@ -65,6 +70,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
         config: presentationConfig,
         slides: parsedSlides,
         contentHtml,
+        presentationHtml,
         previewHtml,
         layoutsHtml: layouts.layoutsHtml,
         images: localImages,

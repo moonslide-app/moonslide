@@ -21,21 +21,10 @@ export type EditorStore = {
      */
     parsedPresentation: Presentation | undefined
     /**
-     * This number represents the timestamp at which the template of the
-     * presentation has been last modified.
+     * This number represents the timestamp at which the template or theme
+     * of the presentation has been last modified.
      */
-    templateLastUpdate: number
-    /**
-     * This number represents the timestamp at which the theme of the
-     * presentation has been last modified.
-     */
-    themeLastUpdate: number
-    /**
-     * This array contains a number for every slide currently present
-     * in the `parsedPresentation`. The number represents the timestamp
-     * when the slide was last updated.
-     */
-    slidesLastUpdate: number[]
+    lastFullUpdate: number
     /**
      * Changes the editing file path.
      * This will try to read the file from the new path and
@@ -50,10 +39,8 @@ export type EditorStore = {
     updateContent(newContent: string): Promise<void>
     /**
      * Updates the parsed presentation in the store.
-     * This will also update the `slidesLastUpdate`.
      * Depending on the changes, this function will make sure that
-     * the presentation (and template) files are updated by calling the
-     * appropriate ipc functions in the backend.
+     * a full reload is scheduled by updating `lastFullUpdate`.
      */
     updateParsedPresentation(newContent: Presentation | undefined): Promise<void>
     /**
@@ -87,9 +74,7 @@ export const useEditorStore = create<EditorStore>()(
             editingFileSaved: true,
             content: '',
             parsedPresentation: undefined,
-            templateLastUpdate: 0,
-            themeLastUpdate: 0,
-            slidesLastUpdate: [],
+            lastFullUpdate: 0,
             updateContent: async newContent => {
                 const { editingFilePath } = get()
                 set(state => ({ ...state, content: newContent, editingFileSaved: false }))
@@ -107,25 +92,20 @@ export const useEditorStore = create<EditorStore>()(
                 }, DEBOUNCE_INTERVAL)
             },
             updateParsedPresentation: async newParsedPresentation => {
-                const { parsedPresentation, templateLastUpdate, themeLastUpdate, slidesLastUpdate } = get()
+                const { parsedPresentation, lastFullUpdate } = get()
                 set(state => ({ ...state, parsedPresentation: newParsedPresentation }))
 
                 const newTimestamp = Date.now()
                 const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
-                const newTemplateLastUpdate = comparison.templateChange ? newTimestamp : templateLastUpdate
-                const newThemeLastUpdate = comparison.themeChange ? newTimestamp : themeLastUpdate
-                const newSlidesLastUpdate = comparison.slideChanges.map((update, idx) =>
-                    update ? newTimestamp : slidesLastUpdate[idx]
-                )
+                const newLastFullUpdate =
+                    comparison.templateChange || comparison.themeChange ? newTimestamp : lastFullUpdate
                 set(state => ({
                     ...state,
-                    templateLastUpdate: newTemplateLastUpdate,
-                    themeLastUpdate: newThemeLastUpdate,
-                    slidesLastUpdate: newSlidesLastUpdate,
+                    lastFullUpdate: newLastFullUpdate,
                 }))
             },
             async reloadAllPreviews() {
-                set(state => ({ slidesLastUpdate: state.slidesLastUpdate.map(() => Date.now()) }))
+                set(state => ({ ...state, lastFullUpdate: Date.now() }))
             },
             async changeEditingFile(newFilePath, updateContent = true) {
                 if (updateContent) {

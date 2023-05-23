@@ -21,7 +21,7 @@ export async function exportHtml(request: ExportRequest): Promise<void> {
     const templateConfig = isStandalone ? template.getConfig() : template.getConfig(outputFolderPath)
 
     const htmlPresentation = await buildHTMLPresentation({
-        contentHtml: parsedPresentation.contentHtml,
+        presentationHtml: parsedPresentation.presentationHtml,
         presentationConfig: parsedPresentation.config,
         templateConfig,
         type: 'export',

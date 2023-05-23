@@ -10,12 +10,9 @@ export function openPreviewWindow() {
 }
 
 export function PreviewWindow() {
-    const templateLastUpdate = useEditorStore(state => state.templateLastUpdate)
-    const themeLastUpdate = useEditorStore(state => state.themeLastUpdate)
+    const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
 
-    const currentContentHtml = useEditorStore(state =>
-        state.parsedPresentation?.slides.map(slide => slide.contentHtml).join('')
-    )
+    const currentContentHtml = useEditorStore(state => state.parsedPresentation?.contentHtml)
 
     useEffect(() => {
         if (currentPreviewWindow) {
@@ -25,7 +22,7 @@ export function PreviewWindow() {
 
             currentPreviewWindow.postMessage(message, '*')
         }
-    }, [templateLastUpdate, themeLastUpdate])
+    }, [lastFullUpdate])
 
     useEffect(() => {
         if (currentPreviewWindow) {

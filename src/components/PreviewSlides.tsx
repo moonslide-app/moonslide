@@ -3,8 +3,7 @@ import { useEditorStore } from '../store'
 import { PreviewSlide } from './PreviewSlide'
 
 export function PreviewSlides() {
-    const templateLastUpdate = useEditorStore(state => state.templateLastUpdate)
-    const themeLastUpdate = useEditorStore(state => state.themeLastUpdate)
+    const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
 
     const slides = useEditorStore(state => state.parsedPresentation?.slides)
     const currentPresentationsHtml = slides?.map(slide => slide.previewHtml)
@@ -12,7 +11,7 @@ export function PreviewSlides() {
 
     useEffect(() => {
         setCachedPresentationsHtml(currentPresentationsHtml)
-    }, [templateLastUpdate, themeLastUpdate])
+    }, [lastFullUpdate])
 
     useEffect(() => {
         if (currentPresentationsHtml?.length !== cachedPresentationsHtml?.length) {
@@ -21,7 +20,7 @@ export function PreviewSlides() {
     }, [slides])
 
     return (
-        <div className="space-y-4 px-4 h-full overflow-y-auto">
+        <div className="space-y-4 px-4 h-full overflow-y-auto" key={lastFullUpdate}>
             {slides &&
                 slides.map((slide, idx) => (
                     <PreviewSlide

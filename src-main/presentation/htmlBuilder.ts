@@ -30,7 +30,7 @@ const LAYOUT_SLOT_TOKEN = '@@slot@@'
  */
 
 export type HTMLPresentationBulidConfig = {
-    contentHtml: string
+    presentationHtml: string
     presentationConfig: PresentationConfig
     templateConfig: TemplateConfig
     type: HTMLPresentationBuildType
@@ -39,7 +39,7 @@ export type HTMLPresentationBulidConfig = {
 export type HTMLPresentationBuildType = 'export' | 'preview-small' | 'preview-fullscreen'
 
 export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
-    const { contentHtml: slidesHtml, presentationConfig, templateConfig } = config
+    const { presentationHtml, presentationConfig, templateConfig } = config
 
     let buildingFile = await loadAssetContent(BASE_FILE_NAME)
     const replaceToken = (token: string, content?: string) => {
@@ -48,7 +48,7 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
 
     replaceToken(TITLE_TOKEN, presentationConfig.title)
     replaceToken(AUTHOR_TOKEN, presentationConfig.author)
-    replaceToken(PRESESENTATION_TOKEN, slidesHtml)
+    replaceToken(PRESESENTATION_TOKEN, presentationHtml)
 
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
     replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal.entry))
@@ -96,16 +96,12 @@ function generateStylesheets({ presentationConfig, templateConfig }: HTMLPresent
  * ---------- Build Slides ----------
  */
 
-export type HTMLPresentationContent = {
-    slidesHtml: string[]
+export function concatSlidesHtml(slidesHtml: string[]): string {
+    return slidesHtml.length === 0 ? '' : slidesHtml.reduce((prev, next) => `${prev}\n${next}`)
 }
 
-export function buildHTMLPresentationContent(
-    presentationContentBaseHtml: string,
-    content: HTMLPresentationContent
-): string {
-    const slides = content.slidesHtml.length === 0 ? '' : content.slidesHtml.reduce((prev, next) => `${prev}\n${next}`)
-    return presentationContentBaseHtml.replace(CONTENT_TOKEN, slides)
+export function buildHTMLPresentationContent(presentationContentBaseHtml: string, slidesHtml: string): string {
+    return presentationContentBaseHtml.replace(CONTENT_TOKEN, slidesHtml)
 }
 
 /*
