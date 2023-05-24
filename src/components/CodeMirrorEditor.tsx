@@ -1,8 +1,6 @@
 import { history, indentWithTab, redo, undo } from '@codemirror/commands'
 import { StreamLanguage, LRLanguage, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
-import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
 import { tags } from '@lezer/highlight'
-import { LRParser } from '@lezer/lr'
 import { parser as mdParser } from '@lezer/markdown'
 import { parseMixed } from '@lezer/common'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
@@ -10,7 +8,6 @@ import { EditorState } from '@codemirror/state'
 import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
-import { oneDark } from '@codemirror/theme-one-dark'
 import { parser } from '../parser/slidesParser'
 
 export type CodeMirrorEditorProps = {
@@ -18,14 +15,20 @@ export type CodeMirrorEditorProps = {
 }
 
 const myHighlightStyle = HighlightStyle.define([
-    { tag: tags.keyword, class: 'text-gray-700 font-bold' },
-    { tag: tags.heading1, class: 'font-bold text-3xl' },
-    { tag: tags.heading2, class: 'font-bold text-2xl' },
-    { tag: tags.heading3, class: 'font-bold text-xl' },
-    { tag: tags.heading4, class: 'font-bold text-lg' },
+    { tag: tags.keyword, class: 'text-violet-700 font-bold' },
+    { tag: tags.heading1, class: 'font-bold text-2xl' },
+    { tag: tags.heading2, class: 'font-bold text-xl' },
+    { tag: tags.heading3, class: 'font-bold text-lg' },
+    { tag: tags.heading4, class: 'font-bold' },
     { tag: tags.heading5, class: 'font-bold' },
     { tag: tags.heading6, class: 'font-bold' },
-    { tag: tags.url, class: 'text-violet-500' },
+    { tag: tags.url, class: 'text-violet-300' },
+    { tag: tags.contentSeparator, class: 'font-bold text-violet-400' },
+    { tag: tags.emphasis, class: 'italic' },
+    { tag: tags.strong, class: 'font-bold' },
+    // TODO: Is not recognized by parser
+    { tag: tags.strikethrough, class: 'line-through' },
+    // TODO: can we change the color of yaml values?
 ])
 
 const myTheme = EditorView.baseTheme({
@@ -38,6 +41,7 @@ const mixedParser = parser.configure({
     wrap: parseMixed(node => {
         if (node.name === 'YamlContent') return { parser: StreamLanguage.define(yaml).parser }
         else if (node.name === 'MarkdownBlock') return { parser: mdParser }
+        else if (node.name === 'Delimiter') return { parser: mdParser }
         return null
     }),
 })
