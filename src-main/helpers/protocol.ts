@@ -1,5 +1,6 @@
 import { app, protocol } from 'electron'
 import { resolve } from 'path'
+import { presentationStore } from '../store'
 
 export const REVEAL_PROTOCOL_NAME = 'reveal'
 export const FILE_PROTOCOL_NAME = 'reveal-file'
@@ -12,17 +13,16 @@ export const previewTargets = {
 }
 
 export function registerProtocols() {
-    protocol.registerFileProtocol(REVEAL_PROTOCOL_NAME, (request, callback) => {
+    protocol.registerStringProtocol(REVEAL_PROTOCOL_NAME, (request, callback) => {
         const requestedPath = request.url.slice(`${REVEAL_PROTOCOL_NAME}://`.length)
-        const allowedPaths = [
-            { match: /^preview-fullscreen(.*)/, baseFile: previewTargets.fullscreen },
-            { match: /^preview-small(.*)/, baseFile: previewTargets.small },
-            { match: /^export(.*)/, baseFile: previewTargets.fullscreen },
+        const registeredPaths = [
+            { match: /^preview(.*)/, content: presentationStore.parsedPresentation?.previewHtml },
+            { match: /^export(.*)/, content: presentationStore.parsedPresentation?.previewHtml },
         ]
 
-        for (const allowed of allowedPaths) {
-            if (allowed.match.test(requestedPath)) {
-                callback({ path: resolve(previewFolderPath, allowed.baseFile) })
+        for (const registeredPath of registeredPaths) {
+            if (registeredPath.match.test(requestedPath)) {
+                callback({ data: registeredPath.content })
                 return
             }
         }

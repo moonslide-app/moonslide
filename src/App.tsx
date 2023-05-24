@@ -3,6 +3,9 @@ import { PreviewSlides } from './components/PreviewSlides'
 import { MenuCallbacks } from './components/MenuCallbacks'
 import { useEditorStore } from './store'
 import { useEffectOnce } from 'usehooks-ts'
+import { Allotment } from 'allotment'
+import 'allotment/dist/style.css'
+import { PreviewWindow } from './components/PreviewWindow'
 
 function App() {
     const [editingFilePath, reloadAllPreviews] = useEditorStore(state => [
@@ -15,13 +18,19 @@ function App() {
     })
 
     return (
-        <div className="p-8 md:p-12 m-auto">
+        <div className="flex flex-col h-screen m-auto">
             <MenuCallbacks />
-            <h1 className="text-4xl font-semibold mb-4">Reveal Editor</h1>
+            <PreviewWindow />
             <p className="text-sm font-medium">Editing File: {editingFilePath}</p>
-            <div className="grid grid-cols-3 2xl:grid-cols-4 gap-8">
-                <CodeMirrorEditor className="col-span-2 2xl:col-span-3 h-[700px] max-h-[700px] overflow-y-auto" />
-                <PreviewSlides />
+            <div className="flex-grow">
+                <Allotment separator={false}>
+                    <Allotment.Pane minSize={200} className="border-r-[1px]" snap>
+                        <CodeMirrorEditor />
+                    </Allotment.Pane>
+                    <Allotment.Pane minSize={200} className="border-l-[1px]" snap>
+                        <PreviewSlides />
+                    </Allotment.Pane>
+                </Allotment>
             </div>
         </div>
     )
