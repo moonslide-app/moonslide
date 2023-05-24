@@ -9,6 +9,7 @@ import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
+import { Strikethrough } from '@lezer/markdown'
 
 export type CodeMirrorEditorProps = {
     className?: string
@@ -26,9 +27,7 @@ const myHighlightStyle = HighlightStyle.define([
     { tag: tags.contentSeparator, class: 'font-bold text-violet-400' },
     { tag: tags.emphasis, class: 'italic' },
     { tag: tags.strong, class: 'font-bold' },
-    // TODO: Is not recognized by parser
     { tag: tags.strikethrough, class: 'line-through' },
-    // TODO: can we change the color of yaml values?
 ])
 
 const myTheme = EditorView.baseTheme({
@@ -40,7 +39,7 @@ const myTheme = EditorView.baseTheme({
 const mixedParser = parser.configure({
     wrap: parseMixed(node => {
         if (node.name === 'YamlContent') return { parser: StreamLanguage.define(yaml).parser }
-        else if (node.name === 'MarkdownContent') return { parser: mdParser }
+        else if (node.name === 'MarkdownContent') return { parser: mdParser.configure(Strikethrough) }
         else if (node.name === 'StartDelimiter') return { parser: mdParser }
         return null
     }),
