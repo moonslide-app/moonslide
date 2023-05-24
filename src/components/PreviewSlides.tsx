@@ -20,7 +20,7 @@ export function PreviewSlides() {
     }, [slides])
 
     return (
-        <div className="space-y-4 px-4 h-full overflow-y-auto" key={lastFullUpdate}>
+        <div className="space-y-4 p-4 h-full overflow-y-auto bg-gray-100" key={lastFullUpdate}>
             {slides &&
                 slides.map((slide, idx) => (
                     <PreviewSlide

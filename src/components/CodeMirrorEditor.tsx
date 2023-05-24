@@ -1,7 +1,7 @@
 import { history, indentWithTab, redo, undo } from '@codemirror/commands'
 import { StreamLanguage, LRLanguage, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
 import { tags } from '@lezer/highlight'
-import { parser as mdParser } from '@lezer/markdown'
+import { parser as mdParser, Strikethrough } from '@lezer/markdown'
 import { parseMixed } from '@lezer/common'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
 import { EditorState } from '@codemirror/state'
@@ -9,7 +9,6 @@ import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
 import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
-import { Strikethrough } from '@lezer/markdown'
 
 export type CodeMirrorEditorProps = {
     className?: string
