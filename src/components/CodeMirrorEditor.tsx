@@ -66,6 +66,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
                 updatePlugin,
                 keymap.of([indentWithTab]),
                 history(),
+                EditorView.lineWrapping,
             ],
         })
 
@@ -81,5 +82,5 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         return () => view?.destroy()
     }, [editingFilePath])
 
-    return <div ref={editorDomNode} className={props?.className}></div>
+    return <div ref={editorDomNode} className={`h-full overflow-y-auto ${props?.className}`}></div>
 }
