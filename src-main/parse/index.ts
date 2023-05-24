@@ -1,7 +1,7 @@
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
-import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
+import { PresentationConfig, parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
 import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/SlideConfig'
-import { parse as yamlParse } from 'yaml'
+import { YAMLError, parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
 import {
@@ -12,7 +12,9 @@ import {
 } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
+import { ParseError, wrapErrorIfThrows } from '../../src-shared/errors/ParseError'
 
+export const FIRST_SLIDE_SEPERATOR = '---'
 const SLIDE_SEPARATOR = '\n---'
 const SLOT_SEPERATOR = '\n***'
 
@@ -83,15 +85,36 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
 
 function parseConfig(markdownContent: string) {
     const hasContent = markdownContent && markdownContent.trim()
-    const separated = hasContent ? markdownContent.split(SLIDE_SEPARATOR) : []
+
+    if (hasContent && !markdownContent.startsWith(FIRST_SLIDE_SEPERATOR)) {
+        throw ParseError.missingStartSeperator
+    }
+
+    const withoutFirstSeperator = markdownContent.substring(FIRST_SLIDE_SEPERATOR.length)
+    const separated = hasContent ? withoutFirstSeperator.split(SLIDE_SEPARATOR) : []
     const trimmed = separated.map(part => part.trim())
 
     const slidesMarkdown = trimmed.filter((_, idx) => idx % 2 == 1)
     const yamlConfigParts = trimmed.filter((_, idx) => idx % 2 == 0)
-    const jsonConfigParts = yamlConfigParts.map(yml => yamlParse(yml))
-    const presentationConfig = parsePresentationConfig(jsonConfigParts[0])
+    const jsonConfigParts = yamlConfigParts.map((yml, idx) =>
+        wrapErrorIfThrows(
+            () => yamlParse(yml),
+            error => ParseError.yamlConfigError(idx, error)
+        )
+    )
+
+    const presentationConfig = wrapErrorIfThrows(
+        () => parsePresentationConfig(jsonConfigParts[0]),
+        err => ParseError.yamlConfigError(0, err)
+    )
+
     const slidesConfig = jsonConfigParts
-        .map(json => parseSlideConfig(json))
+        .map((json, idx) =>
+            wrapErrorIfThrows(
+                () => parseSlideConfig(json),
+                error => ParseError.yamlConfigError(idx, error)
+            )
+        )
         .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults ?? {}))
 
     return {
