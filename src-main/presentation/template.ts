@@ -5,6 +5,7 @@ import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import sanitizeHtml from './sanitize'
 import { getLocalFileUrl } from '../helpers/protocol'
+import { TemplateConfigError, TemplateNotFoundError, wrapErrorIfThrows } from '../../src-shared/errors/WrappingError'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
@@ -55,8 +56,15 @@ export type Layouts = {
  * Loads the template folder and the config inside it.
  */
 export async function loadTemplate(templateFolderPath: string): Promise<Template> {
-    const configYaml = (await readFile(resolve(templateFolderPath, CONFIG_FILE_NAME))).toString()
-    const config = parseTemplateConfig(configYaml)
+    const configFile = wrapErrorIfThrows(
+        async () => await readFile(resolve(templateFolderPath, CONFIG_FILE_NAME)),
+        error => new TemplateNotFoundError(templateFolderPath, error)
+    )
+    const configYaml = configFile.toString()
+    const config = wrapErrorIfThrows(
+        () => parseTemplateConfig(configYaml),
+        error => new TemplateConfigError(error)
+    )
     return new TemplateImpl(templateFolderPath, config)
 }
 

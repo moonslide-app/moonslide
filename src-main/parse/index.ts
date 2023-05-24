@@ -1,7 +1,7 @@
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
-import { PresentationConfig, parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
+import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
 import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/SlideConfig'
-import { YAMLError, parse as yamlParse } from 'yaml'
+import { parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
 import {
@@ -12,7 +12,7 @@ import {
 } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
-import { ParseError, wrapErrorIfThrows } from '../../src-shared/errors/ParseError'
+import { MissingStartSeparatorError, YamlConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappingError'
 
 export const FIRST_SLIDE_SEPERATOR = '---'
 const SLIDE_SEPARATOR = '\n---'
@@ -87,7 +87,7 @@ function parseConfig(markdownContent: string) {
     const hasContent = markdownContent && markdownContent.trim()
 
     if (hasContent && !markdownContent.startsWith(FIRST_SLIDE_SEPERATOR)) {
-        throw ParseError.missingStartSeperator
+        throw new MissingStartSeparatorError()
     }
 
     const withoutFirstSeperator = markdownContent.substring(FIRST_SLIDE_SEPERATOR.length)
@@ -99,20 +99,20 @@ function parseConfig(markdownContent: string) {
     const jsonConfigParts = yamlConfigParts.map((yml, idx) =>
         wrapErrorIfThrows(
             () => yamlParse(yml),
-            error => ParseError.yamlConfigError(idx, error)
+            error => new YamlConfigError(idx, error)
         )
     )
 
     const presentationConfig = wrapErrorIfThrows(
         () => parsePresentationConfig(jsonConfigParts[0]),
-        err => ParseError.yamlConfigError(0, err)
+        err => new YamlConfigError(0, err)
     )
 
     const slidesConfig = jsonConfigParts
         .map((json, idx) =>
             wrapErrorIfThrows(
                 () => parseSlideConfig(json),
-                error => ParseError.yamlConfigError(idx, error)
+                error => new YamlConfigError(idx, error)
             )
         )
         .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults ?? {}))
