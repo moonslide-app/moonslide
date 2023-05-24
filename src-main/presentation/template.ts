@@ -56,10 +56,9 @@ export type Layouts = {
  * Loads the template folder and the config inside it.
  */
 export async function loadTemplate(templateFolderPath: string): Promise<Template> {
-    const configFile = wrapErrorIfThrows(
-        async () => await readFile(resolve(templateFolderPath, CONFIG_FILE_NAME)),
-        error => new TemplateNotFoundError(templateFolderPath, error)
-    )
+    const configFile = await readFile(resolve(templateFolderPath, CONFIG_FILE_NAME)).catch(error => {
+        throw new TemplateNotFoundError(templateFolderPath, error)
+    })
     const configYaml = configFile.toString()
     const config = wrapErrorIfThrows(
         () => parseTemplateConfig(configYaml),

@@ -21,6 +21,10 @@ export type EditorStore = {
      */
     parsedPresentation: Presentation | undefined
     /**
+     * Contains an error, if one occurred during parsing
+     */
+    parsingError: unknown | undefined
+    /**
      * This number represents the timestamp at which the template or theme
      * of the presentation has been last modified.
      */
@@ -74,6 +78,7 @@ export const useEditorStore = create<EditorStore>()(
             editingFileSaved: true,
             content: '',
             parsedPresentation: undefined,
+            parsingError: undefined,
             lastFullUpdate: 0,
             updateContent: async newContent => {
                 const { editingFilePath } = get()
@@ -87,8 +92,14 @@ export const useEditorStore = create<EditorStore>()(
                             markdownFilePath: editingFilePath ?? '.',
                             imageMode: 'preview',
                         })
-                        .then(get().updateParsedPresentation)
-                        .catch(error => console.warn(error))
+                        .then(parsedPresentation => {
+                            set(state => ({ ...state, parsingError: undefined }))
+                            get().updateParsedPresentation(parsedPresentation)
+                        })
+                        .catch(parsingError => {
+                            console.log(parsingError)
+                            set(state => ({ ...state, parsingError }))
+                        })
                 }, DEBOUNCE_INTERVAL)
             },
             updateParsedPresentation: async newParsedPresentation => {

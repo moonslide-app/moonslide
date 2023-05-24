@@ -1,7 +1,7 @@
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
 import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
 import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/SlideConfig'
-import { parse as yamlParse } from 'yaml'
+import { YAMLError, parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
 import {
@@ -98,7 +98,7 @@ function parseConfig(markdownContent: string) {
     const yamlConfigParts = trimmed.filter((_, idx) => idx % 2 == 0)
     const jsonConfigParts = yamlConfigParts.map((yml, idx) =>
         wrapErrorIfThrows(
-            () => yamlParse(yml),
+            () => parseSlideYaml(yml),
             error => new YamlConfigError(idx, error)
         )
     )
@@ -122,4 +122,35 @@ function parseConfig(markdownContent: string) {
         slidesMarkdown,
         slidesConfig,
     }
+}
+
+function parseSlideYaml(content: string) {
+    let strippedContent = content
+    // This loop tries to strip away lines which are currently beeing edited
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        try {
+            const parsed = yamlParse(strippedContent)
+            // ignore other input if it is not an object
+            if (typeof parsed === 'object') return parsed
+            else return undefined
+        } catch (error) {
+            if (error instanceof YAMLError) {
+                if (error.code === 'MISSING_CHAR') {
+                    const removeLine = error.linePos?.[0].line
+                    if (removeLine) {
+                        strippedContent = removeLineFromString(strippedContent, removeLine)
+                        continue
+                    }
+                }
+            }
+            throw error
+        }
+    }
+}
+
+function removeLineFromString(string: string, line: number): string {
+    const split = string.split('\n')
+    split.splice(line - 1, 1)
+    return split.join('\n')
 }
