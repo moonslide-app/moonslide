@@ -6,8 +6,8 @@ import {
     PREVIEW_SMALL_SCRIPT_FILENAME,
     loadAssetContent,
 } from '../../src-main/helpers/assets'
-import { Presentation } from '../../src-shared/entities/Presentation'
 import { TemplateConfig, getThemeMatching } from './templateConfig'
+import { PresentationConfig } from '../../src-shared/entities/PresentationConfig'
 
 // presentation
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
@@ -30,7 +30,8 @@ const LAYOUT_SLOT_TOKEN = '@@slot@@'
  */
 
 export type HTMLPresentationBulidConfig = {
-    presentation: Presentation
+    presentationHtml: string
+    presentationConfig: PresentationConfig
     templateConfig: TemplateConfig
     type: HTMLPresentationBuildType
 }
@@ -38,16 +39,16 @@ export type HTMLPresentationBulidConfig = {
 export type HTMLPresentationBuildType = 'export' | 'preview-small' | 'preview-fullscreen'
 
 export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
-    const { presentation, templateConfig } = config
+    const { presentationHtml, presentationConfig, templateConfig } = config
 
     let buildingFile = await loadAssetContent(BASE_FILE_NAME)
     const replaceToken = (token: string, content?: string) => {
         buildingFile = buildingFile.replace(token, content ?? '')
     }
 
-    replaceToken(TITLE_TOKEN, presentation.config.title)
-    replaceToken(AUTHOR_TOKEN, presentation.config.author)
-    replaceToken(PRESESENTATION_TOKEN, presentation.html)
+    replaceToken(TITLE_TOKEN, presentationConfig.title)
+    replaceToken(AUTHOR_TOKEN, presentationConfig.author)
+    replaceToken(PRESESENTATION_TOKEN, presentationHtml)
 
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
     replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal.entry))
@@ -77,8 +78,8 @@ function scriptWithSource(src: string) {
     return `<script src="${src}"></script>`
 }
 
-function generateStylesheets({ presentation, templateConfig }: HTMLPresentationBulidConfig): string {
-    const theme = getThemeMatching(templateConfig, presentation.config.theme)
+function generateStylesheets({ presentationConfig, templateConfig }: HTMLPresentationBulidConfig): string {
+    const theme = getThemeMatching(templateConfig, presentationConfig.theme)
     const styleSheetPaths = [
         ...templateConfig.reveal.stylesheets,
         ...(theme?.stylesheets ?? []),
@@ -95,16 +96,12 @@ function generateStylesheets({ presentation, templateConfig }: HTMLPresentationB
  * ---------- Build Slides ----------
  */
 
-export type HTMLPresentationContent = {
-    slidesHtml: string[]
+export function concatSlidesHtml(slidesHtml: string[]): string {
+    return slidesHtml.length === 0 ? '' : slidesHtml.reduce((prev, next) => `${prev}\n${next}`)
 }
 
-export function buildHTMLPresentationContent(
-    presentationContentBaseHtml: string,
-    content: HTMLPresentationContent
-): string {
-    const slides = content.slidesHtml.length === 0 ? '' : content.slidesHtml.reduce((prev, next) => `${prev}\n${next}`)
-    return presentationContentBaseHtml.replace(CONTENT_TOKEN, slides)
+export function buildHTMLPresentationContent(presentationContentBaseHtml: string, slidesHtml: string): string {
+    return presentationContentBaseHtml.replace(CONTENT_TOKEN, slidesHtml)
 }
 
 /*

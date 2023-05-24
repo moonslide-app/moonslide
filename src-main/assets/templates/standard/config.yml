@@ -1,26 +1,26 @@
-template: 
+template:
   entry: ./index.js
   presentation: ./presentation.html
   stylesheets:
     - ./reveal_js/plugin/highlight/monokai.css
     - ./styles/index.css
-reveal: 
+reveal:
   entry: ./reveal_js/dist/reveal.js
   stylesheets: ./reveal_js/dist/reveal.css
 plugins:
   - ./reveal_js/plugin/highlight/highlight.js
   - ./reveal_js/plugin/math/math.js
-themes: 
+themes:
   - name: black
     default: true
-    stylesheets: 
+    stylesheets:
       - ./reveal_js/dist/theme/black.css
       - ./styles/colors/black.css
   - name: white
-    stylesheets: 
+    stylesheets:
       - ./reveal_js/dist/theme/white.css
       - ./styles/colors/white.css
-layouts: 
+layouts:
   - name: base
     default: true
     path: ./layouts/base.html
@@ -58,4 +58,3 @@ layouts:
     path: ./layouts/title-grid-3-right.html
   - name: title-grid-4
     path: ./layouts/title-grid-4.html
-  
