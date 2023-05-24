@@ -1,4 +1,4 @@
-# Can parse with trailing comma
+# Can parse yaml and markdown
 
 ---
 ---
