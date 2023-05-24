@@ -1,14 +1,17 @@
-@top T { (YamlBlock MarkdownBlock)* }
+@top T { (YamlBlock MarkdownContent)* }
 
-YamlBlock { Delimiter Break YamlContent Delimiter }
-YamlContent { (Content Break)* }
-MarkdownBlock { (Break Content)* Break }
+YamlBlock { DelimiterStartLine Break YamlContent DelimiterStartLine Break }
+YamlContent { (NoDelimiterStartLine Break)* }
+MarkdownContent { (NoDelimiterStartLine Break)* }
 
-Content { Any* }
+DelimiterStartLine { StartDelimiter AnyContentLine }
+StartDelimiter { Delimiter }
+NoDelimiterStartLine { (Any AnyContentLine)? }
+AnyContentLine { (Delimiter | Any)* }
 
 @tokens { 
     Delimiter { "---" }
     Break { "\n" }
-    Any { ![\n] } 
+    Any { ![] } 
     @precedence { Delimiter, Break, Any }
 }

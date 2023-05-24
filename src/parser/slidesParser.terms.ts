@@ -2,9 +2,12 @@
 export const
   T = 1,
   YamlBlock = 2,
-  Delimiter = 3,
-  Break = 4,
-  YamlContent = 5,
-  Content = 6,
+  DelimiterStartLine = 3,
+  StartDelimiter = 4,
+  Delimiter = 5,
+  AnyContentLine = 6,
   Any = 7,
-  MarkdownBlock = 8
+  Break = 8,
+  YamlContent = 9,
+  NoDelimiterStartLine = 10,
+  MarkdownContent = 11

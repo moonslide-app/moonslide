@@ -40,8 +40,8 @@ const myTheme = EditorView.baseTheme({
 const mixedParser = parser.configure({
     wrap: parseMixed(node => {
         if (node.name === 'YamlContent') return { parser: StreamLanguage.define(yaml).parser }
-        else if (node.name === 'MarkdownBlock') return { parser: mdParser }
-        else if (node.name === 'Delimiter') return { parser: mdParser }
+        else if (node.name === 'MarkdownContent') return { parser: mdParser }
+        else if (node.name === 'StartDelimiter') return { parser: mdParser }
         return null
     }),
 })

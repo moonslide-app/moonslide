@@ -2,15 +2,15 @@
 import {LRParser} from "@lezer/lr"
 export const parser = LRParser.deserialize({
   version: 14,
-  states: "#xQQOPOOOVOPO'#C^O[OPO'#CeQQOPOOOaOPO,58xOlOPO'#CdOzOPO'#CdOOOO,59P,59POOOO-E6c-E6cOOOO'#Cg'#CgO!POPO'#CbO!XOPO'#CfO!^OPO'#CaO!iOPO1G.dOOOO,59S,59SO!nOPO,59OOOOO-E6f-E6fOOOO-E6e-E6eOOOO,59Q,59QOOOO-E6d-E6dOOOO7+$O7+$OP!|OPO'#Ch",
-  stateData: "#Z~ORPO~OSSO~OSTO~OVXORTPSUP~OVXORWXSUP]WX~OS_O~OVXOSUX~OSbO~OVXORTXSUP~ORdO~OVXORWaSUP]Wa~OVXOSUP~ORSVS~",
-  goto: "!_]PP^PPbePnqw}!XTQORR]SSZS[V^T_eRVQQRORWRQ[SRc[YYST[_eRaYQUQR`U",
-  nodeNames: "⚠ T YamlBlock Delimiter Break YamlContent Content Any MarkdownBlock",
-  maxTerm: 13,
+  states: "$OQQOPOOOOOO'#C`'#C`OVOPO'#C_ObOPO'#C^OgOPO'#ChQQOPOOOOOO'#Ci'#CiOuOPO'#CbOOOO,58y,58yO!QOPO,58xOVOPO'#CfO!]OPO'#CjO!bOPO'#CgOOOO,59S,59SOOOO-E6f-E6fOOOO-E6g-E6gO!pOPO'#CeOQOPO1G.dOOOO,59Q,59QOOOO,59U,59UOOOO-E6h-E6hO!{OPO7+$OOOOO<<Gj<<Gj",
+  stateData: "#V~OTPO~OTUOVUOWUP~OWXO~OVYOTZPWYP_ZP~OTUOVUOWUX~OVYOTXPWYP~OWcO~OVYOTZXWYP_ZX~OVYOTXXWYP~OWfO~OTWVW~",
+  goto: "!k_PP`dkPpPPvy!P!S!Y!aTSOTSROTReaVQOTaQWQRbYRaXXZSX[`R]SQTOR^TSVQYR_VQ[SQ`XTd[`",
+  nodeNames: "⚠ T YamlBlock DelimiterStartLine StartDelimiter Delimiter AnyContentLine Any Break YamlContent NoDelimiterStartLine MarkdownContent",
+  maxTerm: 15,
   skippedNodes: [0],
-  repeatNodeCount: 4,
-  tokenData: "!]~RVOYhYZmZ}h}!Or!O;'Sh;'S;=`!V<%lOh~mOV~~rOS~~wPV~}!Oz~}P}!O!Q~!VOR~~!YP;=`<%lh",
+  repeatNodeCount: 3,
+  tokenData: "!_~RVOYhYZmZ}h}!Ot!O;'Sh;'S;=`!X<%lOh~mOV~~tOW~V~~yPV~}!O|~!PP}!O!S~!XOT~~![P;=`<%lh",
   tokenizers: [0],
   topRules: {"T":[0,1]},
-  tokenPrec: 98
+  tokenPrec: 94
 })
