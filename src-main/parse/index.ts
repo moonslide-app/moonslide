@@ -109,7 +109,7 @@ function parseConfig(markdownContent: string) {
                 error => new YamlConfigError(idx + 1, error)
             )
         )
-        .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults ?? {}))
+        .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults))
 
     return {
         presentationConfig,
