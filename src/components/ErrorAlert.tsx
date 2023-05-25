@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { isWrappedError } from '../../src-shared/errors/WrappedError'
 import { useEditorStore } from '../store'
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
