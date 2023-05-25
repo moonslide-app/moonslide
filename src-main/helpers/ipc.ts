@@ -8,15 +8,10 @@ import {
     selectOutputFile,
     selectOutputFolder,
 } from './files'
-import { parse } from '../parse'
 import { exportPdf } from '../export/exportPdf'
 import { exportHtml } from '../export/exportHtml'
-import {
-    clearPreviewFolder,
-    openPreviewWindow,
-    preparePresentationForPreview,
-    reloadPreviewWindow,
-} from '../presentation/preview'
+import { parseAndCachePresentation } from '../store'
+import { wrapPromise } from '../../src-shared/errors/wrapPromise'
 
 export function registerIpc() {
     ipcMain.handle('dialog:selectFile', (_, title, filters) => selectFile(title, filters))
@@ -26,13 +21,9 @@ export function registerIpc() {
     ipcMain.handle('dialog:saveChanges', saveChangesDialog)
     ipcMain.handle('file:save', (_, filePath, content) => saveFile(filePath, content))
     ipcMain.handle('file:getContent', (_, filePath) => getFileContent(filePath))
-    ipcMain.handle('presentation:parse', (_, parseRequest) => parse(parseRequest))
-    ipcMain.handle('preview:clearOutFolder', clearPreviewFolder)
-    ipcMain.handle('preview:prepare', (_, presentation) => preparePresentationForPreview(presentation))
-    ipcMain.handle('preview:show', openPreviewWindow)
-    ipcMain.handle('preview:reload', reloadPreviewWindow)
-    ipcMain.handle('export:html', (_, exportRequest) => exportHtml(exportRequest))
-    ipcMain.handle('export:pdf', (_, outputPath) => exportPdf(outputPath))
+    ipcMain.handle('presentation:parse', (_, parseRequest) => wrapPromise(parseAndCachePresentation(parseRequest)))
+    ipcMain.handle('export:html', (_, exportRequest) => wrapPromise(exportHtml(exportRequest)))
+    ipcMain.handle('export:pdf', (_, outputPath) => wrapPromise(exportPdf(outputPath)))
 }
 
 export function unregisterIpc() {
@@ -44,10 +35,6 @@ export function unregisterIpc() {
     ipcMain.removeHandler('file:save')
     ipcMain.removeHandler('file:getContent')
     ipcMain.removeHandler('presentation:parse')
-    ipcMain.removeHandler('preview:clearOutFolder')
-    ipcMain.removeHandler('preview:prepare')
-    ipcMain.removeHandler('preview:show')
-    ipcMain.removeHandler('preview:reload')
     ipcMain.removeHandler('export:html')
     ipcMain.removeHandler('export:pdf')
 }

@@ -1,4 +1,6 @@
+---
 template: standard
+theme: black
 title: WBE-Einführung
 defaults:
    class: text-left position-center
@@ -75,4 +77,3 @@ layout: title-grid-3-right
 ***
 ### Architektur 3
 ![Architecture 2](images/architecture2.png) {.fragment .image-contain .image-top}
-

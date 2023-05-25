@@ -1,5 +1,4 @@
 import { shell, Menu, BrowserWindow, app } from 'electron'
-import { openPreviewWindow } from '../presentation/preview'
 import { TEMPLATE_STANDARD, getTemplateFolder } from '../helpers/assets'
 import { selectOutputFolder } from '../helpers/files'
 import { loadTemplate } from '../presentation/template'
@@ -89,7 +88,7 @@ export function buildTemplate(window: BrowserWindow): Electron.MenuItemConstruct
                 {
                     label: 'Open Preview Window',
                     accelerator: isMac ? 'Cmd+Enter' : 'Ctrl+Enter',
-                    click: () => openPreviewWindow(),
+                    click: () => window.webContents.send('menu:open-previews'),
                 },
                 {
                     label: 'Reload All Previews',

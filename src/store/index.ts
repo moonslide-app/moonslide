@@ -21,11 +21,14 @@ export type EditorStore = {
      */
     parsedPresentation: Presentation | undefined
     /**
-     * This array contains a number for every slide currently present
-     * in the `parsedPresentation`. The number represents the timestamp
-     * when the slide was last updated.
+     * Contains an error, if one occurred during parsing
      */
-    slidesLastUpdate: number[]
+    parsingError: unknown | undefined
+    /**
+     * This number represents the timestamp at which the template or theme
+     * of the presentation has been last modified.
+     */
+    lastFullUpdate: number
     /**
      * Changes the editing file path.
      * This will try to read the file from the new path and
@@ -40,10 +43,8 @@ export type EditorStore = {
     updateContent(newContent: string): Promise<void>
     /**
      * Updates the parsed presentation in the store.
-     * This will also update the `slidesLastUpdate`.
      * Depending on the changes, this function will make sure that
-     * the presentation (and template) files are updated by calling the
-     * appropriate ipc functions in the backend.
+     * a full reload is scheduled by updating `lastFullUpdate`.
      */
     updateParsedPresentation(newContent: Presentation | undefined): Promise<void>
     /**
@@ -60,10 +61,6 @@ export type EditorStore = {
      */
     saveOrDiscardChanges(): Promise<void>
     /**
-     * This methods calls the ipc function to rebuild the presentation (and preview) files.
-     */
-    preparePresentation(): Promise<void>
-    /**
      * Exports the presentation as html.
      * @param standalone If `true` the whole template folder is copied with the presentation.
      */
@@ -71,7 +68,7 @@ export type EditorStore = {
 }
 
 let debounceTimeout: number | undefined = undefined
-const DEBOUNCE_INTERVAL = 1000
+const DEBOUNCE_INTERVAL = 100
 
 export const useEditorStore = create<EditorStore>()(
     persist(
@@ -81,7 +78,8 @@ export const useEditorStore = create<EditorStore>()(
             editingFileSaved: true,
             content: '',
             parsedPresentation: undefined,
-            slidesLastUpdate: [],
+            parsingError: undefined,
+            lastFullUpdate: 0,
             updateContent: async newContent => {
                 const { editingFilePath } = get()
                 set(state => ({ ...state, content: newContent, editingFileSaved: false }))
@@ -94,31 +92,28 @@ export const useEditorStore = create<EditorStore>()(
                             markdownFilePath: editingFilePath ?? '.',
                             imageMode: 'preview',
                         })
-                        .then(get().updateParsedPresentation)
-                        .catch(error => console.warn(error))
+                        .then(parsedPresentation => {
+                            set(state => ({ ...state, parsingError: undefined }))
+                            get().updateParsedPresentation(parsedPresentation)
+                        })
+                        .catch(parsingError => set(state => ({ ...state, parsingError })))
                 }, DEBOUNCE_INTERVAL)
             },
             updateParsedPresentation: async newParsedPresentation => {
-                const { parsedPresentation, slidesLastUpdate } = get()
+                const { parsedPresentation, lastFullUpdate } = get()
                 set(state => ({ ...state, parsedPresentation: newParsedPresentation }))
 
-                if (newParsedPresentation) {
-                    await get().preparePresentation()
-                    window.ipc.presentation.reloadPreviewWindow()
-                } else {
-                    await window.ipc.presentation.clearPreviewFolder()
-                }
-
+                const newTimestamp = Date.now()
                 const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
-                const newSlidesLastUpdate = comparison.slideChanges.map((update, idx) =>
-                    update ? Date.now() : slidesLastUpdate[idx]
-                )
-                set(state => ({ ...state, slidesLastUpdate: newSlidesLastUpdate }))
+                const newLastFullUpdate =
+                    comparison.templateChange || comparison.themeChange ? newTimestamp : lastFullUpdate
+                set(state => ({
+                    ...state,
+                    lastFullUpdate: newLastFullUpdate,
+                }))
             },
             async reloadAllPreviews() {
-                await get().preparePresentation()
-                set(state => ({ slidesLastUpdate: state.slidesLastUpdate.map(() => Date.now()) }))
-                await window.ipc.presentation.reloadPreviewWindow()
+                set(state => ({ ...state, lastFullUpdate: Date.now() }))
             },
             async changeEditingFile(newFilePath, updateContent = true) {
                 if (updateContent) {
@@ -148,15 +143,6 @@ export const useEditorStore = create<EditorStore>()(
                     const saveFile = await window.ipc.files.showSaveChangesDialog()
                     if (saveFile) await saveContentToEditingFile()
                 }
-            },
-            async preparePresentation() {
-                const { parsedPresentation } = get()
-                if (parsedPresentation) {
-                    await window.ipc.presentation.preparePresentationForPreview(parsedPresentation)
-                } else
-                    console.log(
-                        'Could not prepare presentation, either parsedPresentation or editingFilePath was nullish.'
-                    )
             },
             async exportHTMLPresentation(standalone = true) {
                 const { editingFilePath, content } = get()
