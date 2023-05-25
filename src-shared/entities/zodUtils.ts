@@ -27,5 +27,5 @@ export const gracefulStringSchema = z
     })
 
 export function nullishToOptional<T>(nullish: T | null | undefined): T | undefined {
-    return nullish ?? undefined
+    return !nullish ? undefined : nullish
 }

@@ -23,7 +23,6 @@ function App() {
             <MenuCallbacks />
             <PreviewWindow />
             <p className="text-sm font-medium">Editing File: {editingFilePath}</p>
-            <ErrorAlert />
             <div className="flex-grow">
                 <Allotment separator={false}>
                     <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
@@ -34,6 +33,7 @@ function App() {
                     </Allotment.Pane>
                 </Allotment>
             </div>
+            <ErrorAlert />
         </div>
     )
 }

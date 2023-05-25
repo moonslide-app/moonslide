@@ -4,7 +4,7 @@ import { slideConfigSchema } from './SlideConfig'
 import { gracefulStringSchema, nullishToOptional } from './zodUtils'
 
 export const presentationConfigSchema = z.object({
-    template: gracefulStringSchema.default(TEMPLATE_STANDARD),
+    template: gracefulStringSchema.transform(input => (input ? input : TEMPLATE_STANDARD)),
     theme: gracefulStringSchema,
     title: gracefulStringSchema,
     author: gracefulStringSchema,

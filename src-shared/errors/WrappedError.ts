@@ -1,24 +1,57 @@
-import { FIRST_SLIDE_SEPERATOR } from '../../src-main/parse'
-
 /*
  * ---------- Wrapped Error ----------
  */
 
-export class WrappedError extends Error {
-    readonly underyingError?: unknown
+import { YAMLError } from 'yaml'
+import { ZodError } from 'zod'
+
+export class WrappedError {
+    readonly type = 'WrappedError'
+    readonly message: string
+    readonly underlyingErrorMessage?: string
 
     constructor(message: string, underlyingError?: unknown) {
-        super(message)
-        this.name = 'WrappedError'
-        this.underyingError = underlyingError
+        this.message = message
+        this.underlyingErrorMessage = extractUnderlyingErrorMessage(underlyingError)
     }
 }
 
-export function wrapErrorIfThrows<T, U extends Error>(action: () => T, wrap: (error: unknown) => U): T {
+export function isWrappedError(object: unknown): object is WrappedError {
+    const error = object as WrappedError
+    return (
+        typeof error === 'object' &&
+        error.type === 'WrappedError' &&
+        typeof error.message === 'string' &&
+        (typeof error.underlyingErrorMessage === 'string' || typeof error.underlyingErrorMessage === 'undefined')
+    )
+}
+
+export function wrapErrorIfThrows<T, U extends WrappedError>(action: () => T, wrap: (error: unknown) => U): T {
     try {
         return action()
     } catch (error) {
         throw wrap(error)
+    }
+}
+
+function extractUnderlyingErrorMessage(error: unknown): string | undefined {
+    if (!error) return undefined
+
+    if (error instanceof YAMLError) {
+        console.log('Yaml Error')
+        return error.message
+    } else if (error instanceof ZodError) {
+        const { fieldErrors } = error.flatten()
+        return Object.entries(fieldErrors)
+            .map(([key, value]) => {
+                return `- Property '${key}': ${value?.join(', ') ?? 'Unknown error'}`
+            })
+            .join('\n')
+        return
+    } else if (error instanceof Error) {
+        return 'Other Error'
+    } else {
+        return 'An unknown error occurred.'
     }
 }
 
@@ -27,8 +60,8 @@ export function wrapErrorIfThrows<T, U extends Error>(action: () => T, wrap: (er
  */
 
 export class MissingStartSeparatorError extends WrappedError {
-    constructor() {
-        super(`Missing start seperator '${FIRST_SLIDE_SEPERATOR}' at the start of the file.`)
+    constructor(separator: string) {
+        super(`Missing start seperator '${separator}' at the start of the file.`)
     }
 }
 

@@ -96,10 +96,7 @@ export const useEditorStore = create<EditorStore>()(
                             set(state => ({ ...state, parsingError: undefined }))
                             get().updateParsedPresentation(parsedPresentation)
                         })
-                        .catch(parsingError => {
-                            console.log(parsingError)
-                            set(state => ({ ...state, parsingError }))
-                        })
+                        .catch(parsingError => set(state => ({ ...state, parsingError })))
                 }, DEBOUNCE_INTERVAL)
             },
             updateParsedPresentation: async newParsedPresentation => {

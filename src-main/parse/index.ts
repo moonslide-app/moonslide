@@ -87,7 +87,7 @@ function parseConfig(markdownContent: string) {
     const hasContent = markdownContent && markdownContent.trim()
 
     if (hasContent && !markdownContent.startsWith(FIRST_SLIDE_SEPERATOR)) {
-        throw new MissingStartSeparatorError()
+        throw new MissingStartSeparatorError(FIRST_SLIDE_SEPERATOR)
     }
 
     const withoutFirstSeperator = markdownContent.substring(FIRST_SLIDE_SEPERATOR.length)
@@ -99,20 +99,20 @@ function parseConfig(markdownContent: string) {
     const jsonConfigParts = yamlConfigParts.map((yml, idx) =>
         wrapErrorIfThrows(
             () => parseSlideYaml(yml),
-            error => new YamlConfigError(idx, error)
+            error => new YamlConfigError(idx + 1, error)
         )
     )
 
     const presentationConfig = wrapErrorIfThrows(
         () => parsePresentationConfig(jsonConfigParts[0]),
-        err => new YamlConfigError(0, err)
+        err => new YamlConfigError(1, err)
     )
 
     const slidesConfig = jsonConfigParts
         .map((json, idx) =>
             wrapErrorIfThrows(
                 () => parseSlideConfig(json),
-                error => new YamlConfigError(idx, error)
+                error => new YamlConfigError(idx + 1, error)
             )
         )
         .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults ?? {}))
