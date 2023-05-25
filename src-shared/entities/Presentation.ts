@@ -16,14 +16,9 @@ export type Presentation = {
      */
     contentHtml: string
     /**
-     * The parsed html content of all slides plus its wrapper
-     */
-    presentationHtml: string
-    /**
-     * Full HTML containing each slide for previewing
+     * Full HTML containing all slides of the presentation.
      */
     previewHtml: string
-
     resolvedPaths: {
         /**
          * The absolute path of this presentations template folder
@@ -59,10 +54,6 @@ export type Slide = {
      * The parsed html content of the slide
      */
     contentHtml: string
-    /**
-     * The parsed html content of the slide plus its wrapper
-     */
-    presentationHtml: string
     /**
      * A full presentation HTML containing just this slide,
      * used for previews.

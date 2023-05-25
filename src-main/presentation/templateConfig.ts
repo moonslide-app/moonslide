@@ -1,3 +1,4 @@
+import { gracefulStringSchema } from '../../src-shared/entities/zodUtils'
 import { parse } from 'yaml'
 import { z } from 'zod'
 
@@ -12,7 +13,7 @@ const stringOrArray = z
 
 const templateConfigSchema = z.object({
     entry: z.string(),
-    slide: z.string(),
+    slide: gracefulStringSchema,
     reveal: z.object({
         entry: z.string(),
         stylesheets: stringOrArray,
@@ -47,7 +48,7 @@ export function parseTemplateConfig(yamlString: string): TemplateConfig {
 export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: string) => string): TemplateConfig {
     return {
         entry: mapPath(config.entry),
-        slide: mapPath(config.slide),
+        slide: config.slide ? mapPath(config.slide) : undefined,
         reveal: {
             entry: mapPath(config.reveal.entry),
             stylesheets: config.reveal.stylesheets.map(mapPath),
