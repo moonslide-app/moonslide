@@ -1,15 +1,15 @@
 import { FIRST_SLIDE_SEPERATOR } from '../../src-main/parse'
 
 /*
- * ---------- Wrapping Error ----------
+ * ---------- Wrapped Error ----------
  */
 
-export class WrappingError extends Error {
+export class WrappedError extends Error {
     readonly underyingError?: unknown
 
     constructor(message: string, underlyingError?: unknown) {
         super(message)
-        this.name = 'WrappingError'
+        this.name = 'WrappedError'
         this.underyingError = underlyingError
     }
 }
@@ -23,16 +23,16 @@ export function wrapErrorIfThrows<T, U extends Error>(action: () => T, wrap: (er
 }
 
 /*
- * ---------- Wrapping Error Implementations ----------
+ * ---------- Wrapped Error Implementations ----------
  */
 
-export class MissingStartSeparatorError extends WrappingError {
+export class MissingStartSeparatorError extends WrappedError {
     constructor() {
         super(`Missing start seperator '${FIRST_SLIDE_SEPERATOR}' at the start of the file.`)
     }
 }
 
-export class YamlConfigError extends WrappingError {
+export class YamlConfigError extends WrappedError {
     readonly slideNumber: number
 
     constructor(slideNumber: number, underlyingError: unknown) {
@@ -41,7 +41,7 @@ export class YamlConfigError extends WrappingError {
     }
 }
 
-export class TemplateNotFoundError extends WrappingError {
+export class TemplateNotFoundError extends WrappedError {
     readonly templatePath: string
 
     constructor(templatePath: string, underlyingError: unknown) {
@@ -50,7 +50,7 @@ export class TemplateNotFoundError extends WrappingError {
     }
 }
 
-export class TemplateConfigError extends WrappingError {
+export class TemplateConfigError extends WrappedError {
     constructor(underlyingError: unknown) {
         super('The is an error in the config.yml file of the template.', underlyingError)
     }

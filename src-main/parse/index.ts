@@ -12,7 +12,7 @@ import {
 } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage } from './imagePath'
-import { MissingStartSeparatorError, YamlConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappingError'
+import { MissingStartSeparatorError, YamlConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
 
 export const FIRST_SLIDE_SEPERATOR = '---'
 const SLIDE_SEPARATOR = '\n---'

@@ -5,7 +5,7 @@ import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import sanitizeHtml from './sanitize'
 import { getLocalFileUrl } from '../helpers/protocol'
-import { TemplateConfigError, TemplateNotFoundError, wrapErrorIfThrows } from '../../src-shared/errors/WrappingError'
+import { TemplateConfigError, TemplateNotFoundError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
