@@ -4,9 +4,9 @@ export const stringOrArraySchema = z
     .string()
     .or(z.string().array())
     .nullish()
-    .transform(nullishToOptional)
     .transform(input => {
         if (typeof input === 'string') return [input]
+        else if (!input) return []
         else return input
     })
 
@@ -18,4 +18,8 @@ export const gracefulStringSchema = z.string().nullish().transform(nullishToOpti
 
 export function nullishToOptional<T>(nullish: T | null | undefined): T | undefined {
     return !nullish ? undefined : nullish
+}
+
+export function nullishToArray<T>(nullish: T[] | null | undefined): T[] {
+    return !nullish ? [] : nullish
 }

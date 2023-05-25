@@ -1,41 +1,39 @@
-import { gracefulStringSchema } from '../../src-shared/entities/zodUtils'
+import {
+    gracefulStringSchema,
+    nullishToArray,
+    nullishToOptional,
+    stringOrArraySchema,
+} from '../../src-shared/entities/zodUtils'
 import { parse } from 'yaml'
 import { z } from 'zod'
-
-const stringOrArray = z
-    .string()
-    .array()
-    .or(z.string())
-    .transform(input => {
-        if (typeof input === 'string') return [input]
-        else return input
-    })
 
 const templateConfigSchema = z.object({
     entry: z.string(),
     slide: gracefulStringSchema,
     reveal: z.object({
         entry: z.string(),
-        stylesheets: stringOrArray,
+        stylesheets: stringOrArraySchema,
     }),
-    stylesheets: stringOrArray.optional(),
-    scripts: stringOrArray.optional(),
+    stylesheets: stringOrArraySchema,
+    scripts: stringOrArraySchema,
     layouts: z
         .object({
             name: z.string(),
             path: z.string(),
-            default: z.boolean().optional(),
+            default: z.boolean().nullish().transform(nullishToOptional),
         })
         .array()
-        .optional(),
+        .nullish()
+        .transform(nullishToArray),
     themes: z
         .object({
             name: z.string(),
-            default: z.boolean().optional(),
-            stylesheets: stringOrArray,
+            default: z.boolean().nullish().transform(nullishToOptional),
+            stylesheets: stringOrArraySchema,
         })
         .array()
-        .optional(),
+        .nullish()
+        .transform(nullishToArray),
 })
 
 export type TemplateConfig = z.infer<typeof templateConfigSchema>
@@ -53,9 +51,9 @@ export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: s
             entry: mapPath(config.reveal.entry),
             stylesheets: config.reveal.stylesheets.map(mapPath),
         },
-        stylesheets: config.stylesheets?.map(mapPath),
-        scripts: config.scripts?.map(mapPath),
-        layouts: config.layouts?.map(layout => ({ ...layout, path: mapPath(layout.path) })),
+        stylesheets: config.stylesheets.map(mapPath),
+        scripts: config.scripts.map(mapPath),
+        layouts: config.layouts.map(layout => ({ ...layout, path: mapPath(layout.path) })),
         themes: config.themes?.map(theme => ({ ...theme, stylesheets: theme.stylesheets.map(mapPath) })),
     }
 }
