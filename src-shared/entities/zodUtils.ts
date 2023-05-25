@@ -16,15 +16,7 @@ export const stringOrArraySchema = z
  * This should try to allow almost all string like input values from config files
  * without raising an error.
  */
-export const gracefulStringSchema = z
-    .string()
-    .or(z.number())
-    .nullish()
-    .transform(nullishToOptional)
-    .transform(input => {
-        if (typeof input === 'number') return input.toString()
-        else return input
-    })
+export const gracefulStringSchema = z.string().nullish().transform(nullishToOptional)
 
 export function nullishToOptional<T>(nullish: T | null | undefined): T | undefined {
     return !nullish ? undefined : nullish

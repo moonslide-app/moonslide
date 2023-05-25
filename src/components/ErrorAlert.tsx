@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react'
-import {
-    MissingStartSeparatorError,
-    WrappedError,
-    YamlConfigError,
-    isWrappedError,
-} from '../../src-shared/errors/WrappedError'
+import { isWrappedError } from '../../src-shared/errors/WrappedError'
 import { useEditorStore } from '../store'
-import { Button } from './ui/button'
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 
 export function ErrorAlert() {

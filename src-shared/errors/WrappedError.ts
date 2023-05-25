@@ -38,18 +38,18 @@ function extractUnderlyingErrorMessage(error: unknown): string | undefined {
     if (!error) return undefined
 
     if (error instanceof YAMLError) {
-        console.log('Yaml Error')
         return error.message
     } else if (error instanceof ZodError) {
-        const { fieldErrors } = error.flatten()
-        return Object.entries(fieldErrors)
-            .map(([key, value]) => {
-                return `- Property '${key}': ${value?.join(', ') ?? 'Unknown error'}`
-            })
-            .join('\n')
-        return
+        const { fieldErrors, formErrors } = error.flatten()
+        const formattedFormErrors =
+            formErrors.length > 0 ? [`- The input is in the wrong format: ${formErrors.join(', ')}`] : []
+        const formattedFieldErrors = Object.entries(fieldErrors).map(([key, value]) => {
+            return `- Property '${key}': ${value?.join(', ') ?? 'Unknown error'}`
+        })
+
+        return [...formattedFormErrors, ...formattedFieldErrors].join('\n')
     } else if (error instanceof Error) {
-        return 'Other Error'
+        return error.message
     } else {
         return 'An unknown error occurred.'
     }
