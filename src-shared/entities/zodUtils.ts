@@ -11,10 +11,8 @@ export const stringOrArraySchema = z
     })
 
 /**
- * This input schema allows string, number, null, undefined and
+ * This input schema allows string, null, undefined and
  * transforms it to string or undefined.
- * This should try to allow almost all string like input values from config files
- * without raising an error.
  */
 export const gracefulStringSchema = z.string().nullish().transform(nullishToOptional)
 
