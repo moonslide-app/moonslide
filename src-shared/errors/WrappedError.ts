@@ -42,9 +42,9 @@ function extractUnderlyingErrorMessage(error: unknown): string | undefined {
     } else if (error instanceof ZodError) {
         const { fieldErrors, formErrors } = error.flatten()
         const formattedFormErrors =
-            formErrors.length > 0 ? [`- The input is in the wrong format: ${formErrors.join(', ')}`] : []
+            formErrors.length > 0 ? [`- The input is in the wrong format: ${formErrors.join(', ')}.`] : []
         const formattedFieldErrors = Object.entries(fieldErrors).map(([key, value]) => {
-            return `- Property '${key}': ${value?.join(', ') ?? 'Unknown error'}`
+            return `- Property '${key}': ${value?.join(', ') ?? 'Unknown error'}.`
         })
 
         return [...formattedFormErrors, ...formattedFieldErrors].join('\n')
@@ -69,7 +69,7 @@ export class YamlConfigError extends WrappedError {
     readonly slideNumber: number
 
     constructor(slideNumber: number, underlyingError: unknown) {
-        super(`The YAML config of slide number ${slideNumber} contains an error.`, underlyingError)
+        super(`The YAML config of slide ${slideNumber} contains an error.`, underlyingError)
         this.slideNumber = slideNumber
     }
 }

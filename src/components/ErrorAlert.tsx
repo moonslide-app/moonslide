@@ -23,10 +23,6 @@ export function ErrorAlert() {
     const hasDetails = detailedMessage !== undefined
     const [showDetails, setShowDetails] = useState(false)
 
-    useEffect(() => {
-        if (!isDisplayed || !hasDetails) setShowDetails(false)
-    }, [isDisplayed, hasDetails])
-
     return isDisplayed ? (
         <div className="bg-red-100 text-red-500">
             <div className="flex justify-between items-baseline space-x-4 border-b border-red-200 p-2">
