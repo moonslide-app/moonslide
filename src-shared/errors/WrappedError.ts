@@ -89,5 +89,11 @@ export class TemplateConfigError extends WrappedError {
     }
 }
 
-// TODO: All template functions like getPresentationHtml(),
-// getLayouts() could produce custom errors.
+export class TemplatePathReferenceError extends WrappedError {
+    readonly notFoundPath: string
+
+    constructor(notFoundPath: string) {
+        super(`The template references the file '${notFoundPath}' which was not found.`)
+        this.notFoundPath = notFoundPath
+    }
+}
