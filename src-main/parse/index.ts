@@ -131,7 +131,16 @@ function parseSlideYaml(content: string) {
     while (true) {
         try {
             const parsed = yamlParse(strippedContent)
-            // ignore other input if it is not an object
+
+            // This clause catches the case, that a seperator is
+            // beeing typed (-) and parsed as an array
+            if (Array.isArray(parsed) && parsed.length == 1 && !parsed[0]) {
+                return undefined
+            }
+
+            // If it is not an object, it means that it is likely
+            // a primitive value (which means the user is typing the first value)
+            // we don't want to display an error in this case and return undefined
             if (typeof parsed === 'object') return parsed
             else return undefined
         } catch (error) {
