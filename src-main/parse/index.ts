@@ -132,7 +132,7 @@ function parseSlideYaml(content: string) {
         try {
             const parsed = yamlParse(strippedContent)
 
-            // This clause catches the case, that a seperator is
+            // This clause catches the case, that a separator is
             // beeing typed (-) and parsed as an array
             if (Array.isArray(parsed) && parsed.length == 1 && !parsed[0]) {
                 return undefined
