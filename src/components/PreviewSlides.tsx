@@ -25,7 +25,7 @@ export function PreviewSlides() {
                 slides.map((slide, idx) => (
                     <PreviewSlide
                         presentationHtml={(cachedPresentationsHtml && cachedPresentationsHtml[idx]) ?? ''}
-                        slideHtml={slide.contentHtml ?? ''}
+                        slideHtml={slide.slideHtml ?? ''}
                     ></PreviewSlide>
                 ))}
         </div>
