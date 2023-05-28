@@ -41,23 +41,23 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
             localImages.push(...images)
 
             const htmlLayout = getLayout(slideConfig.layout)
-            const contentHtml = buildHTMLSlide(htmlLayout, slideWrapperHtml, { slots, slideConfig })
+            const slideHtml = buildHTMLSlide(htmlLayout, slideWrapperHtml, { slots, slideConfig })
 
             const previewHtml = await buildHTMLPresentation({
-                contentHtml,
+                slidesHtml: slideHtml,
                 presentationConfig,
                 templateConfig,
                 type: 'preview-small',
             })
 
-            return { config: slideConfig, markdown, contentHtml, previewHtml }
+            return { config: slideConfig, markdown, slideHtml, previewHtml }
         })
     )
 
-    const contentHtml = concatSlidesHtml(parsedSlides.map(slide => slide.contentHtml))
+    const slidesHtml = concatSlidesHtml(parsedSlides.map(slide => slide.slideHtml))
 
     const previewHtml = await buildHTMLPresentation({
-        contentHtml,
+        slidesHtml,
         presentationConfig,
         templateConfig,
         type: 'preview-fullscreen',
@@ -66,7 +66,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
     return {
         config: presentationConfig,
         slides: parsedSlides,
-        contentHtml,
+        slidesHtml,
         previewHtml,
         layoutsHtml: layouts.layoutsHtml,
         images: localImages,

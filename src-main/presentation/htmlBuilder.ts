@@ -13,7 +13,7 @@ import { PresentationConfig } from '../../src-shared/entities/PresentationConfig
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
 const TITLE_TOKEN = '@@title@@'
 const AUTHOR_TOKEN = '@@author@@'
-const PRESESENTATION_TOKEN = '@@presentation@@'
+const SLIDES_TOKEN = '@@slides@@'
 const REVEAL_TOKEN = '@@reveal@@'
 const PLUGINS_TOKEN = '@@plugins@@'
 const REVEAL_EDITOR_TOKEN = '@@reveal-editor@@'
@@ -30,7 +30,7 @@ const LAYOUT_SLOT_TOKEN = '@@slot@@'
  */
 
 export type HTMLPresentationBulidConfig = {
-    contentHtml: string
+    slidesHtml: string
     presentationConfig: PresentationConfig
     templateConfig: TemplateConfig
     type: HTMLPresentationBuildType
@@ -39,7 +39,7 @@ export type HTMLPresentationBulidConfig = {
 export type HTMLPresentationBuildType = 'export' | 'preview-small' | 'preview-fullscreen'
 
 export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
-    const { contentHtml, presentationConfig, templateConfig } = config
+    const { slidesHtml, presentationConfig, templateConfig } = config
 
     let buildingFile = await loadAssetContent(BASE_FILE_NAME)
     const replaceToken = (token: string, content?: string) => {
@@ -48,7 +48,7 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
 
     replaceToken(TITLE_TOKEN, presentationConfig.title)
     replaceToken(AUTHOR_TOKEN, presentationConfig.author)
-    replaceToken(PRESESENTATION_TOKEN, contentHtml)
+    replaceToken(SLIDES_TOKEN, slidesHtml)
 
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
     replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal.entry))

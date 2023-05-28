@@ -11,8 +11,7 @@ export function openPreviewWindow() {
 
 export function PreviewWindow() {
     const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
-
-    const currentContentHtml = useEditorStore(state => state.parsedPresentation?.contentHtml)
+    const currentSlidesHtml = useEditorStore(state => state.parsedPresentation?.slidesHtml)
 
     useEffect(() => {
         if (currentPreviewWindow) {
@@ -28,12 +27,12 @@ export function PreviewWindow() {
         if (currentPreviewWindow) {
             const message = {
                 name: 'reveal-editor:update',
-                newSlides: currentContentHtml,
+                newSlides: currentSlidesHtml,
             }
 
             currentPreviewWindow.postMessage(message, '*')
         }
-    }, [currentContentHtml])
+    }, [currentSlidesHtml])
 
     return <></>
 }
