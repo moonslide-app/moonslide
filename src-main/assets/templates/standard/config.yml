@@ -1,15 +1,22 @@
-template:
-  entry: ./index.js
-  presentation: ./presentation.html
-  stylesheets:
-    - ./reveal_js/plugin/highlight/monokai.css
-    - ./styles/index.css
-reveal:
+# Entry point script which must call `RevealEditor.configure()`. 
+entry: ./index.js
+# Entry point script and stylesheet(s) of the reveal.js distribution.
+reveal: 
   entry: ./reveal_js/dist/reveal.js
   stylesheets: ./reveal_js/dist/reveal.css
-plugins:
+# Additional stylesheets which are loaded after reveal and theme stylesheets.
+stylesheets:
+  - ./reveal_js/plugin/highlight/monokai.css
+  - ./styles/index.css
+# Additional scripts which are loaded after the reveal entry script, but before the entry script
+# This property is suitable to specify additional (reveal.js) plugins.
+scripts: 
   - ./reveal_js/plugin/highlight/highlight.js
   - ./reveal_js/plugin/math/math.js
+# HTML file which allows to define a wrapper around all slides. 
+# Must contain a `@@content@@` token where the slide content will be placed.
+slide: ./slide.html
+# Definition of themes which add additional stylesheets.
 themes:
   - name: black
     default: true
@@ -20,6 +27,8 @@ themes:
     stylesheets:
       - ./reveal_js/dist/theme/white.css
       - ./styles/colors/white.css
+# Definition of layouts which are used to build the slides.
+# Every layout must contain at least one `@@slot@@` token where the content is placed.
 layouts:
   - name: base
     default: true

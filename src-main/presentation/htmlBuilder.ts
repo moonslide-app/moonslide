@@ -13,13 +13,13 @@ import { PresentationConfig } from '../../src-shared/entities/PresentationConfig
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
 const TITLE_TOKEN = '@@title@@'
 const AUTHOR_TOKEN = '@@author@@'
-const PRESESENTATION_TOKEN = '@@presentation@@'
+const SLIDES_TOKEN = '@@slides@@'
 const REVEAL_TOKEN = '@@reveal@@'
 const PLUGINS_TOKEN = '@@plugins@@'
 const REVEAL_EDITOR_TOKEN = '@@reveal-editor@@'
 const ENTRY_TOKEN = '@@entry@@'
 
-// presentation content
+// slide content
 const CONTENT_TOKEN = '@@content@@'
 
 // layout
@@ -30,7 +30,7 @@ const LAYOUT_SLOT_TOKEN = '@@slot@@'
  */
 
 export type HTMLPresentationBulidConfig = {
-    presentationHtml: string
+    slidesHtml: string
     presentationConfig: PresentationConfig
     templateConfig: TemplateConfig
     type: HTMLPresentationBuildType
@@ -39,7 +39,7 @@ export type HTMLPresentationBulidConfig = {
 export type HTMLPresentationBuildType = 'export' | 'preview-small' | 'preview-fullscreen'
 
 export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig): Promise<string> {
-    const { presentationHtml, presentationConfig, templateConfig } = config
+    const { slidesHtml, presentationConfig, templateConfig } = config
 
     let buildingFile = await loadAssetContent(BASE_FILE_NAME)
     const replaceToken = (token: string, content?: string) => {
@@ -48,13 +48,13 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
 
     replaceToken(TITLE_TOKEN, presentationConfig.title)
     replaceToken(AUTHOR_TOKEN, presentationConfig.author)
-    replaceToken(PRESESENTATION_TOKEN, presentationHtml)
+    replaceToken(SLIDES_TOKEN, slidesHtml)
 
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
     replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal.entry))
-    replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.plugins))
+    replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.scripts))
     replaceToken(REVEAL_EDITOR_TOKEN, await getRevealEditorScriptContent(config.type))
-    replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.template.entry))
+    replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.entry))
 
     return buildingFile
 }
@@ -83,7 +83,7 @@ function generateStylesheets({ presentationConfig, templateConfig }: HTMLPresent
     const styleSheetPaths = [
         ...templateConfig.reveal.stylesheets,
         ...(theme?.stylesheets ?? []),
-        ...(templateConfig.template.stylesheets ?? []),
+        ...(templateConfig.stylesheets ?? []),
     ]
 
     if (styleSheetPaths.length == 0) return ''
@@ -100,20 +100,21 @@ export function concatSlidesHtml(slidesHtml: string[]): string {
     return slidesHtml.length === 0 ? '' : slidesHtml.reduce((prev, next) => `${prev}\n${next}`)
 }
 
-export function buildHTMLPresentationContent(presentationContentBaseHtml: string, slidesHtml: string): string {
-    return presentationContentBaseHtml.replace(CONTENT_TOKEN, slidesHtml)
-}
-
 /*
- * ---------- Build Layout ----------
+ * ---------- Build Slide ----------
  */
 
-export type HTMLLayoutContent = {
+export type HTMLSlideContent = {
     slots: string[]
     slideConfig: SlideConfig
 }
 
-export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTMLLayoutContent): string {
+export function buildHTMLSlide(
+    layoutFileHtml: string | undefined,
+    slideWrapperHtml: string | undefined,
+    content: HTMLSlideContent
+): string {
+    const slideWrapper = slideWrapperHtml ?? CONTENT_TOKEN
     let buildingFile = layoutFileHtml ?? LAYOUT_SLOT_TOKEN
     const occurences = (buildingFile.match(RegExp(LAYOUT_SLOT_TOKEN, 'g')) || []).length
 
@@ -138,6 +139,9 @@ export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTM
         })
     }
 
+    // Wrap slide into the slideWrapper
+    buildingFile = slideWrapper.replace(CONTENT_TOKEN, buildingFile)
+
     const classes = [...(content.slideConfig.class ?? [])]
     const stylesObject = { ...(content.slideConfig.style ?? {}) }
     const styles = Object.entries(stylesObject).map(([key, value]) => `${key}: ${value};`)
@@ -152,6 +156,5 @@ export function buildHTMLLayout(layoutFileHtml: string | undefined, content: HTM
     sectionOpenTag += '>'
 
     buildingFile = `${sectionOpenTag}${buildingFile}</section>`
-
     return buildingFile
 }

@@ -14,16 +14,11 @@ export type Presentation = {
     /**
      * The parsed html content of all slides
      */
-    contentHtml: string
+    slidesHtml: string
     /**
-     * The parsed html content of all slides plus its wrapper
-     */
-    presentationHtml: string
-    /**
-     * Full HTML containing each slide for previewing
+     * Full HTML containing all slides of the presentation.
      */
     previewHtml: string
-
     resolvedPaths: {
         /**
          * The absolute path of this presentations template folder
@@ -58,11 +53,7 @@ export type Slide = {
     /**
      * The parsed html content of the slide
      */
-    contentHtml: string
-    /**
-     * The parsed html content of the slide plus its wrapper
-     */
-    presentationHtml: string
+    slideHtml: string
     /**
      * A full presentation HTML containing just this slide,
      * used for previews.
@@ -87,7 +78,7 @@ export function comparePresentations(
         newVersion?.slides.map((slide, idx) => {
             if (templateChange || themeChange) return true
             const lastVersionSlide = lastVersion?.slides[idx]
-            return lastVersionSlide?.contentHtml !== slide.contentHtml
+            return lastVersionSlide?.slideHtml !== slide.slideHtml
         }) ?? []
     return { templateChange, themeChange, slideChanges }
 }

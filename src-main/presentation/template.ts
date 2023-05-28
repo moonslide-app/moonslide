@@ -37,9 +37,10 @@ export type Template = {
      */
     getConfigLocalFile(): TemplateConfig
     /**
-     * Returns the content of the presentation html file.
+     * Returns the content of the slide html file,
+     * which is used to wrap every slide.
      */
-    getPresentationHtml(): Promise<string>
+    getSlideHtml(): Promise<string | undefined>
     /**
      * Loads all layouts of the template.
      */
@@ -106,9 +107,12 @@ class TemplateImpl implements Template {
         return mapTemplateConfigPaths(this.config, getLocalFileUrl)
     }
 
-    async getPresentationHtml() {
-        const fileContents = (await readFile(this.config.template.presentation)).toString()
-        return sanitizeHtml(fileContents)
+    async getSlideHtml() {
+        if (this.config.slide === undefined) return undefined
+        else {
+            const fileContents = (await readFile(this.config.slide)).toString()
+            return sanitizeHtml(fileContents)
+        }
     }
 
     async getLayouts() {
