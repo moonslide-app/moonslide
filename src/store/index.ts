@@ -38,15 +38,20 @@ export type EditorStore = {
     changeEditingFile(newFilePath: string | undefined, updateContent?: boolean): Promise<void>
     /**
      * Updates the content in the store. The newContent is parsed and will
-     * result in a call to `updateParsedPresentation` if successful.
+     * result in a debounced call to `parsePresentation` if successful.
      */
-    updateContent(newContent: string): Promise<void>
+    updateContent(newContent: string): void
+    /**
+     * Parses the current content and calls `updateParsedPresentation` with
+     * the parsed presentation if successful.
+     */
+    parsePresentation(): Promise<void>
     /**
      * Updates the parsed presentation in the store.
      * Depending on the changes, this function will make sure that
      * a full reload is scheduled by updating `lastFullUpdate`.
      */
-    updateParsedPresentation(newContent: Presentation | undefined): Promise<void>
+    updateParsedPresentation(newContent: Presentation | undefined): void
     /**
      * This function triggers a reload of all previews, the small ones and the preview window.
      * This can be useful if files in the template have been changed.
@@ -80,26 +85,26 @@ export const useEditorStore = create<EditorStore>()(
             parsedPresentation: undefined,
             parsingError: undefined,
             lastFullUpdate: 0,
-            updateContent: async newContent => {
-                const { editingFilePath } = get()
+            updateContent: newContent => {
                 set(state => ({ ...state, content: newContent, editingFileSaved: false }))
-
                 window.clearTimeout(debounceTimeout)
-                debounceTimeout = window.setTimeout(() => {
-                    window.ipc.presentation
-                        .parsePresentation({
-                            markdownContent: newContent,
-                            markdownFilePath: editingFilePath ?? '.',
-                            imageMode: 'preview',
-                        })
-                        .then(parsedPresentation => {
-                            set(state => ({ ...state, parsingError: undefined }))
-                            get().updateParsedPresentation(parsedPresentation)
-                        })
-                        .catch(parsingError => set(state => ({ ...state, parsingError })))
-                }, DEBOUNCE_INTERVAL)
+                debounceTimeout = window.setTimeout(get().parsePresentation, DEBOUNCE_INTERVAL)
             },
-            updateParsedPresentation: async newParsedPresentation => {
+            parsePresentation: () => {
+                const { content, editingFilePath } = get()
+                return window.ipc.presentation
+                    .parsePresentation({
+                        markdownContent: content,
+                        markdownFilePath: editingFilePath ?? '.',
+                        imageMode: 'preview',
+                    })
+                    .then(parsedPresentation => {
+                        set(state => ({ ...state, parsingError: undefined }))
+                        get().updateParsedPresentation(parsedPresentation)
+                    })
+                    .catch(parsingError => set(state => ({ ...state, parsingError })))
+            },
+            updateParsedPresentation: newParsedPresentation => {
                 const { parsedPresentation, lastFullUpdate } = get()
                 set(state => ({ ...state, parsedPresentation: newParsedPresentation }))
 
@@ -113,6 +118,7 @@ export const useEditorStore = create<EditorStore>()(
                 }))
             },
             async reloadAllPreviews() {
+                await get().parsePresentation()
                 set(state => ({ ...state, lastFullUpdate: Date.now() }))
             },
             async changeEditingFile(newFilePath, updateContent = true) {
