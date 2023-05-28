@@ -24,10 +24,10 @@ function App() {
             <p className="text-sm font-medium">Editing File: {editingFilePath}</p>
             <div className="flex-grow">
                 <Allotment separator={false}>
-                    <Allotment.Pane minSize={200} className="border-r-[1px]" snap>
+                    <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
                         <CodeMirrorEditor />
                     </Allotment.Pane>
-                    <Allotment.Pane minSize={200} className="border-l-[1px]" snap>
+                    <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
                         <PreviewSlides />
                     </Allotment.Pane>
                 </Allotment>
