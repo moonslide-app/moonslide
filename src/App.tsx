@@ -6,6 +6,7 @@ import { useEffectOnce } from 'usehooks-ts'
 import { Allotment } from 'allotment'
 import 'allotment/dist/style.css'
 import { PreviewWindow } from './components/PreviewWindow'
+import { ErrorAlert } from './components/ErrorAlert'
 
 function App() {
     const [editingFilePath, reloadAllPreviews] = useEditorStore(state => [
@@ -32,6 +33,7 @@ function App() {
                     </Allotment.Pane>
                 </Allotment>
             </div>
+            <ErrorAlert />
         </div>
     )
 }

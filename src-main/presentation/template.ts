@@ -1,10 +1,16 @@
 import { readFile } from 'fs/promises'
-import { copy } from 'fs-extra'
+import { copy, existsSync } from 'fs-extra'
 import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from './templateConfig'
 import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import sanitizeHtml from './sanitize'
 import { getLocalFileUrl } from '../helpers/protocol'
+import {
+    TemplateConfigError,
+    TemplateNotFoundError,
+    TemplatePathReferenceError,
+    wrapErrorIfThrows,
+} from '../../src-shared/errors/WrappedError'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
@@ -39,6 +45,11 @@ export type Template = {
      */
     getLayouts(): Promise<Layouts>
     /**
+     * Validates that all paths in this template point to an existing file.
+     * Throws if any file is not found.
+     */
+    validate(): Promise<void>
+    /**
      * Copies the whole template folder to a new location,
      * @param newLocation the new location where the template should be copied to. The folder should be empty.
      */
@@ -55,9 +66,17 @@ export type Layouts = {
  * Loads the template folder and the config inside it.
  */
 export async function loadTemplate(templateFolderPath: string): Promise<Template> {
-    const configYaml = (await readFile(resolve(templateFolderPath, CONFIG_FILE_NAME))).toString()
-    const config = parseTemplateConfig(configYaml)
-    return new TemplateImpl(templateFolderPath, config)
+    const configFile = await readFile(resolve(templateFolderPath, CONFIG_FILE_NAME)).catch(error => {
+        throw new TemplateNotFoundError(templateFolderPath, error)
+    })
+    const configYaml = configFile.toString()
+    const config = wrapErrorIfThrows(
+        () => parseTemplateConfig(configYaml),
+        error => new TemplateConfigError(error)
+    )
+    const template = new TemplateImpl(templateFolderPath, config)
+    await template.validate()
+    return template
 }
 
 /**
@@ -109,6 +128,14 @@ class TemplateImpl implements Template {
         }
 
         return { availableLayouts, layoutsHtml, defaultLayoutHtml }
+    }
+
+    async validate() {
+        // goes through all paths and throws if file does not exist.
+        mapTemplateConfigPaths(this.getConfigAbsolute(), path => {
+            if (!existsSync(path)) throw new TemplatePathReferenceError(path)
+            else return path
+        })
     }
 
     async copyTo(newLocation: string): Promise<void> {

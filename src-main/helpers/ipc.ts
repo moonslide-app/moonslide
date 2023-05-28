@@ -11,6 +11,7 @@ import {
 import { exportPdf } from '../export/exportPdf'
 import { exportHtml } from '../export/exportHtml'
 import { parseAndCachePresentation } from '../store'
+import { wrapPromise } from '../../src-shared/errors/wrapPromise'
 
 export function registerIpc() {
     ipcMain.handle('dialog:selectFile', (_, title, filters) => selectFile(title, filters))
@@ -20,9 +21,9 @@ export function registerIpc() {
     ipcMain.handle('dialog:saveChanges', saveChangesDialog)
     ipcMain.handle('file:save', (_, filePath, content) => saveFile(filePath, content))
     ipcMain.handle('file:getContent', (_, filePath) => getFileContent(filePath))
-    ipcMain.handle('presentation:parse', (_, parseRequest) => parseAndCachePresentation(parseRequest))
-    ipcMain.handle('export:html', (_, exportRequest) => exportHtml(exportRequest))
-    ipcMain.handle('export:pdf', (_, outputPath) => exportPdf(outputPath))
+    ipcMain.handle('presentation:parse', (_, parseRequest) => wrapPromise(parseAndCachePresentation(parseRequest)))
+    ipcMain.handle('export:html', (_, exportRequest) => wrapPromise(exportHtml(exportRequest)))
+    ipcMain.handle('export:pdf', (_, outputPath) => wrapPromise(exportPdf(outputPath)))
 }
 
 export function unregisterIpc() {
