@@ -7,6 +7,7 @@ import { Allotment } from 'allotment'
 import 'allotment/dist/style.css'
 import { PreviewWindow } from './components/PreviewWindow'
 import { ErrorAlert } from './components/ErrorAlert'
+import { MarkdownToolbar } from './components/MarkdownToolbar'
 
 function App() {
     const [editingFilePath, reloadAllPreviews] = useEditorStore(state => [
@@ -26,6 +27,7 @@ function App() {
             <div className="flex-grow">
                 <Allotment separator={false}>
                     <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
+                        <MarkdownToolbar />
                         <CodeMirrorEditor />
                     </Allotment.Pane>
                     <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
