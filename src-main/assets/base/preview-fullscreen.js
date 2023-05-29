@@ -26,6 +26,7 @@ function updatePreview(newSlides) {
     // prevent flickering for fragments on setState
     performWithDisabledLayout(() => Reveal.setState(savedState))
     runAllPlugins()
+    Reveal.configure({})
     Reveal.setState(savedState)
 }
 
