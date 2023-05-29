@@ -85,7 +85,6 @@ layout: title-content
   <div class="box">HTML Box</div>
   <div class="box">HTML Box</div>
   <div class="box">HTML Box</div>
-  <div class="box">HTML Box</div>
   <div class="box large-item">HTML Box</div>
 </div>
 

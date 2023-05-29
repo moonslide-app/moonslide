@@ -11,6 +11,8 @@ stylesheets: ./styles/index.css
 scripts: 
   - ./reveal_js/plugin/highlight/highlight.js
   - ./reveal_js/plugin/math/math.js
+  - ./reveal_js/plugin/search/search.js
+  - ./reveal_js/plugin/zoom/zoom.js
 # HTML file which allows to define a wrapper around all slides. 
 # Must contain a `@@content@@` token where the slide content will be placed.
 slide: ./slide.html
