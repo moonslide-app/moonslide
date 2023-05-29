@@ -1,32 +1,61 @@
 ---
-layout: title-cols-2
-class: text-left
+theme: white
+layout: title-grid-4
 ---
 # Code Blocks
 
 ***
 
-## JavaScript Code
+## JavaScript Code {.mb-8}
 
-```
+``` { data-line-numbers }
 function factorial(n) {
-  if (n == 0 || n == 1) {
-    return 1
+  const test = "hello"
+  if (n == 0 || n === 1) {
+    return 1;
   } else {
-    return n * factorial(n-1)
+    return n * factorial(n - 1)
   }
 }
 ```
 
 ***
 
-## Python Code
+## Python Code {.mb-8}
 
-```
+``` { data-line-numbers }
 def factorial(n):
   if (n==1 or n==0):
     return 1
   else:
     return n * factorial(n - 1)
 ```
-{ data-line-numbers }
+
+***
+
+- JavaScript Code is very beautiful and does the job well.
+- It handles recursion well.
+- It is generally good. 
+{ .text-sm }
+
+***
+
+- Python Code is less beautiful and does the job less well.
+- It handles recursion less well.
+- It is generally bad.
+{ .text-sm }
+
+---
+class: text-left
+---
+# Math Equations
+
+### Wave Equation {.mt-10}
+
+$$\nabla^2u-\frac{1}{v^2}\frac{\partial^2 u}{\partial t^2}=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}+\frac{\partial^2 u}{\partial z^2}-\frac{1}{v^2}\frac{\partial^2 u}{\partial t^2}=0 $$ 
+
+
+### Other Fancy Equation {.mt-10}
+
+$$v_{\rm g}=\frac{d\omega}{dk}=v_{\rm ph}+k\frac{dv_{\rm ph}}{dk}= v_{\rm ph}\left(1-\frac{k}{n}\frac{dn}{dk}\right)$$
+
