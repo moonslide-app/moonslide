@@ -1,26 +1,28 @@
 import { z } from 'zod'
-import { gracefulStringSchema, stringOrArraySchema } from './zodUtils'
+import { gracefulStringSchema, nullishToOptional, stringOrArraySchema } from './zodUtils'
 
-export const slideConfigSchema = z.object({
+export const finalSlideConfigSchema = z.object({
     layout: gracefulStringSchema,
-    transition: gracefulStringSchema,
-    ['transition-speed']: gracefulStringSchema,
     class: stringOrArraySchema,
-    style: z.object({}).passthrough().optional(),
+    data: z.object({}).passthrough().nullish().transform(nullishToOptional),
 })
 
-export type SlideConfig = z.infer<typeof slideConfigSchema>
+export const slideConfigSchema = finalSlideConfigSchema.passthrough().transform(config => ({
+    ...config,
+    data: {
+        ...config,
+        ...config.data,
+        layout: undefined,
+        class: undefined,
+    },
+}))
+
+export type SlideConfig = z.infer<typeof finalSlideConfigSchema>
 
 export function parseSlideConfig(json: unknown): SlideConfig {
-    return slideConfigSchema.parse(json ?? {})
+    return finalSlideConfigSchema.parse(slideConfigSchema.parse(json ?? {}))
 }
 
 export function mergeWithDefaults(config: SlideConfig, defaults?: SlideConfig) {
-    return {
-        layout: config.layout ?? defaults?.layout,
-        transition: config.transition ?? defaults?.transition,
-        ['transition-speed']: config['transition-speed'] ?? defaults?.['transition-speed'],
-        class: [...(defaults?.class ?? []), ...(config.class ?? [])],
-        styles: { ...defaults?.style, ...config.style },
-    }
+    return { ...defaults, ...config, reveal: { ...defaults?.data, ...config.data } }
 }
