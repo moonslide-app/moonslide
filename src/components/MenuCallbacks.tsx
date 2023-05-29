@@ -10,14 +10,12 @@ export function MenuCallbacks() {
         saveOrDiscardChanges,
         exportHTMLPresentation,
         reloadAllPreviews,
-        parsingError,
     ] = useEditorStore(state => [
         state.changeEditingFile,
         state.saveContentToEditingFile,
         state.saveOrDiscardChanges,
         state.exportHTMLPresentation,
         state.reloadAllPreviews,
-        state.parsingError,
     ])
 
     useEffect(() => {
