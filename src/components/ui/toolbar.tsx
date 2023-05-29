@@ -3,10 +3,14 @@ import * as ToolbarPrimitive from '@radix-ui/react-toolbar'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import { Command as CommandPrimitive } from 'cmdk'
 import { Search } from 'lucide-react'
+import { Actions, useMap } from 'usehooks-ts'
 
 import { cn } from '../../lib/utils'
 
-const ToolbarContext = React.createContext<[boolean, (v: boolean) => void] | undefined>(undefined)
+const ToolbarOpenContext = React.createContext<[boolean, (v: boolean) => void] | undefined>(undefined)
+const SearchValuesContext = React.createContext<
+    [Omit<Map<string, string[]>, 'set' | 'clear' | 'delete'>, Actions<string, string[]>] | undefined
+>(undefined)
 
 const Toolbar = React.forwardRef<
     React.ElementRef<typeof ToolbarPrimitive.Root>,
@@ -42,13 +46,13 @@ const ToolbarItems: React.FC<React.ComponentPropsWithoutRef<typeof PopoverPrimit
     const [contextOpen, setContextOpen] = React.useState(false)
 
     return (
-        <ToolbarContext.Provider value={[contextOpen, setContextOpen]}>
+        <ToolbarOpenContext.Provider value={[contextOpen, setContextOpen]}>
             <PopoverPrimitive.Root
                 open={open ?? contextOpen}
                 onOpenChange={onOpenChange ?? setContextOpen}
                 {...props}
             />
-        </ToolbarContext.Provider>
+        </ToolbarOpenContext.Provider>
     )
 }
 ToolbarItems.displayName = PopoverPrimitive.Root.displayName
@@ -57,7 +61,7 @@ const ToolbarItemsButton = React.forwardRef<
     React.ElementRef<typeof ToolbarButton>,
     React.ComponentPropsWithoutRef<typeof ToolbarButton>
 >(({ className, 'aria-expanded': ariaExpanded, ...props }, ref) => {
-    const [open] = React.useContext(ToolbarContext) ?? []
+    const [open] = React.useContext(ToolbarOpenContext) ?? []
 
     return (
         <PopoverPrimitive.Trigger asChild>
@@ -69,26 +73,38 @@ const ToolbarItemsButton = React.forwardRef<
 const ToolbarItemsContent = React.forwardRef<
     React.ElementRef<typeof PopoverPrimitive.Content>,
     React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = 'start', sideOffset = 4, children, ...props }, ref) => (
-    <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Content
-            ref={ref}
-            align={align}
-            sideOffset={sideOffset}
-            className={cn(
-                'z-50 w-72 rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-                className
-            )}
-            {...props}
-        >
-            <CommandPrimitive
-                className="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground"
-                shouldFilter={false}
-                children={children}
-            />
-        </PopoverPrimitive.Content>
-    </PopoverPrimitive.Portal>
-))
+>(({ className, align = 'start', sideOffset = 4, children, ...props }, ref) => {
+    const [searchValues, searchValueActions] = useMap<string, string[]>()
+
+    const filter = (value: string, seach: string) => {
+        const values = searchValues.get(value)
+        return values?.find(v => v.includes(seach)) ? 1 : 0
+    }
+
+    return (
+        <PopoverPrimitive.Portal>
+            <PopoverPrimitive.Content
+                ref={ref}
+                align={align}
+                sideOffset={sideOffset}
+                className={cn(
+                    'z-50 w-72 rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+                    className
+                )}
+                {...props}
+            >
+                <SearchValuesContext.Provider value={[searchValues, searchValueActions]}>
+                    <CommandPrimitive
+                        className="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground"
+                        shouldFilter={true}
+                        filter={filter}
+                        children={children}
+                    />
+                </SearchValuesContext.Provider>
+            </PopoverPrimitive.Content>
+        </PopoverPrimitive.Portal>
+    )
+})
 ToolbarItemsContent.displayName = PopoverPrimitive.Content.displayName
 
 const ToolbarItemsSearch = React.forwardRef<
@@ -158,9 +174,11 @@ ToolbarItemSeparator.displayName = CommandPrimitive.Separator.displayName
 
 const ToolbarItem = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive.Item>,
-    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, onSelect, ...props }, ref) => {
-    const [, setOpen] = React.useContext(ToolbarContext) ?? []
+    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item> & { value: string; searchValues: string[] }
+>(({ className, onSelect, value, searchValues: newSearchValues, ...props }, ref) => {
+    const [, setOpen] = React.useContext(ToolbarOpenContext) ?? []
+    const [searchValues, searchValueActions] = React.useContext(SearchValuesContext) ?? []
+    if (searchValues?.get(value) !== newSearchValues) searchValueActions?.set(value, newSearchValues)
 
     return (
         <CommandPrimitive.Item
@@ -173,6 +191,7 @@ const ToolbarItem = React.forwardRef<
                 if (onSelect) onSelect(v)
                 if (setOpen) setOpen(false)
             }}
+            value={value}
             {...props}
         />
     )

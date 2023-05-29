@@ -20,6 +20,8 @@ export function MarkdownToolbar() {
                     <ToolbarItemsList>
                         <ToolbarItemGroup>
                             <ToolbarItem
+                                value="format:bold"
+                                searchValues={['format', 'bold', 'format bold']}
                                 onSelect={() => {
                                     alert('make bold')
                                 }}
@@ -27,6 +29,8 @@ export function MarkdownToolbar() {
                                 Bold
                             </ToolbarItem>
                             <ToolbarItem
+                                value="format:italic"
+                                searchValues={['format', 'italic', 'format italic']}
                                 onSelect={() => {
                                     alert('make italic')
                                 }}
@@ -43,8 +47,10 @@ export function MarkdownToolbar() {
                 <ToolbarItemsContent>
                     <ToolbarItemsSearch placeholder="Search modifier..." />
                     <ToolbarItemsList>
-                        <ToolbarItemGroup>
+                        <ToolbarItemGroup heading="Format">
                             <ToolbarItem
+                                value="format:bold"
+                                searchValues={['format', 'bold', 'format bold']}
                                 onSelect={() => {
                                     alert('make bold')
                                 }}
@@ -52,6 +58,8 @@ export function MarkdownToolbar() {
                                 Bold
                             </ToolbarItem>
                             <ToolbarItem
+                                value="format:italic"
+                                searchValues={['format', 'italic', 'format italic', 'test']}
                                 onSelect={() => {
                                     alert('make italic')
                                 }}
