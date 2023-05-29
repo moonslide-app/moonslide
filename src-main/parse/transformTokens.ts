@@ -3,6 +3,31 @@ import Token from 'markdown-it/lib/token'
 export function transformTokens(initialTokens: Token[]): Token[] {
     let tokens = initialTokens
 
+    // Move attributes of empty paragraph after code block
+    // to code block
+    tokens = tokens.filter((token, idx, array) => {
+        if (token.meta === 'remove') return false
+
+        const fence = array.at(idx - 1) // has to be fence
+        const paragraphOpen = token // has to be paragraph_open
+        const inline = array.at(idx + 1) // has to be inline with one child
+        const inlineText = inline?.children?.at(0) // has to be empty text
+        const paragraphClose = array.at(idx + 2) // has to be paragraph_close
+
+        // if any condition is wrong, don't filter
+        if (fence?.type !== 'fence') return true
+        if (paragraphOpen.type !== 'paragraph_open') return true
+        if (inline?.type !== 'inline') return true
+        if (inlineText?.type !== 'text' || inlineText?.content !== '') return true
+        if (paragraphClose?.type !== 'paragraph_close') return true
+
+        // all conditions passed -> apply attrs to fence and filter out paragraph
+        fence.attrs = paragraphOpen.attrs
+        inline.meta = 'remove'
+        paragraphClose.meta = 'remove'
+        return false
+    })
+
     // Remove paragraphs, which only contain an image
     // Move images to top-level
     tokens = tokens.filter((token, idx, array) => {
