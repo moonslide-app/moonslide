@@ -1,5 +1,8 @@
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
-import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
+import {
+    parsePresentationConfig,
+    stripPresentationConfigProperties,
+} from '../../src-shared/entities/PresentationConfig'
 import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/SlideConfig'
 import { YAMLError, parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
@@ -97,7 +100,11 @@ function parseConfig(markdownContent: string, request: ParseRequest) {
     )
 
     const presentationConfig = wrapErrorIfThrows(
-        () => parsePresentationConfig(jsonConfigParts[0]),
+        () => {
+            const first = jsonConfigParts[0]
+            jsonConfigParts[0] = stripPresentationConfigProperties(first)
+            return parsePresentationConfig(first)
+        },
         err => new YamlConfigError(1, err)
     )
 
