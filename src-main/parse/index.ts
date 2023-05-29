@@ -6,7 +6,7 @@ import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
 import { buildHTMLSlide, buildHTMLPresentation, concatSlidesHtml } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
-import { LocalImage } from './imagePath'
+import { LocalImage, isLikelyPath, transformImagePath } from './imagePath'
 import { MissingStartSeparatorError, YamlConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
 
 export const FIRST_SLIDE_SEPERATOR = '---'
@@ -15,7 +15,7 @@ const SLOT_SEPERATOR = '\n***'
 
 export async function parse(request: ParseRequest): Promise<Presentation> {
     const { markdownContent, markdownFilePath } = request
-    const { presentationConfig, slidesMarkdown, slidesConfig } = parseConfig(markdownContent)
+    const { localImages, presentationConfig, slidesMarkdown, slidesConfig } = parseConfig(markdownContent, request)
 
     const template = await findAndLoadTemplate(presentationConfig.template, markdownFilePath)
 
@@ -27,7 +27,6 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
     const slideWrapperHtml = await template.getSlideHtml()
     const templateConfig = template.getConfigLocalFile()
 
-    const localImages: LocalImage[] = []
     const parsedSlides: Slide[] = await Promise.all(
         slidesConfig.map(async (slideConfig, i) => {
             const markdown = slidesMarkdown[i] || ''
@@ -77,7 +76,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
     }
 }
 
-function parseConfig(markdownContent: string) {
+function parseConfig(markdownContent: string, request: ParseRequest) {
     const hasContent = markdownContent && markdownContent.trim()
 
     if (hasContent && !markdownContent.startsWith(FIRST_SLIDE_SEPERATOR)) {
@@ -102,6 +101,7 @@ function parseConfig(markdownContent: string) {
         err => new YamlConfigError(1, err)
     )
 
+    const localImages: LocalImage[] = []
     const slidesConfig = jsonConfigParts
         .map((json, idx) =>
             wrapErrorIfThrows(
@@ -110,8 +110,24 @@ function parseConfig(markdownContent: string) {
             )
         )
         .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults))
+        .map(slideConfig => {
+            const data = slideConfig.data ?? {}
+            Object.keys(data).forEach(key => {
+                const value = data[key]
+                if (isLikelyPath(value)) {
+                    const localImage = transformImagePath(value, request)
+                    if (localImage) {
+                        data[key] = localImage.transformedPath
+                        localImages.push(localImage)
+                    }
+                }
+            })
+            slideConfig.data = data
+            return slideConfig
+        })
 
     return {
+        localImages,
         presentationConfig,
         slidesMarkdown,
         slidesConfig,

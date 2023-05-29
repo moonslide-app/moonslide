@@ -1,6 +1,9 @@
 ---
 theme: white
 layout: title-grid-4
+class: 
+  - text-left
+  - position-top
 ---
 # Code Blocks
 
@@ -54,7 +57,6 @@ class: text-left
 
 $$\nabla^2u-\frac{1}{v^2}\frac{\partial^2 u}{\partial t^2}=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}+\frac{\partial^2 u}{\partial z^2}-\frac{1}{v^2}\frac{\partial^2 u}{\partial t^2}=0$$ 
 
-
 ### Other Fancy Equation {.mt-10}
 
 $$v_{\rm g}=\frac{d\omega}{dk}=v_{\rm ph}+k\frac{dv_{\rm ph}}{dk}= v_{\rm ph}\left(1-\frac{k}{n}\frac{dn}{dk}\right)$$
@@ -87,4 +89,20 @@ layout: title-content
   <div class="box">HTML Box</div>
   <div class="box large-item">HTML Box</div>
 </div>
+
+---
+class: position-center text-white
+background-image: ./image3.jpg
+---
+
+# Beautiful
+
+---
+background-video: ./video.mov
+background-size: contain
+background-video-loop: true
+---
+
+
+
 

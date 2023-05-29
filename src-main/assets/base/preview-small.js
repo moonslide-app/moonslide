@@ -16,6 +16,7 @@ var RevealEditor = {
             autoSlide: false,
             transition: 'none',
             slideNumber: false,
+            autoPlayMedia: false,
         }
         Reveal.initialize(newConfig, ...args)
     },

@@ -23,6 +23,6 @@ export function parseSlideConfig(json: unknown): SlideConfig {
     return finalSlideConfigSchema.parse(slideConfigSchema.parse(json ?? {}))
 }
 
-export function mergeWithDefaults(config: SlideConfig, defaults?: SlideConfig) {
-    return { ...defaults, ...config, reveal: { ...defaults?.data, ...config.data } }
+export function mergeWithDefaults(config: SlideConfig, defaults?: SlideConfig): SlideConfig {
+    return { ...defaults, ...config, data: { ...defaults?.data, ...config.data } }
 }
