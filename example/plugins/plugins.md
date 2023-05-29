@@ -91,6 +91,11 @@ layout: title-content
 </div>
 
 ---
+---
+# Links
+[To slide number 5](#/5)
+
+---
 class: position-center text-white
 background-image: ./image3.jpg
 ---
@@ -100,8 +105,20 @@ background-image: ./image3.jpg
 ---
 background-video: ./video.mov
 background-size: contain
-background-video-loop: true
 ---
+
+---
+auto-animate: true
+---
+
+# Hello
+
+---
+class: text-red
+auto-animate: true
+---
+
+# Hello {.mt-8}
 
 
 
