@@ -247,7 +247,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Modifiers"
                     placeholder="Search modifiers..."
                     emptyText="No modifier found."
-                    onSelect={editorRef?.onAddModifier}
+                    onSelect={editorRef?.onAddAttribute}
                 />
             )}
             {toolbar?.slideClasses && (

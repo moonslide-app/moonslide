@@ -52,7 +52,7 @@ export type CodeMirrorEditorRef = {
     onAddFormat(prefix: string, suffix?: string): void
     onAddBlock(prefix: string): void
     onAddHeading(prefix: string): void
-    onAddModifier(className: string): void
+    onAddAttribute(attribute: string): void
     onAddClass(className: string): void
     onAddDataTag(dataTag: string): void
     onAddMedia(path: string): void
@@ -73,10 +73,13 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
         onAddFormat(prefix, suffix) {
             if (!editorView.current) return
 
+            const currentSlide = findCurrentSlide(editorView.current.state)
+            if (!currentSlide) return
+
             let unwrappedPrefix = prefix ?? ''
             let unwrappedSuffix = suffix ?? prefix ?? ''
 
-            const currentMarkdown = markdownSelectionInSlide(editorView.current)
+            const currentMarkdown = markdownSelectionInSlide(editorView.current, currentSlide)
             const selection = changeInRange(editorView.current, currentMarkdown, (doc, oldValue) => {
                 unwrappedPrefix = addSpace(doc, currentMarkdown.from, unwrappedPrefix, true, false)
                 unwrappedSuffix = addSpace(doc, currentMarkdown.to, unwrappedSuffix, false, true)
@@ -87,22 +90,56 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
         onAddBlock(prefix) {
             if (!editorView.current) return
 
-            const line = currentMarkdownLineInSlide(editorView.current)
+            const currentSlide = findCurrentSlide(editorView.current.state)
+            if (!currentSlide) return
+
+            const line = currentMarkdownLineInSlide(editorView.current, currentSlide)
             const position = insertAtPosition(editorView.current, prefix, line.from)
             setCursorPosition(editorView.current, position)
         },
         onAddHeading(prefix) {
             if (!editorView.current) return
 
-            let line = currentMarkdownLineInSlide(editorView.current)
+            const currentSlide = findCurrentSlide(editorView.current.state)
+            if (!currentSlide) return
+
+            let line = currentMarkdownLineInSlide(editorView.current, currentSlide)
             line = removeHeadingFromLine(editorView.current, line)
             const position = insertAtPosition(editorView.current, prefix, line.from)
             setCursorPosition(editorView.current, position)
         },
-        onAddModifier(className) {
-            if (editorView.current) {
-                editorView.current.dispatch(editorView.current.state.replaceSelection(className))
+        onAddAttribute(className) {
+            if (!editorView.current) return
+
+            const currentSlide = findCurrentSlide(editorView.current.state)
+            if (!currentSlide) return
+
+            let selection = markdownSelectionInSlide(editorView.current, currentSlide)
+            let position: SelectionRange
+
+            if (selection.from === selection.to) {
+                const currentLine = editorView.current.state.doc.lineAt(selection.from)
+                selection = EditorSelection.range(currentLine.to, currentLine.to)
+                let newAttributes = `{ .${className} }`
+
+                const existingAttributes = extractLineAttributes(currentLine)
+                if (existingAttributes) {
+                    const { originalAttributes, extractedAttributes } = existingAttributes
+                    const attributesStart = currentLine.to - originalAttributes.length
+                    selection = EditorSelection.range(attributesStart, currentLine.to)
+                    newAttributes = `{ ${extractedAttributes} .${className} }`
+                }
+
+                position = changeInRange(editorView.current, selection, doc =>
+                    addSpace(doc, selection.from, newAttributes, true, false)
+                )
+            } else {
+                position = changeInRange(editorView.current, selection, (doc, oldValue) =>
+                    addSpace(doc, selection.from, `[${oldValue}]{ .${className} }`, true, false)
+                )
             }
+
+            setCursorPosition(editorView.current, position.to)
         },
         onAddClass(className) {
             if (!editorView.current) return
@@ -414,6 +451,21 @@ function addSpace(doc: Text, position: number, value: string, leading: boolean, 
     return modified
 }
 
+function extractLineAttributes(line: Line): { originalAttributes: string; extractedAttributes: string } | undefined {
+    const originalQuery = '{.*}\\s*$' // matches { .attr } at end of line
+    const extractQuery = '(?<={).*(?=})' // matches inner part of { .attr }
+
+    const originalMatch = line.text.match(originalQuery)
+    if (!originalMatch) return undefined
+    const originalAttributes = originalMatch[0]
+
+    const extractedMatch = originalAttributes.match(extractQuery)
+    if (!extractedMatch) return undefined
+    const extractedAttributes = extractedMatch[0].trim()
+
+    return { originalAttributes, extractedAttributes }
+}
+
 function setCursorPosition(editorView: EditorView, position: number) {
     editorView.dispatch({ selection: { anchor: position, head: position } })
     editorView.focus()
@@ -440,10 +492,9 @@ function changeInRange(
     return EditorSelection.range(range.from, range.from + newText.length)
 }
 
-function markdownSelectionInSlide(editorView: EditorView): SelectionRange {
+function markdownSelectionInSlide(editorView: EditorView, currentSlide: SlideSelection): SelectionRange {
     const { state } = editorView
 
-    const currentSlide = findCurrentSlide(state)
     if (!currentSlide) {
         const documentEnd = state.doc.length
         return EditorSelection.range(documentEnd, documentEnd)
@@ -458,9 +509,9 @@ function markdownSelectionInSlide(editorView: EditorView): SelectionRange {
     return EditorSelection.range(start, end)
 }
 
-function currentMarkdownLineInSlide(editorView: EditorView): Line {
+function currentMarkdownLineInSlide(editorView: EditorView, currentSlide: SlideSelection): Line {
     const { state } = editorView
-    const markdownSelection = markdownSelectionInSlide(editorView)
+    const markdownSelection = markdownSelectionInSlide(editorView, currentSlide)
 
     return state.doc.lineAt(markdownSelection.from)
 }
@@ -469,14 +520,9 @@ function removeHeadingFromLine(editorView: EditorView, line: Line): Line {
     const regexQuery = '^#+ *'
     const match = line.text.match(regexQuery)
 
-    if (match) {
-        console.log('found match', match[0])
-        const to = line.from + match[0].length
-        const newSelection = changeInRange(editorView, EditorSelection.range(line.from, to), () => '')
-        return editorView.state.doc.lineAt(newSelection.from)
-    } else {
-        console.log('no match found')
-    }
+    if (!match) return line
 
-    return line
+    const to = line.from + match[0].length
+    const newSelection = changeInRange(editorView, EditorSelection.range(line.from, to), () => '')
+    return editorView.state.doc.lineAt(newSelection.from)
 }
