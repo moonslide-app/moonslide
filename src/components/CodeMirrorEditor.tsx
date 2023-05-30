@@ -51,6 +51,7 @@ export type CodeMirrorEditorRef = {
     onAddSlide(layout?: string): void
     onAddFormat(prefix: string, suffix?: string): void
     onAddBlock(prefix: string): void
+    onAddHeading(prefix: string): void
     onAddModifier(className: string): void
     onAddClass(className: string): void
     onAddDataTag(dataTag: string): void
@@ -87,6 +88,14 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             if (!editorView.current) return
 
             const line = currentMarkdownLineInSlide(editorView.current)
+            const position = insertAtPosition(editorView.current, prefix, line.from)
+            setCursorPosition(editorView.current, position)
+        },
+        onAddHeading(prefix) {
+            if (!editorView.current) return
+
+            let line = currentMarkdownLineInSlide(editorView.current)
+            line = removeHeadingFromLine(editorView.current, line)
             const position = insertAtPosition(editorView.current, prefix, line.from)
             setCursorPosition(editorView.current, position)
         },
@@ -265,7 +274,6 @@ function rangeHasLineStartingWith(start: string, state: EditorState, range: Simp
     const it = doc.iterLines(startLine, endLine + 1)
     while (!it.done) {
         const line = it.next().value
-        console.log('iter lines:', line)
         currentLine++
         if (line.startsWith(start)) return doc.line(currentLine)
     }
@@ -453,9 +461,22 @@ function markdownSelectionInSlide(editorView: EditorView): SelectionRange {
 function currentMarkdownLineInSlide(editorView: EditorView): Line {
     const { state } = editorView
     const markdownSelection = markdownSelectionInSlide(editorView)
-    const markdownRange = findCurrentSlide(editorView.state)?.markdown ?? markdownSelection
-    const currentSelection = editorView.state.selection.main
 
-    const position = currentSelection.from < markdownRange.from ? markdownRange.to : markdownSelection.from
-    return state.doc.lineAt(position)
+    return state.doc.lineAt(markdownSelection.from)
+}
+
+function removeHeadingFromLine(editorView: EditorView, line: Line): Line {
+    const regexQuery = '^#+ *'
+    const match = line.text.match(regexQuery)
+
+    if (match) {
+        console.log('found match', match[0])
+        const to = line.from + match[0].length
+        const newSelection = changeInRange(editorView, EditorSelection.range(line.from, to), () => '')
+        return editorView.state.doc.lineAt(newSelection.from)
+    } else {
+        console.log('no match found')
+    }
+
+    return line
 }

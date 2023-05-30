@@ -34,19 +34,19 @@ export function formatMathBlock(editor: CodeMirrorEditorRef) {
 }
 
 export function blockH1(editor: CodeMirrorEditorRef) {
-    editor.onAddBlock('# ')
+    editor.onAddHeading('# ')
 }
 
 export function blockH2(editor: CodeMirrorEditorRef) {
-    editor.onAddBlock('## ')
+    editor.onAddHeading('## ')
 }
 
 export function blockH3(editor: CodeMirrorEditorRef) {
-    editor.onAddBlock('### ')
+    editor.onAddHeading('### ')
 }
 
 export function blockH4(editor: CodeMirrorEditorRef) {
-    editor.onAddBlock('#### ')
+    editor.onAddHeading('#### ')
 }
 
 export function blockOl(editor: CodeMirrorEditorRef) {
