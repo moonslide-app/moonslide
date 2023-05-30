@@ -1,11 +1,12 @@
 import * as React from 'react'
 import * as ToolbarPrimitive from '@radix-ui/react-toolbar'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
-import { Command as CommandPrimitive } from 'cmdk'
+import { Command as CommandPrimitive, useCommandState } from 'cmdk'
 import { Search } from 'lucide-react'
 import { Actions, useMap } from 'usehooks-ts'
 
 import { cn } from '../../lib/utils'
+import { isNonNullable } from '../../../src-shared/entities/utils'
 
 const ToolbarOpenContext = React.createContext<[boolean, (v: boolean) => void] | undefined>(undefined)
 const SearchValuesContext = React.createContext<
@@ -31,7 +32,7 @@ const ToolbarButton = React.forwardRef<
     <ToolbarPrimitive.Button
         ref={ref}
         className={cn(
-            'flex cursor-default select-none items-center rounded-sm px-3 py-1.5 text-sm font-medium outline-none hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+            'flex cursor-default select-none items-center rounded-sm p-1.5 text-sm font-medium outline-none hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
             className
         )}
         {...props}
@@ -76,9 +77,11 @@ const ToolbarItemsContent = React.forwardRef<
 >(({ className, align = 'start', sideOffset = 4, children, ...props }, ref) => {
     const [searchValues, searchValueActions] = useMap<string, string[]>()
 
-    const filter = (value: string, seach: string) => {
-        const values = searchValues.get(value)
-        return values?.find(v => v.includes(seach)) ? 1 : 0
+    const filter = (value: string, search: string) => {
+        const values = searchValues.get(value)?.map(v => v.toLowerCase())
+        const searchLowerCased = search.toLowerCase()
+        const found = values?.findIndex(v => v.toLowerCase().includes(searchLowerCased))
+        return isNonNullable(found) && found !== -1 ? 1 : 0
     }
 
     return (
@@ -174,11 +177,18 @@ ToolbarItemSeparator.displayName = CommandPrimitive.Separator.displayName
 
 const ToolbarItem = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive.Item>,
-    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item> & { value: string; searchValues: string[] }
->(({ className, onSelect, value, searchValues: newSearchValues, ...props }, ref) => {
+    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item> & {
+        value: string
+        searchValues: string[]
+        hidden?: boolean
+    }
+>(({ className, onSelect, value, searchValues: newSearchValues, hidden, ...props }, ref) => {
+    const search = useCommandState(state => state.search)
     const [, setOpen] = React.useContext(ToolbarOpenContext) ?? []
     const [searchValues, searchValueActions] = React.useContext(SearchValuesContext) ?? []
     if (searchValues?.get(value) !== newSearchValues) searchValueActions?.set(value, newSearchValues)
+
+    if (hidden && !search) return null
 
     return (
         <CommandPrimitive.Item

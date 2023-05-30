@@ -4,9 +4,10 @@ import { tags } from '@lezer/highlight'
 import { parser as mdParser, Strikethrough } from '@lezer/markdown'
 import { parseMixed } from '@lezer/common'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
-import { EditorState } from '@codemirror/state'
-import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
-import { useEffect, useRef } from 'react'
+import { EditorSelection, EditorState } from '@codemirror/state'
+import { RegExpCursor } from '@codemirror/search'
+import { EditorView, ViewPlugin, keymap, drawSelection, lineNumbers } from '@codemirror/view'
+import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
 
@@ -46,9 +47,66 @@ const mixedParser = parser.configure({
 
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
 
-export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
+export type CodeMirrorEditorRef = {
+    onAddSlide(layout?: string): void
+    onAddFormat(prefix: string, suffix?: string): void
+    onAddBlock(prefix: string): void
+    onAddModifier(className: string): void
+    onAddClass(className: string): void
+    onAddDataTag(dataTag: string): void
+    onAddMedia(path: string): void
+}
+
+export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?: Ref<CodeMirrorEditorRef>) => {
+    const editorView = useRef<EditorView | undefined>()
+
     const editingFilePath = useEditorStore(state => state.editingFilePath)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
+
+    useImperativeHandle(ref, () => ({
+        onAddSlide(layout) {
+            if (editorView.current && layout) {
+                editorView.current.dispatch(editorView.current.state.replaceSelection(layout))
+            }
+        },
+        onAddFormat(prefix, suffix) {
+            console.log('add format', prefix, suffix)
+        },
+        onAddBlock(prefix) {
+            console.log('add block', prefix)
+        },
+        onAddModifier(className) {
+            if (editorView.current) {
+                editorView.current.dispatch(editorView.current.state.replaceSelection(className))
+            }
+        },
+        onAddClass(className) {
+            if (editorView.current) {
+                editorView.current.dispatch(editorView.current.state.replaceSelection(className))
+            }
+        },
+        onAddDataTag(dataTag) {
+            if (editorView.current) {
+                const state = editorView.current.state
+                const currentSlide = findCurrentSlide(state)
+                console.log('front matter', currentSlide?.frontMatter)
+                console.log('markdown', currentSlide?.markdown)
+
+                if (currentSlide?.markdown) {
+                    editorView.current.dispatch(
+                        editorView.current.state.changeByRange(() => ({
+                            range: currentSlide.markdown,
+                        }))
+                    )
+                }
+            }
+        },
+        onAddMedia(path) {
+            if (editorView.current) {
+                editorView.current.dispatch(editorView.current.state.replaceSelection(path))
+            }
+        },
+    }))
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
 
@@ -67,14 +125,18 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
                 keymap.of([indentWithTab]),
                 history(),
                 EditorView.lineWrapping,
+                drawSelection(),
+                lineNumbers(),
             ],
         })
 
         const parent = editorDomNode.current
-        let view: EditorView | undefined
-        if (parent) {
-            view = new EditorView({ state, parent })
+
+        if (parent && state) {
+            editorView.current = new EditorView({ state, parent })
         }
+
+        const view = editorView.current
 
         window.ipc.menu.onUndo(() => view && undo(view))
         window.ipc.menu.onRedo(() => view && redo(view))
@@ -82,5 +144,32 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         return () => view?.destroy()
     }, [editingFilePath])
 
-    return <div ref={editorDomNode} className={`h-full overflow-y-auto ${props?.className}`}></div>
+    return <div ref={editorDomNode} className={`flex-grow overflow-y-auto ${props?.className}`}></div>
+})
+
+function findCurrentSlide(state: EditorState) {
+    const regexQuery = '^---(.|\n)*?^---'
+
+    const currentPosition = state.selection.main.anchor
+
+    const cursor = new RegExpCursor(state.doc, regexQuery, {})
+
+    let currentFrontMatter: { from: number; to: number } | undefined
+    let nextFrontMatter: { from: number; to: number } | undefined
+
+    while (!cursor.done) {
+        currentFrontMatter = nextFrontMatter
+        nextFrontMatter = cursor.next().value
+        if (nextFrontMatter && nextFrontMatter.from >= currentPosition) break
+    }
+
+    if (cursor.done) nextFrontMatter = undefined // cursor was in last slide, there is no next
+    if (!currentFrontMatter) return undefined
+
+    const currentMarkdown = { from: currentFrontMatter.to + 1, to: (nextFrontMatter?.from ?? state.doc.length) - 1 }
+
+    return {
+        frontMatter: EditorSelection.range(currentFrontMatter.from, currentFrontMatter.to),
+        markdown: EditorSelection.range(currentMarkdown.from, currentMarkdown.to),
+    }
 }

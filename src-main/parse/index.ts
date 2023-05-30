@@ -65,10 +65,10 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
 
     return {
         config: presentationConfig,
+        templateConfig,
         slides: parsedSlides,
         slidesHtml,
         previewHtml,
-        layoutsHtml: layouts.layoutsHtml,
         images: localImages,
         resolvedPaths: {
             templateFolder: template.folderPath,

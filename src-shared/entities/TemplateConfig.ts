@@ -1,11 +1,21 @@
-import {
-    gracefulStringSchema,
-    nullishToArray,
-    nullishToOptional,
-    stringOrArraySchema,
-} from '../../src-shared/entities/zodUtils'
+import { gracefulStringSchema, nullishToArray, nullishToOptional, stringOrArraySchema } from './zodUtils'
 import { parse } from 'yaml'
 import { z } from 'zod'
+
+const toolbarEntryConfigSchema = z
+    .object({
+        name: z.string(),
+        items: z
+            .object({
+                key: z.string(),
+                displayName: z.string().nullish().transform(nullishToOptional),
+                hidden: z.boolean().nullish().transform(nullishToOptional),
+            })
+            .array(),
+    })
+    .array()
+    .nullish()
+    .transform(nullishToArray)
 
 const templateConfigSchema = z.object({
     entry: z.string(),
@@ -34,8 +44,18 @@ const templateConfigSchema = z.object({
         .array()
         .nullish()
         .transform(nullishToArray),
+    toolbar: z
+        .object({
+            layouts: toolbarEntryConfigSchema,
+            modifiers: toolbarEntryConfigSchema,
+            slideClasses: toolbarEntryConfigSchema,
+            dataTags: toolbarEntryConfigSchema,
+        })
+        .nullish()
+        .transform(nullishToOptional),
 })
 
+export type ToolbarEntryConfig = z.infer<typeof toolbarEntryConfigSchema>
 export type TemplateConfig = z.infer<typeof templateConfigSchema>
 
 export function parseTemplateConfig(yamlString: string): TemplateConfig {
@@ -55,6 +75,7 @@ export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: s
         scripts: config.scripts.map(mapPath),
         layouts: config.layouts.map(layout => ({ ...layout, path: mapPath(layout.path) })),
         themes: config.themes?.map(theme => ({ ...theme, stylesheets: theme.stylesheets.map(mapPath) })),
+        toolbar: config.toolbar,
     }
 }
 
