@@ -84,7 +84,11 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             setCursorPosition(editorView.current, selection.to - unwrappedSuffix.length)
         },
         onAddBlock(prefix) {
-            console.log('add block', prefix)
+            if (!editorView.current) return
+
+            const line = currentMarkdownLineInSlide(editorView.current)
+            const position = insertAtPosition(editorView.current, prefix, line.from)
+            setCursorPosition(editorView.current, position)
         },
         onAddModifier(className) {
             if (editorView.current) {
@@ -92,61 +96,51 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             }
         },
         onAddClass(className) {
-            if (editorView.current) {
-                const state = editorView.current.state
-                const currentSlide = findCurrentSlide(state)
+            if (!editorView.current) return
+            const state = editorView.current.state
+            const currentSlide = findCurrentSlide(state)
 
-                if (currentSlide?.frontMatter) {
-                    let newCursorPosition: number
+            if (currentSlide?.frontMatter) {
+                let newCursorPosition: number
 
-                    const line = rangeHasLineStartingWith('class:', editorView.current.state, currentSlide.frontMatter)
-                    if (line) {
-                        const yamlMultiline =
-                            isYAMLArray(line, state, currentSlide.frontMatter) ??
-                            isYAMLMultiline(line, state, currentSlide.frontMatter)
-                        if (yamlMultiline) {
-                            newCursorPosition = insertLineWithPrefix(
-                                editorView.current,
-                                className,
-                                yamlMultiline.nextPosition,
-                                yamlMultiline.prefix
-                            )
-                        } else {
-                            newCursorPosition = insertAtEndOfLine(editorView.current, className, line)
-                        }
-                    } else {
-                        newCursorPosition = insertLine(
+                const line = rangeHasLineStartingWith('class:', editorView.current.state, currentSlide.frontMatter)
+                if (line) {
+                    const yamlMultiline =
+                        isYAMLArray(line, state, currentSlide.frontMatter) ??
+                        isYAMLMultiline(line, state, currentSlide.frontMatter)
+                    if (yamlMultiline) {
+                        newCursorPosition = insertLineWithPrefix(
                             editorView.current,
-                            `class: ${className}`,
-                            currentSlide.frontMatter.to
+                            className,
+                            yamlMultiline.nextPosition,
+                            yamlMultiline.prefix
                         )
+                    } else {
+                        newCursorPosition = insertAtEndOfLine(editorView.current, className, line)
                     }
-
-                    setCursorPosition(editorView.current, newCursorPosition)
+                } else {
+                    newCursorPosition = insertLine(
+                        editorView.current,
+                        `class: ${className}`,
+                        currentSlide.frontMatter.to
+                    )
                 }
+
+                setCursorPosition(editorView.current, newCursorPosition)
             }
         },
         onAddDataTag(dataTag) {
-            if (editorView.current) {
-                const state = editorView.current.state
-                const currentSlide = findCurrentSlide(state)
+            if (!editorView.current) return
+            const state = editorView.current.state
+            const currentSlide = findCurrentSlide(state)
 
-                if (currentSlide?.frontMatter) {
-                    const line = rangeHasLineStartingWith(
-                        `${dataTag}:`,
-                        editorView.current.state,
-                        currentSlide.frontMatter
-                    )
-                    if (line) {
-                        setCursorPosition(editorView.current, line.to)
-                    } else {
-                        const cursorPosition = insertLine(
-                            editorView.current,
-                            `${dataTag}: `,
-                            currentSlide.frontMatter.to
-                        )
-                        setCursorPosition(editorView.current, cursorPosition)
-                    }
+            if (currentSlide?.frontMatter) {
+                const line = rangeHasLineStartingWith(`${dataTag}:`, editorView.current.state, currentSlide.frontMatter)
+                if (line) {
+                    setCursorPosition(editorView.current, line.to)
+                } else {
+                    const cursorPosition = insertLine(editorView.current, `${dataTag}: `, currentSlide.frontMatter.to)
+                    setCursorPosition(editorView.current, cursorPosition)
                 }
             }
         },
@@ -454,4 +448,14 @@ function markdownSelectionInSlide(editorView: EditorView): SelectionRange {
     const end = Math.min(markdownRange.to, Math.max(markdownRange.from, currentSelection.to))
 
     return EditorSelection.range(start, end)
+}
+
+function currentMarkdownLineInSlide(editorView: EditorView): Line {
+    const { state } = editorView
+    const markdownSelection = markdownSelectionInSlide(editorView)
+    const markdownRange = findCurrentSlide(editorView.state)?.markdown ?? markdownSelection
+    const currentSelection = editorView.state.selection.main
+
+    const position = currentSelection.from < markdownRange.from ? markdownRange.to : markdownSelection.from
+    return state.doc.lineAt(position)
 }
