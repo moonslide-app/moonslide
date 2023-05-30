@@ -14,7 +14,7 @@ export function formatStrikethrough(editor: CodeMirrorEditorRef) {
 }
 
 export function formatLink(editor: CodeMirrorEditorRef) {
-    editor.onAddFormat('[', '](https://')
+    editor.onAddFormat('[', '](https://)')
 }
 
 export function formatCodeInline(editor: CodeMirrorEditorRef) {

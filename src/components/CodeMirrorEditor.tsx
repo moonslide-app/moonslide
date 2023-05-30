@@ -4,7 +4,7 @@ import { tags } from '@lezer/highlight'
 import { parser as mdParser, Strikethrough } from '@lezer/markdown'
 import { parseMixed } from '@lezer/common'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
-import { EditorSelection, EditorState, Line } from '@codemirror/state'
+import { EditorSelection, EditorState, Line, SelectionRange, Text } from '@codemirror/state'
 import { RegExpCursor } from '@codemirror/search'
 import { EditorView, ViewPlugin, keymap, drawSelection, lineNumbers } from '@codemirror/view'
 import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
@@ -70,7 +70,18 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             }
         },
         onAddFormat(prefix, suffix) {
-            console.log('add format', prefix, suffix)
+            if (!editorView.current) return
+
+            let unwrappedPrefix = prefix ?? ''
+            let unwrappedSuffix = suffix ?? prefix ?? ''
+
+            const currentMarkdown = markdownSelectionInSlide(editorView.current)
+            const selection = changeInRange(editorView.current, currentMarkdown, (doc, oldValue) => {
+                unwrappedPrefix = addSpace(doc, currentMarkdown.from, unwrappedPrefix, true, false)
+                unwrappedSuffix = addSpace(doc, currentMarkdown.to, unwrappedSuffix, false, true)
+                return `${unwrappedPrefix}${oldValue}${unwrappedSuffix}`
+            })
+            setCursorPosition(editorView.current, selection.to - unwrappedSuffix.length)
         },
         onAddBlock(prefix) {
             console.log('add block', prefix)
@@ -111,7 +122,6 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                         )
                     }
 
-                    editorView.current.focus()
                     setCursorPosition(editorView.current, newCursorPosition)
                 }
             }
@@ -120,17 +130,23 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             if (editorView.current) {
                 const state = editorView.current.state
                 const currentSlide = findCurrentSlide(state)
-                console.log('front matter', currentSlide?.frontMatter)
-                console.log('markdown', currentSlide?.markdown)
-
-                console.log('current index', currentSlide?.index)
 
                 if (currentSlide?.frontMatter) {
-                    editorView.current.dispatch(
-                        editorView.current.state.changeByRange(() => ({
-                            range: currentSlide.frontMatter,
-                        }))
+                    const line = rangeHasLineStartingWith(
+                        `${dataTag}:`,
+                        editorView.current.state,
+                        currentSlide.frontMatter
                     )
+                    if (line) {
+                        setCursorPosition(editorView.current, line.to)
+                    } else {
+                        const cursorPosition = insertLine(
+                            editorView.current,
+                            `${dataTag}: `,
+                            currentSlide.frontMatter.to
+                        )
+                        setCursorPosition(editorView.current, cursorPosition)
+                    }
                 }
             }
         },
@@ -185,16 +201,22 @@ type SimpleRange = {
     to: number
 }
 
+type SlideSelection = {
+    index: number
+    frontMatter: SelectionRange
+    markdown: SelectionRange
+}
+
 /**
  * Get the selecton ranges for both front matter and markdown that
  * represent the slide in which the cursor is currently positioned.
  * @param state Editor state to search in
  * @returns Information about the current slide or `undefined` if no slide is found
  */
-function findCurrentSlide(state: EditorState) {
+function findCurrentSlide(state: EditorState): SlideSelection | undefined {
     const regexQuery = '^---(.|\n)*?^---'
 
-    const currentPosition = state.selection.main.anchor
+    const currentPosition = state.selection.main.from
 
     const cursor = new RegExpCursor(state.doc, regexQuery)
 
@@ -350,9 +372,7 @@ function isYAMLMultiline(
 
 function insertAtEndOfLine(editorView: EditorView, value: string, line: Line) {
     const { doc } = editorView.state
-    const lastCharacter = doc.sliceString(line.to, line.to)
-    const lastCharacterIsSpace = lastCharacter.match('\\s')
-    const spacedValue = lastCharacterIsSpace ? value : ` ${value}`
+    const spacedValue = addSpace(doc, line.to, value, true, false)
     return insertAtPosition(editorView, spacedValue, line.to)
 }
 
@@ -377,6 +397,61 @@ function insertAtPosition(editorView: EditorView, value: string, from: number) {
     return from + value.length
 }
 
+function addSpace(doc: Text, position: number, value: string, leading: boolean, trailing: boolean): string {
+    const spaceRegex = '\\s'
+
+    const start = Math.max(0, position - 1)
+    const docText = doc.sliceString(start, start + 1)
+
+    const isSpace = docText.match(spaceRegex)
+
+    let modified = value
+    if (leading && !isSpace) modified = ` ${modified}`
+    if (trailing && !isSpace) modified = `${modified} `
+
+    return modified
+}
+
 function setCursorPosition(editorView: EditorView, position: number) {
     editorView.dispatch({ selection: { anchor: position, head: position } })
+    editorView.focus()
+}
+
+function changeInRange(
+    editorView: EditorView,
+    range: SelectionRange,
+    newValue: (doc: Text, oldValue: string) => string
+) {
+    const currentText = editorView.state.doc.sliceString(range.from, range.to)
+    const newText = newValue(editorView.state.doc, currentText)
+
+    editorView.dispatch(
+        editorView.state.update({
+            changes: {
+                from: range.from,
+                to: range.to,
+                insert: newText,
+            },
+        })
+    )
+
+    return EditorSelection.range(range.from, range.from + newText.length)
+}
+
+function markdownSelectionInSlide(editorView: EditorView): SelectionRange {
+    const { state } = editorView
+
+    const currentSlide = findCurrentSlide(state)
+    if (!currentSlide) {
+        const documentEnd = state.doc.length
+        return EditorSelection.range(documentEnd, documentEnd)
+    }
+
+    const currentSelection = state.selection.main
+    const markdownRange = currentSlide.markdown
+
+    const start = Math.max(markdownRange.from, Math.min(markdownRange.to, currentSelection.from))
+    const end = Math.min(markdownRange.to, Math.max(markdownRange.from, currentSelection.to))
+
+    return EditorSelection.range(start, end)
 }

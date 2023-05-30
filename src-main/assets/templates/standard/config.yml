@@ -218,7 +218,7 @@ toolbar:
   dataTags:
     - name: Background
       items:
-        - key: 'background-image: '
+        - key: 'background-image'
           displayName: Background Image
   slideClasses:
     - name: Margins
