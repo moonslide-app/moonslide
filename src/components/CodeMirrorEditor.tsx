@@ -80,9 +80,9 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             let unwrappedSuffix = suffix ?? prefix ?? ''
 
             const currentMarkdown = markdownSelectionInSlide(editorView.current, currentSlide)
-            const selection = changeInRange(editorView.current, currentMarkdown, (doc, oldValue) => {
-                unwrappedPrefix = addSpace(doc, currentMarkdown.from, unwrappedPrefix, true, false)
-                unwrappedSuffix = addSpace(doc, currentMarkdown.to, unwrappedSuffix, false, true)
+            const selection = changeInRange(editorView.current, currentMarkdown, (oldValue, doc) => {
+                unwrappedPrefix = addSpaceIfNeeded(doc, currentMarkdown.from, unwrappedPrefix, true, false).newValue
+                unwrappedSuffix = addSpaceIfNeeded(doc, currentMarkdown.to, unwrappedSuffix, false, true).newValue
                 return `${unwrappedPrefix}${oldValue}${unwrappedSuffix}`
             })
             setCursorPosition(editorView.current, selection.to - unwrappedSuffix.length)
@@ -130,12 +130,17 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                     newAttributes = `{ ${extractedAttributes} ${className} }`
                 }
 
-                position = changeInRange(editorView.current, selection, doc =>
-                    addSpace(doc, selection.from, newAttributes, true, false)
+                position = changeInRange(
+                    editorView.current,
+                    selection,
+                    (_, doc) => addSpaceIfNeeded(doc, selection.from, newAttributes, true, false).newValue
                 )
             } else {
-                position = changeInRange(editorView.current, selection, (doc, oldValue) =>
-                    addSpace(doc, selection.from, `[${oldValue}]{ ${className} }`, true, false)
+                position = changeInRange(
+                    editorView.current,
+                    selection,
+                    (oldValue, doc) =>
+                        addSpaceIfNeeded(doc, selection.from, `[${oldValue}]{ ${className} }`, true, false).newValue
                 )
             }
 
@@ -191,9 +196,21 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             }
         },
         onAddMedia(path) {
-            if (editorView.current) {
-                editorView.current.dispatch(editorView.current.state.replaceSelection(path))
-            }
+            if (!editorView.current) return
+
+            const currentSlide = findCurrentSlide(editorView.current.state)
+            if (!currentSlide) return
+
+            const currentMarkdown = markdownSelectionInSlide(editorView.current, currentSlide)
+            const position = EditorSelection.range(currentMarkdown.to, currentMarkdown.to)
+            let imageTag: ModifiedString = { newValue: '', leadingOffset: 0, trailingOffset: 0 }
+
+            const selection = changeInRange(editorView.current, position, (_, doc) => {
+                imageTag = addSpaceIfNeeded(doc, position.to, `![](${path})`, true, true)
+                return imageTag.newValue
+            })
+            const cursorPosition = selection.to + imageTag.leadingOffset + 2 - imageTag.newValue.length
+            setCursorPosition(editorView.current, cursorPosition)
         },
     }))
 
@@ -245,6 +262,12 @@ type SlideSelection = {
     index: number
     frontMatter: SelectionRange
     markdown: SelectionRange
+}
+
+type ModifiedString = {
+    newValue: string
+    leadingOffset: number
+    trailingOffset: number
 }
 
 /**
@@ -411,7 +434,7 @@ function isYAMLMultiline(
 
 function insertAtEndOfLine(editorView: EditorView, value: string, line: Line) {
     const { doc } = editorView.state
-    const spacedValue = addSpace(doc, line.to, value, true, false)
+    const spacedValue = addSpaceIfNeeded(doc, line.to, value, true, false).newValue
     return insertAtPosition(editorView, spacedValue, line.to)
 }
 
@@ -436,7 +459,13 @@ function insertAtPosition(editorView: EditorView, value: string, from: number) {
     return from + value.length
 }
 
-function addSpace(doc: Text, position: number, value: string, leading: boolean, trailing: boolean): string {
+function addSpaceIfNeeded(
+    doc: Text,
+    position: number,
+    value: string,
+    leading: boolean,
+    trailing: boolean
+): ModifiedString {
     const spaceRegex = '\\s'
 
     const start = Math.max(0, position - 1)
@@ -444,11 +473,12 @@ function addSpace(doc: Text, position: number, value: string, leading: boolean, 
 
     const isSpace = docText.match(spaceRegex)
 
-    let modified = value
-    if (leading && !isSpace) modified = ` ${modified}`
-    if (trailing && !isSpace) modified = `${modified} `
+    const leadingOffset = leading && !isSpace ? 1 : 0
+    const trailingOffset = trailing && !isSpace ? 1 : 0
 
-    return modified
+    const newValue = `${' '.repeat(leadingOffset)}${value}${' '.repeat(trailingOffset)}`
+
+    return { newValue, leadingOffset, trailingOffset }
 }
 
 function extractLineAttributes(line: Line): { originalAttributes: string; extractedAttributes: string } | undefined {
@@ -474,10 +504,10 @@ function setCursorPosition(editorView: EditorView, position: number) {
 function changeInRange(
     editorView: EditorView,
     range: SelectionRange,
-    newValue: (doc: Text, oldValue: string) => string
+    newValue: (oldValue: string, doc: Text) => string
 ) {
     const currentText = editorView.state.doc.sliceString(range.from, range.to)
-    const newText = newValue(editorView.state.doc, currentText)
+    const newText = newValue(currentText, editorView.state.doc)
 
     editorView.dispatch(
         editorView.state.update({
