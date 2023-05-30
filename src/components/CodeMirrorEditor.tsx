@@ -120,14 +120,14 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
             if (selection.from === selection.to) {
                 const currentLine = editorView.current.state.doc.lineAt(selection.from)
                 selection = EditorSelection.range(currentLine.to, currentLine.to)
-                let newAttributes = `{ .${className} }`
+                let newAttributes = `{ ${className} }`
 
                 const existingAttributes = extractLineAttributes(currentLine)
                 if (existingAttributes) {
                     const { originalAttributes, extractedAttributes } = existingAttributes
                     const attributesStart = currentLine.to - originalAttributes.length
                     selection = EditorSelection.range(attributesStart, currentLine.to)
-                    newAttributes = `{ ${extractedAttributes} .${className} }`
+                    newAttributes = `{ ${extractedAttributes} ${className} }`
                 }
 
                 position = changeInRange(editorView.current, selection, doc =>
@@ -135,7 +135,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                 )
             } else {
                 position = changeInRange(editorView.current, selection, (doc, oldValue) =>
-                    addSpace(doc, selection.from, `[${oldValue}]{ .${className} }`, true, false)
+                    addSpace(doc, selection.from, `[${oldValue}]{ ${className} }`, true, false)
                 )
             }
 
