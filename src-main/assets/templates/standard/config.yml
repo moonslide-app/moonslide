@@ -220,3 +220,8 @@ toolbar:
       items:
         - key: 'background-image: '
           displayName: Background Image
+  slideClasses:
+    - name: Margins
+      items:
+        - key: m-0
+          displayName: Margin 0
