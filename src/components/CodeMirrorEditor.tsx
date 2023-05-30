@@ -160,7 +160,7 @@ function findCurrentSlide(state: EditorState) {
     while (!cursor.done) {
         currentFrontMatter = nextFrontMatter
         nextFrontMatter = cursor.next().value
-        if (nextFrontMatter && nextFrontMatter.from >= currentPosition) break
+        if (nextFrontMatter && nextFrontMatter.from > currentPosition) break
     }
 
     if (cursor.done) nextFrontMatter = undefined // cursor was in last slide, there is no next
