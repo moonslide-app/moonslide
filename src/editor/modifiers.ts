@@ -22,7 +22,7 @@ export function formatCodeInline(editor: CodeMirrorEditorRef) {
 }
 
 export function formatCodeBlock(editor: CodeMirrorEditorRef) {
-    editor.onAddFormat('\n```\n')
+    editor.onAddFormat('\n\n```\n', '\n```\n')
 }
 
 export function formatMathInline(editor: CodeMirrorEditorRef) {
