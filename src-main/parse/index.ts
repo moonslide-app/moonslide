@@ -147,7 +147,7 @@ function parseSlideYaml(content: string) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
-            const parsed = yamlParse(strippedContent)
+            const parsed = yamlParse(strippedContent, { strict: true })
 
             // This clause catches the case, that a separator is
             // beeing typed (-) and parsed as an array
@@ -163,9 +163,10 @@ function parseSlideYaml(content: string) {
         } catch (error) {
             if (error instanceof YAMLError) {
                 if (error.code === 'MISSING_CHAR') {
-                    const removeLine = error.linePos?.[0].line
-                    if (removeLine) {
-                        strippedContent = removeLineFromString(strippedContent, removeLine)
+                    const affectedLine = (error.linePos?.[0].line ?? 0) - 1
+                    // only ignore error if line does not contain ':'.
+                    if (affectedLine >= 0 && !doesLineContainColon(strippedContent, affectedLine)) {
+                        strippedContent = removeLineFromString(strippedContent, affectedLine)
                         continue
                     }
                 }
@@ -175,8 +176,14 @@ function parseSlideYaml(content: string) {
     }
 }
 
+function doesLineContainColon(string: string, line: number): boolean {
+    const split = string.split('\n')
+    const interesting = split.at(line) ?? ''
+    return interesting.includes(':')
+}
+
 function removeLineFromString(string: string, line: number): string {
     const split = string.split('\n')
-    split.splice(line - 1, 1)
+    split.splice(line, 1)
     return split.join('\n')
 }
