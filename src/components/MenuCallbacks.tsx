@@ -17,6 +17,8 @@ export function MenuCallbacks() {
         updateContent,
     } = useEditorStore()
 
+    // If the file does not exist on the system anymore (path is loaded from localstorage)
+    // the editor should just display the same content without a file.
     useEffectOnce(() => {
         if (editingFile.path !== undefined) {
             window.ipc.files.existsFile(editingFile.path).then(editingFileExists => {
