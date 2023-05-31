@@ -218,11 +218,17 @@ function ItemsTemplateConfigurable<
                                     <ToolbarItem
                                         valueKey={item.key}
                                         value={item}
-                                        searchValues={[item.key, layout.name, item.displayName].filter(isNonNullable)}
+                                        searchValues={[item.key, layout.name, item.value, item.displayName].filter(
+                                            isNonNullable
+                                        )}
                                         hidden={item.hidden}
                                         onSelect={onSelect}
                                     >
-                                        {item.displayName ? `${item.displayName} (${item.key})` : item.key}
+                                        {buildItemLabel({
+                                            displayName: item.displayName,
+                                            value: item.value ?? undefined,
+                                            key: item.key,
+                                        })}
                                     </ToolbarItem>
                                 ))}
                             </ToolbarItemGroup>
@@ -247,7 +253,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="+"
                     placeholder="Search layouts..."
                     emptyText="No layout found."
-                    onSelect={value => value && editorRef?.onAddSlide(value.key, value.slots)}
+                    onSelect={item => item && editorRef?.onAddSlide(item.value ?? item.key, item.slots)}
                 />
             )}
             {editorRef && <ItemsFormat editorRef={editorRef} />}
@@ -282,4 +288,22 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
             )}
         </Toolbar>
     )
+}
+
+function buildItemLabel(item: { displayName?: string; value?: string; key?: string }): string {
+    const parts: (string | undefined)[] = []
+
+    if (item.displayName) {
+        parts.push(item.displayName)
+    }
+
+    if (isNonNullable(item.value)) {
+        if (item.value) {
+            parts.push(`(${item.value})`)
+        }
+    } else if (item.key) {
+        parts.push(`(${item.key})`)
+    }
+
+    return parts.join(' ')
 }

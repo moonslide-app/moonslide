@@ -73,6 +73,9 @@ toolbar:
   layouts:
     - name: Basic
       items:
+        - key: default
+          value: ''
+          displayName: Default
         - key: base
           displayName: Base
     - name: Columns

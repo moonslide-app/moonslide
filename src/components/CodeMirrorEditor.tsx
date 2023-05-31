@@ -594,8 +594,8 @@ function lastNonEmptyLine(state: EditorState, afterPosition: number): Line {
 }
 
 function createNewSlideTemplate(layoutName?: string, slots?: number): { template: string; offset: number } {
-    const layoutTag = layoutName ? `layout: ${layoutName}\n` : ''
-    const newSlideTag = `\n\n---\n${layoutTag}---\n\n`
+    const layoutTag = layoutName ? `layout: ${layoutName}` : ''
+    const newSlideTag = `\n\n---\n${layoutTag}\n---\n\n`
 
     const slotSeparatorsCount = slots && slots > 1 ? slots - 1 : 0
     const slotTags = slots ? `${'\n\n***\n\n'.repeat(slotSeparatorsCount)}` : ''
