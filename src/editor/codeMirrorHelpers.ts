@@ -144,11 +144,11 @@ export function rangeHasLineStartingWith(start: string, state: EditorState, rang
     let currentLine = startLine - 1 // iterator.next starts at first line
 
     const it = doc.iterLines(startLine, endLine + 1)
-    while (!it.done) {
+    do {
         const line = it.next().value
         currentLine++
         if (line.startsWith(start)) return doc.line(currentLine)
-    }
+    } while (!it.done)
 
     return undefined
 }
