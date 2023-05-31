@@ -6,10 +6,11 @@ import { parser as htmlParser } from '@lezer/html'
 import { parseMixed } from '@lezer/common'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
 import { EditorState } from '@codemirror/state'
-import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
-import { useEffect, useRef } from 'react'
+import { EditorView, ViewPlugin, keymap, drawSelection, lineNumbers } from '@codemirror/view'
+import { Ref, forwardRef, useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
+import { useCodeMirrorEditorRef } from '../editor/useCodeMirrorEditorRef'
 
 export type CodeMirrorEditorProps = {
     className?: string
@@ -62,9 +63,24 @@ const mixedParser = parser.configure({
 
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
 
-export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
+export type CodeMirrorEditorRef = {
+    onAddSlide(layout?: string, slots?: number): void
+    onAddFormat(prefix: string, suffix?: string): void
+    onAddBlock(prefix: string): void
+    onAddHeading(prefix: string): void
+    onAddAttribute(attribute: string): void
+    onAddClass(className: string): void
+    onAddDataTag(dataTag: string): void
+    onAddMedia(path: string): void
+}
+
+export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?: Ref<CodeMirrorEditorRef>) => {
+    const editorView = useRef<EditorView | undefined>()
+
     const editingFile = useEditorStore(state => state.editingFile)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
+
+    useCodeMirrorEditorRef(ref, editorView)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
 
@@ -83,14 +99,18 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
                 keymap.of([indentWithTab]),
                 history(),
                 EditorView.lineWrapping,
+                drawSelection(),
+                lineNumbers(),
             ],
         })
 
         const parent = editorDomNode.current
-        let view: EditorView | undefined
-        if (parent) {
-            view = new EditorView({ state, parent })
+
+        if (parent && state) {
+            editorView.current = new EditorView({ state, parent })
         }
+
+        const view = editorView.current
 
         window.ipc.menu.onUndo(() => view && undo(view))
         window.ipc.menu.onRedo(() => view && redo(view))
@@ -98,5 +118,5 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         return () => view?.destroy()
     }, [editingFile.openedAt])
 
-    return <div ref={editorDomNode} className={`h-full overflow-y-auto ${props?.className}`}></div>
-}
+    return <div ref={editorDomNode} className={`flex-grow overflow-y-auto ${props?.className}`}></div>
+})

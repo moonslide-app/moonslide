@@ -6,7 +6,7 @@ import {
     PREVIEW_SMALL_SCRIPT_FILENAME,
     loadAssetContent,
 } from '../../src-main/helpers/assets'
-import { TemplateConfig, getThemeMatching } from './templateConfig'
+import { TemplateConfig, getThemeMatching } from '../../src-shared/entities/TemplateConfig'
 import { PresentationConfig } from '../../src-shared/entities/PresentationConfig'
 import escapeHtml from 'escape-html'
 
