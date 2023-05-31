@@ -147,7 +147,6 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                 let newAttributes = `{ ${className} }`
 
                 const existingAttributes = extractLineAttributes(currentLine)
-                console.log('existing attributes', existingAttributes)
                 if (existingAttributes) {
                     const { originalAttributes, extractedAttributes } = existingAttributes
                     const attributesStart = currentLine.to - originalAttributes.length
