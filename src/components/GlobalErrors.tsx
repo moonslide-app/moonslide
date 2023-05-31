@@ -5,12 +5,8 @@ import { toast } from './ui/use-toast'
 export function GlobalErrors() {
     useEffectOnce(() => {
         window.onunhandledrejection = (event: PromiseRejectionEvent) => {
-            const { highLevelMessage } = getErrorMessage(event.reason)
-            toast({
-                title: 'Error',
-                description: highLevelMessage,
-                variant: 'destructive',
-            })
+            const { title, highLevelMessage } = getErrorMessage(event.reason)
+            toast({ title, description: highLevelMessage, variant: 'destructive' })
         }
     })
 
