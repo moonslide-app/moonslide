@@ -67,7 +67,6 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
     useImperativeHandle(ref, () => ({
         onAddSlide(layout, slots) {
             if (!editorView.current) return
-
             const { doc } = editorView.current.state
 
             const { template, offset } = createNewSlideTemplate(layout, slots)
@@ -322,7 +321,7 @@ function findLastSlideUntil(state: EditorState, position: number): SlideSelectio
     const frontMatterSecondLastLine = state.doc.lineAt(currentFrontMatter.to).number - 1
 
     const trimmedFrontMatter: SimpleRange = {
-        from: state.doc.line(frontMatterSecondLine).from,
+        from: state.doc.line(frontMatterSecondLine).from - 1,
         to: state.doc.line(frontMatterSecondLastLine).to,
     }
 
@@ -517,7 +516,7 @@ function extractLineAttributes(line: Line): { originalAttributes: string; extrac
 }
 
 function setCursorPosition(editorView: EditorView, position: number) {
-    editorView.dispatch({ selection: { anchor: position, head: position } })
+    editorView.dispatch({ selection: { anchor: position, head: position }, scrollIntoView: true })
     editorView.focus()
 }
 
@@ -606,4 +605,11 @@ function createNewSlideTemplate(layoutName?: string, slots?: number): { template
     const offset = slots ? slotTags.length : 0
 
     return { template, offset }
+}
+
+function selectRange(editorView: EditorView, selection: SelectionRange) {
+    console.log('new selection', selection)
+    editorView.dispatch({
+        selection,
+    })
 }
