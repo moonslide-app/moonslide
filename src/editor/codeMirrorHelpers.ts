@@ -76,11 +76,12 @@ function findLastSlideUntil(state: EditorState, position: number): SlideSelectio
     if (cursor.done) nextFrontMatter = undefined // cursor was in last slide, there is no next
     if (!currentFrontMatter) return undefined
 
-    const endOfDocument = lastNonEmptyLine(state, currentFrontMatter.to + 1, 3)
+    const endOfDocument = lastNonEmptyLine(state, currentFrontMatter.to + 1, 2)
+    const currentMarkdownEnd = nextFrontMatter ? nextFrontMatter.from - 1 : endOfDocument.to
 
     const currentMarkdown = {
         from: currentFrontMatter.to + 1,
-        to: (nextFrontMatter?.from ?? endOfDocument.from) - 1,
+        to: currentMarkdownEnd,
     }
 
     const frontMatterSecondLine = state.doc.lineAt(currentFrontMatter.from).number + 1
