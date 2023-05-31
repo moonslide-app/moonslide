@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
 import { copy, existsSync } from 'fs-extra'
-import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from './templateConfig'
+import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from '../../src-shared/entities/TemplateConfig'
 import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import sanitizeHtml from './sanitize'
