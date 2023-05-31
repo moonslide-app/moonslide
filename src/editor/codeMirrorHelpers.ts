@@ -144,11 +144,11 @@ export function rangeHasLineStartingWith(start: string, state: EditorState, rang
     let currentLine = startLine - 1 // iterator.next starts at first line
 
     const it = doc.iterLines(startLine, endLine + 1)
-    do {
+    while (!it.done) {
         const line = it.next().value
         currentLine++
         if (line.startsWith(start)) return doc.line(currentLine)
-    } while (!it.done)
+    }
 
     return undefined
 }
@@ -212,13 +212,13 @@ export function lastLineMatching(state: EditorState, range: SimpleRange, regex: 
     let lastLine = currentLine
 
     const it = state.doc.iterLines(startLine.number, maxLine + 1)
-    do {
+    while (!it.done) {
         const value = it.next().value
         currentLine++
 
         const match = value.match(regex)
         if (match) lastLine = currentLine
-    } while (!it.done)
+    }
 
     lastLine = Math.min(maxLine, lastLine)
     return state.doc.line(lastLine)
