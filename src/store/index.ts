@@ -87,8 +87,11 @@ export type EditorStore = {
     exportHTMLPresentation(outputPath: string, standalone?: boolean): Promise<void>
 }
 
-let debounceTimeout: number | undefined = undefined
-const DEBOUNCE_INTERVAL = 350
+let parseTimeout: number | undefined = undefined
+const PARSE_INTERVAL = 350
+
+let fullReloadTimeout: number | undefined = undefined
+const FULL_RELOAD_INTERVAL = 500
 
 export const useEditorStore = create<EditorStore>()(
     persist(
@@ -105,8 +108,8 @@ export const useEditorStore = create<EditorStore>()(
             lastFullUpdate: 0,
             updateContent: newContent => {
                 set(state => ({ ...state, content: newContent, editingFileSaved: false }))
-                window.clearTimeout(debounceTimeout)
-                debounceTimeout = window.setTimeout(get().parsePresentation, DEBOUNCE_INTERVAL)
+                window.clearTimeout(parseTimeout)
+                parseTimeout = window.setTimeout(get().parsePresentation, PARSE_INTERVAL)
             },
             parsePresentation: () => {
                 const { content, editingFile } = get()
@@ -123,17 +126,17 @@ export const useEditorStore = create<EditorStore>()(
                     .catch(parsingError => set(state => ({ ...state, parsingError })))
             },
             updateParsedPresentation: newParsedPresentation => {
-                const { parsedPresentation, lastFullUpdate } = get()
+                const { parsedPresentation } = get()
                 set(state => ({ ...state, parsedPresentation: newParsedPresentation }))
 
-                const newTimestamp = Date.now()
                 const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
-                const newLastFullUpdate =
-                    comparison.templateChange || comparison.themeChange ? newTimestamp : lastFullUpdate
-                set(state => ({
-                    ...state,
-                    lastFullUpdate: newLastFullUpdate,
-                }))
+                if (comparison.templateChange || comparison.themeChange) {
+                    clearTimeout(fullReloadTimeout)
+                    fullReloadTimeout = window.setTimeout(
+                        () => set(state => ({ ...state, lastFullUpdate: Date.now() })),
+                        FULL_RELOAD_INTERVAL
+                    )
+                }
             },
             async reloadAllPreviews() {
                 await get().parsePresentation()
@@ -151,7 +154,7 @@ export const useEditorStore = create<EditorStore>()(
                 const { editingFile, content } = get()
                 if (editingFile.path) {
                     await window.ipc.files.saveFile(editingFile.path, content)
-                    set(state => ({ ...state, lastSavedContent: content }))
+                    set(state => ({ ...state, editingFile: { ...editingFile, lastSavedContent: content } }))
                 } else {
                     const filePath = await window.ipc.files.selectOutputFile('Save new presentation', [markdownFilter])
                     await window.ipc.files.saveFile(filePath, content)
