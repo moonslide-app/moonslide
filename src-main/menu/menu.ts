@@ -88,9 +88,9 @@ export function buildTemplate(window: BrowserWindow): Electron.MenuItemConstruct
                     click: () => window.webContents.send('menu:reload-previews'),
                 },
                 { type: 'separator' },
-                ...(!app.isPackaged
-                    ? ([{ role: 'forceReload' }, { role: 'toggleDevTools' }, { type: 'separator' }] as const)
-                    : []),
+                { role: 'forceReload' },
+                { role: 'toggleDevTools' },
+                { type: 'separator' },
                 { role: 'resetZoom' },
                 { role: 'zoomIn' },
                 { role: 'zoomOut' },
