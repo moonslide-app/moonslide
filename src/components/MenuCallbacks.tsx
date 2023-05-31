@@ -71,6 +71,16 @@ export function MenuCallbacks() {
                 description: `The presentation was exported to '${filePath}'.`,
             })
         })
+
+        window.ipc.menu.onCreateTemplate(async () => {
+            const folderPath = await window.ipc.files.selectOutputFolder('Export Template')
+            await window.ipc.presentation.exportTemplate(folderPath)
+            toast({
+                title: 'Standard Template Export successful',
+                description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
+            })
+        })
+
         window.ipc.menu.onReloadPreviews(reloadAllPreviews)
         window.ipc.menu.onOpenPreviews(openPreviewWindow)
     }, [changeEditingFile, saveContentToEditingFile, saveOrDiscardChanges])

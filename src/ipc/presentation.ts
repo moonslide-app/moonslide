@@ -14,6 +14,9 @@ const presentation = {
     async exportHtml(request: ExportRequest) {
         await unwrapPromise(ipcRenderer.invoke('export:html', request))
     },
+    async exportTemplate(outputPath: string): Promise<void> {
+        await unwrapPromise(ipcRenderer.invoke('export:template', outputPath))
+    },
 } as const
 
 export default presentation
