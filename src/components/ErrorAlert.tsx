@@ -1,23 +1,14 @@
 import { useState } from 'react'
-import { isWrappedError } from '../../src-shared/errors/WrappedError'
 import { useEditorStore } from '../store'
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
+import { getErrorMessage } from '../../src-shared/errors/errorMessage'
 
 export function ErrorAlert() {
     const parsingError = useEditorStore(state => state.parsingError)
 
-    let highLevelMessage: string | undefined = undefined
-    let detailedMessage: string | undefined = undefined
-    if (isWrappedError(parsingError)) {
-        highLevelMessage = parsingError.message
-        detailedMessage = parsingError.underlyingErrorMessage
-    } else if (parsingError instanceof Error) {
-        highLevelMessage = parsingError.message
-    } else if (typeof parsingError === 'string') {
-        highLevelMessage = parsingError
-    } else if (parsingError) {
-        highLevelMessage = 'An unknown error occurred.'
-    }
+    const errorMessage = parsingError ? getErrorMessage(parsingError) : undefined
+    const highLevelMessage = errorMessage?.highLevelMessage
+    const detailedMessage = errorMessage?.detailedMessage
 
     const isDisplayed = highLevelMessage !== undefined
     const hasDetails = detailedMessage !== undefined

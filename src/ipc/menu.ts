@@ -17,6 +17,7 @@ const menu = {
     onRedo: createCallback('menu:redo'),
     onReloadPreviews: createCallback('menu:reload-previews'),
     onOpenPreviews: createCallback('menu:open-previews'),
+    onCreateTemplate: createCallback('menu:create-template'),
 } as const
 
 export default menu
