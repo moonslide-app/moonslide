@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { htmlFilter, markdownFilter } from '../store/FileFilters'
 import { openPreviewWindow } from './PreviewWindow'
 import { toast } from './ui/use-toast'
+import { useEffectOnce } from 'usehooks-ts'
 
 export function MenuCallbacks() {
     const [
@@ -11,13 +12,23 @@ export function MenuCallbacks() {
         saveOrDiscardChanges,
         exportHTMLPresentation,
         reloadAllPreviews,
+        editingFilePath,
     ] = useEditorStore(state => [
         state.changeEditingFile,
         state.saveContentToEditingFile,
         state.saveOrDiscardChanges,
         state.exportHTMLPresentation,
         state.reloadAllPreviews,
+        state.editingFilePath,
     ])
+
+    useEffectOnce(() => {
+        if (editingFilePath !== undefined) {
+            window.ipc.files.existsFile(editingFilePath).then(editingFileExists => {
+                if (!editingFileExists) changeEditingFile(undefined, false)
+            })
+        }
+    })
 
     useEffect(() => {
         window.ipc.menu.onNew(async () => {

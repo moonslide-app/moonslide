@@ -1,4 +1,5 @@
 import { dialog } from 'electron'
+import { existsSync } from 'fs-extra'
 import { readFile, writeFile } from 'fs/promises'
 
 /**
@@ -63,4 +64,8 @@ export async function getFileContent(filePath: string): Promise<string> {
 
 export async function saveFile(filePath: string, content: string): Promise<void> {
     await writeFile(filePath, content)
+}
+
+export function exists(filePath: string): boolean {
+    return existsSync(filePath)
 }

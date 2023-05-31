@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron'
 import {
+    exists,
     getFileContent,
     saveChangesDialog,
     saveFile,
@@ -20,8 +21,9 @@ export function registerIpc() {
     ipcMain.handle('dialog:selectOutputFile', (_, title, filters) => selectOutputFile(title, filters))
     ipcMain.handle('dialog:selectOutputFolder', (_, title) => selectOutputFolder(title))
     ipcMain.handle('dialog:saveChanges', saveChangesDialog)
-    ipcMain.handle('file:save', (_, filePath, content) => saveFile(filePath, content))
-    ipcMain.handle('file:getContent', (_, filePath) => getFileContent(filePath))
+    ipcMain.handle('file:exists', (_, filePath) => exists(filePath))
+    ipcMain.handle('file:save', (_, filePath, content) => wrapPromise(saveFile(filePath, content)))
+    ipcMain.handle('file:getContent', (_, filePath) => wrapPromise(getFileContent(filePath)))
     ipcMain.handle('presentation:parse', (_, parseRequest) => wrapPromise(parseAndCachePresentation(parseRequest)))
     ipcMain.handle('export:html', (_, exportRequest) => wrapPromise(exportHtml(exportRequest)))
     ipcMain.handle('export:pdf', (_, outputPath) => wrapPromise(exportPdf(outputPath)))

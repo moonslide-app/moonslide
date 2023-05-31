@@ -13,9 +13,9 @@ export type EditorStore = {
      */
     content: string
     /**
-     * Indicates wheter the latest content has been saved to the editing file.
+     * Contains the `content` at the state when the last save occured.
      */
-    editingFileSaved: boolean
+    lastSavedContent: string
     /**
      * The presentation, which was parsed from the `content`.
      */
@@ -81,8 +81,8 @@ export const useEditorStore = create<EditorStore>()(
         (set, get) => ({
             editingFilePath: undefined,
             templateFolderPath: undefined,
-            editingFileSaved: true,
             content: '',
+            lastSavedContent: '',
             parsedPresentation: undefined,
             parsingError: undefined,
             lastFullUpdate: 0,
@@ -137,7 +137,7 @@ export const useEditorStore = create<EditorStore>()(
                 const { editingFilePath, content } = get()
                 if (editingFilePath) {
                     await window.ipc.files.saveFile(editingFilePath, content)
-                    set(state => ({ ...state, editingFileSaved: true }))
+                    set(state => ({ ...state, lastSavedContent: content }))
                 } else {
                     const filePath = await window.ipc.files.selectOutputFile('Save new presentation', [markdownFilter])
                     await window.ipc.files.saveFile(filePath, content)
@@ -145,8 +145,8 @@ export const useEditorStore = create<EditorStore>()(
                 }
             },
             async saveOrDiscardChanges() {
-                const { content, editingFileSaved, saveContentToEditingFile } = get()
-                if (!editingFileSaved && content.trim()) {
+                const { content, lastSavedContent, saveContentToEditingFile } = get()
+                if (content !== lastSavedContent) {
                     const saveFile = await window.ipc.files.showSaveChangesDialog()
                     if (saveFile) await saveContentToEditingFile()
                 }
