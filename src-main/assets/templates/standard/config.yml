@@ -79,42 +79,59 @@ toolbar:
       items:
         - key: cols-2
           displayName: Two Column
+          slots: 2
         - key: cols-3
           displayName: Three Column
+          slots: 3
         - key: cols-4
           displayName: Four Columns
+          slots: 4
     - name: Grid
       items:
         - key: grid-3
           displayName: Grid 3 Left
+          slots: 3
         - key: grid-3-right
           displayName: Grid 3 Right
+          slots: 3
         - key: grid-4
           displayName: Grid 4
+          slots: 4
         - key: grid-5
           displayName: Grid 5
+          slots: 5
         - key: grid-6
           displayName: Grid 6
+          slots: 6
         - key: grid-7
           displayName: Grid 7
+          slots: 7
         - key: grid-8
           displayName: Grid 8
+          slots: 8
         - key: grid-9
           displayName: Grid 9
+          slots: 9
     - name: Title + Content
       items:
         - key: title-content
           displayName: Title + Content
+          slots: 2
         - key: title-cols-2
           displayName: Title + Two Columns
+          slots: 3
         - key: title-cols-3
           displayName: Title + Three Columns
+          slots: 4
         - key: title-grid-3
           displayName: Title + Grid 3 Left
+          slots: 4
         - key: title-grid-3-right
           displayName: Title + Grid 3 Right
+          slots: 4
         - key: title-grid-4
           displayName: Title + Grid 4
+          slots: 5
   modifiers:
     - name: Margins
       items:

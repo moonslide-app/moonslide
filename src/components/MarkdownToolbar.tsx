@@ -1,5 +1,11 @@
 import { isNonNullable } from '../../src-shared/entities/utils'
-import { TemplateConfig, ToolbarEntryConfig, ToolbarItemConfigSchema } from '../../src-shared/entities/TemplateConfig'
+import {
+    TemplateConfig,
+    ToolbarEntryConfig,
+    ToolbarItemConfig,
+    ToolbarLayoutEntryConfig,
+    ToolbarLayoutItemConfig,
+} from '../../src-shared/entities/TemplateConfig'
 import {
     ToolbarItemsEmpty,
     ToolbarItemGroup,
@@ -12,6 +18,7 @@ import {
     ToolbarItemsList,
     ToolbarButton,
     ToolbarItemSeparator,
+    ToolbarItemValue,
 } from './ui/toolbar'
 import { CodeMirrorEditorRef } from './CodeMirrorEditor'
 import {
@@ -186,12 +193,15 @@ function ItemsBlock(props: { editorRef: CodeMirrorEditorRef }) {
     )
 }
 
-function ItemsTemplateConfigurable(props: {
-    layoutsConfig: ToolbarEntryConfig
+function ItemsTemplateConfigurable<
+    Item extends ToolbarItemConfig & ToolbarItemValue,
+    Layout extends { items: Item[] } & ToolbarEntryConfig
+>(props: {
+    layoutsConfig: Layout[]
     buttonTitle: string
     placeholder?: string
     emptyText?: string
-    onSelect?: (value: ToolbarItemConfigSchema | undefined) => void
+    onSelect?: (value: Item | undefined) => void
 }) {
     const { layoutsConfig, buttonTitle, placeholder, emptyText, onSelect } = props
 
@@ -232,12 +242,12 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
     return (
         <Toolbar className="m-4">
             {toolbar?.layouts && (
-                <ItemsTemplateConfigurable
+                <ItemsTemplateConfigurable<ToolbarLayoutItemConfig, ToolbarLayoutEntryConfig>
                     layoutsConfig={toolbar.layouts}
                     buttonTitle="+"
                     placeholder="Search layouts..."
                     emptyText="No layout found."
-                    onSelect={value => value && editorRef?.onAddSlide(value.key)}
+                    onSelect={value => value && editorRef?.onAddSlide(value.key, value.slots)}
                 />
             )}
             {editorRef && <ItemsFormat editorRef={editorRef} />}

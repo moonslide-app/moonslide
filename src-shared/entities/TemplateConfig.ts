@@ -8,14 +8,18 @@ const toolbarItemConfigSchema = z.object({
     hidden: z.boolean().nullish().transform(nullishToOptional),
 })
 
-const toolbarEntryConfigSchema = z
-    .object({
-        name: z.string(),
-        items: toolbarItemConfigSchema.array(),
-    })
-    .array()
-    .nullish()
-    .transform(nullishToArray)
+const toolbarLayoutItemConfigSchema = toolbarItemConfigSchema.extend({
+    slots: z.number().nullish().transform(nullishToOptional),
+})
+
+const toolbarEntryConfigSchema = z.object({
+    name: z.string(),
+    items: toolbarItemConfigSchema.array(),
+})
+
+const toolbarLayoutEntryConfigSchema = toolbarEntryConfigSchema
+    .omit({ items: true })
+    .extend({ items: toolbarLayoutItemConfigSchema.array() })
 
 const templateConfigSchema = z.object({
     entry: z.string(),
@@ -46,17 +50,19 @@ const templateConfigSchema = z.object({
         .transform(nullishToArray),
     toolbar: z
         .object({
-            layouts: toolbarEntryConfigSchema,
-            modifiers: toolbarEntryConfigSchema,
-            slideClasses: toolbarEntryConfigSchema,
-            dataTags: toolbarEntryConfigSchema,
+            layouts: toolbarLayoutEntryConfigSchema.array().nullish().transform(nullishToArray),
+            modifiers: toolbarEntryConfigSchema.array().nullish().transform(nullishToArray),
+            slideClasses: toolbarEntryConfigSchema.array().nullish().transform(nullishToArray),
+            dataTags: toolbarEntryConfigSchema.array().nullish().transform(nullishToArray),
         })
         .nullish()
         .transform(nullishToOptional),
 })
 
-export type ToolbarItemConfigSchema = z.infer<typeof toolbarItemConfigSchema>
+export type ToolbarItemConfig = z.infer<typeof toolbarItemConfigSchema>
+export type ToolbarLayoutItemConfig = z.infer<typeof toolbarLayoutItemConfigSchema>
 export type ToolbarEntryConfig = z.infer<typeof toolbarEntryConfigSchema>
+export type ToolbarLayoutEntryConfig = z.infer<typeof toolbarLayoutEntryConfigSchema>
 export type TemplateConfig = z.infer<typeof templateConfigSchema>
 
 export function parseTemplateConfig(yamlString: string): TemplateConfig {

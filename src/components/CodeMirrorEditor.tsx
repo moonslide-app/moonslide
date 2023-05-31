@@ -65,16 +65,16 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
 
     useImperativeHandle(ref, () => ({
-        onAddSlide(layout) {
+        onAddSlide(layout, slots) {
             if (!editorView.current) return
 
             const { doc } = editorView.current.state
 
-            const layoutTag = layout ? `layout: ${layout}\n` : ''
-            const newSlideTag = `\n---\n${layoutTag}---\n\n`
-            const position = insertAtPosition(editorView.current, newSlideTag, doc.length)
+            const { template, offset } = createNewSlideTemplate(layout, slots)
+            const position = findLastSlide(editorView.current.state)?.markdown.to ?? doc.length
+            const newPosition = insertAtPosition(editorView.current, template, position)
 
-            setCursorPosition(editorView.current, position)
+            setCursorPosition(editorView.current, newPosition - offset)
         },
         onAddFormat(prefix, suffix) {
             if (!editorView.current) return
@@ -129,6 +129,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                 let newAttributes = `{ ${className} }`
 
                 const existingAttributes = extractLineAttributes(currentLine)
+                console.log('existing attributes', existingAttributes)
                 if (existingAttributes) {
                     const { originalAttributes, extractedAttributes } = existingAttributes
                     const attributesStart = currentLine.to - originalAttributes.length
@@ -283,9 +284,17 @@ type ModifiedString = {
  * @returns Information about the current slide or `undefined` if no slide is found
  */
 function findCurrentSlide(state: EditorState): SlideSelection | undefined {
-    const regexQuery = '^---(.|\n)*?^---'
-
     const currentPosition = state.selection.main.from
+    return findLastSlideUntil(state, currentPosition)
+}
+
+function findLastSlide(state: EditorState): SlideSelection | undefined {
+    const endPosition = state.doc.length
+    return findLastSlideUntil(state, endPosition)
+}
+
+function findLastSlideUntil(state: EditorState, position: number): SlideSelection | undefined {
+    const regexQuery = '^---(.|\n)*?^---'
 
     const cursor = new RegExpCursor(state.doc, regexQuery)
 
@@ -298,13 +307,16 @@ function findCurrentSlide(state: EditorState): SlideSelection | undefined {
         currentFrontMatter = nextFrontMatter
         nextFrontMatter = cursor.next().value
         nextIndex++
-        if (nextFrontMatter && nextFrontMatter.from > currentPosition) break
+        if (nextFrontMatter && nextFrontMatter.from > position) break
     }
 
     if (cursor.done) nextFrontMatter = undefined // cursor was in last slide, there is no next
     if (!currentFrontMatter) return undefined
 
-    const currentMarkdown = { from: currentFrontMatter.to + 1, to: (nextFrontMatter?.from ?? state.doc.length) - 1 }
+    const currentMarkdown = {
+        from: currentFrontMatter.to + 1,
+        to: (nextFrontMatter?.from ?? lastNonEmptyLine(state, currentFrontMatter.to + 1).to) - 1,
+    }
 
     const frontMatterSecondLine = state.doc.lineAt(currentFrontMatter.from).number + 1
     const frontMatterSecondLastLine = state.doc.lineAt(currentFrontMatter.to).number - 1
@@ -475,12 +487,14 @@ function addSpaceIfNeeded(
     const spaceRegex = '\\s'
 
     const start = Math.max(0, position - 1)
-    const docText = doc.sliceString(start, start + 1)
+    const textBefore = doc.sliceString(start, start + 1)
+    const textAfter = doc.sliceString(start + 1, start + 2)
 
-    const isSpace = docText.match(spaceRegex)
+    const isSpaceBefore = textBefore.match(spaceRegex)
+    const isSpaceAfter = textAfter.match(spaceRegex)
 
-    const leadingOffset = leading && !isSpace ? 1 : 0
-    const trailingOffset = trailing && !isSpace ? 1 : 0
+    const leadingOffset = leading && !isSpaceBefore ? 1 : 0
+    const trailingOffset = trailing && !isSpaceAfter ? 1 : 0
 
     const newValue = `${' '.repeat(leadingOffset)}${value}${' '.repeat(trailingOffset)}`
 
@@ -488,7 +502,7 @@ function addSpaceIfNeeded(
 }
 
 function extractLineAttributes(line: Line): { originalAttributes: string; extractedAttributes: string } | undefined {
-    const originalQuery = '{.*}\\s*$' // matches { .attr } at end of line
+    const originalQuery = ' {[^{}]*}\\s*$' // matches { .attr } at end of line
     const extractQuery = '(?<={).*(?=})' // matches inner part of { .attr }
 
     const originalMatch = line.text.match(originalQuery)
@@ -561,4 +575,33 @@ function removeHeadingFromLine(editorView: EditorView, line: Line): Line {
     const to = line.from + match[0].length
     const newSelection = changeInRange(editorView, EditorSelection.range(line.from, to), () => '')
     return editorView.state.doc.lineAt(newSelection.from)
+}
+
+function lastNonEmptyLine(state: EditorState, afterPosition: number): Line {
+    const regexQuery = '^.*\\S+.*$' // match all lines that contain any non-whitespace character
+    let currentLine = state.doc.lineAt(afterPosition).number - 1
+    let lastLine = currentLine
+
+    const it = state.doc.iterLines(currentLine)
+    while (!it.done) {
+        const value = it.next().value
+        currentLine++
+        const match = value.match(regexQuery)
+        if (match) lastLine = currentLine
+    }
+
+    return state.doc.line(lastLine)
+}
+
+function createNewSlideTemplate(layoutName?: string, slots?: number): { template: string; offset: number } {
+    const layoutTag = layoutName ? `layout: ${layoutName}\n` : ''
+    const newSlideTag = `\n\n---\n${layoutTag}---\n\n`
+
+    const slotSeparatorsCount = slots && slots > 1 ? slots - 1 : 0
+    const slotTags = slots ? `${'\n\n***\n\n'.repeat(slotSeparatorsCount)}` : ''
+
+    const template = `${newSlideTag}${slotTags}`
+    const offset = slots ? slotTags.length : 0
+
+    return { template, offset }
 }

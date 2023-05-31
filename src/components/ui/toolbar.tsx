@@ -179,10 +179,7 @@ interface ToolbarItemValue {
     key: string
 }
 
-type ToolbarItemProps<T extends ToolbarItemValue> = Omit<
-    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>,
-    'value' | 'onSelect'
-> & {
+type ToolbarItemProps<T> = Omit<React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>, 'value' | 'onSelect'> & {
     valueKey: string
     value?: T
     onSelect?: (value: T | undefined) => void
