@@ -31,69 +31,107 @@ export function MenuCallbacks() {
         }
     })
 
+    async function newPresentation() {
+        const filePath = await window.ipc.files.selectOutputFile('New Presentation', [markdownFilter])
+        await saveOrDiscardChanges()
+        await window.ipc.files.saveFile(filePath, '')
+        changeEditingFile(filePath)
+    }
+
+    async function open() {
+        const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
+        await saveOrDiscardChanges()
+        changeEditingFile(filePath)
+    }
+
+    async function save() {
+        await saveContentToEditingFile()
+    }
+
+    async function saveAs() {
+        const filePath = await window.ipc.files.selectOutputFile('Save Presentation', [markdownFilter])
+        await window.ipc.files.saveFile(filePath, getContent())
+        await changeEditingFile(filePath)
+    }
+
+    async function exportPdf() {
+        const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
+            { name: 'PDF', extensions: ['pdf'] },
+        ])
+        await window.ipc.presentation.exportPdf(filePath)
+        toast({
+            title: 'PDF Export successful',
+            description: `The presentation was exported to '${filePath}'.`,
+        })
+    }
+
+    async function exportPresentationBundle() {
+        const folderPath = await window.ipc.files.selectOutputFolder('Export Presentation Bundle')
+        await exportHTMLPresentation(folderPath, true)
+        toast({
+            title: 'HTML Bundle Export successful',
+            description: `The presentation was exported to '${folderPath}'.`,
+        })
+    }
+
+    async function exportPresentationOnly() {
+        const filePath = await window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter])
+        await exportHTMLPresentation(filePath, false)
+        toast({
+            title: 'HTML Presentation Export successful',
+            description: `The presentation was exported to '${filePath}'.`,
+        })
+    }
+
+    async function createTemplate() {
+        const folderPath = await window.ipc.files.selectOutputFolder('Export Template')
+        await window.ipc.presentation.exportTemplate(folderPath)
+        toast({
+            title: 'Standard Template Export successful',
+            description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
+        })
+    }
+
+    async function reloadPreviews() {
+        await reloadAllPreviews()
+    }
+
+    async function openPreview() {
+        openPreviewWindow()
+    }
+
+    // it has to be this ugly, so we can capture the errors
     useEffectOnce(() => {
-        window.ipc.menu.onNew(async () => {
-            const filePath = await window.ipc.files.selectOutputFile('New Presentation', [markdownFilter])
-            await saveOrDiscardChanges()
-            await window.ipc.files.saveFile(filePath, '')
-            changeEditingFile(filePath)
+        window.ipc.menu.onNew(() => {
+            newPresentation()
         })
-
-        window.ipc.menu.onOpen(async () => {
-            const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
-            await saveOrDiscardChanges()
-            changeEditingFile(filePath)
+        window.ipc.menu.onOpen(() => {
+            open()
         })
-
-        window.ipc.menu.onSave(async () => {
-            await saveContentToEditingFile()
+        window.ipc.menu.onSave(() => {
+            save()
         })
-
-        window.ipc.menu.onSaveAs(async () => {
-            const filePath = await window.ipc.files.selectOutputFile('Save Presentation', [markdownFilter])
-            await window.ipc.files.saveFile(filePath, getContent())
-            await changeEditingFile(filePath)
+        window.ipc.menu.onSaveAs(() => {
+            saveAs()
         })
-
-        window.ipc.menu.onExportPdf(async () => {
-            const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
-                { name: 'PDF', extensions: ['pdf'] },
-            ])
-            await window.ipc.presentation.exportPdf(filePath)
-            toast({
-                title: 'PDF Export successful',
-                description: `The presentation was exported to '${filePath}'.`,
-            })
+        window.ipc.menu.onExportPdf(() => {
+            exportPdf()
         })
-
-        window.ipc.menu.onExportPresentationBundle(async () => {
-            const folderPath = await window.ipc.files.selectOutputFolder('Export Presentation Bundle')
-            await exportHTMLPresentation(folderPath, true)
-            toast({
-                title: 'HTML Bundle Export successful',
-                description: `The presentation was exported to '${folderPath}'.`,
-            })
+        window.ipc.menu.onExportPresentationBundle(() => {
+            exportPresentationBundle()
         })
-        window.ipc.menu.onExportPresentationOnly(async () => {
-            const filePath = await window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter])
-            await exportHTMLPresentation(filePath, false)
-            toast({
-                title: 'HTML Presentation Export successful',
-                description: `The presentation was exported to '${filePath}'.`,
-            })
+        window.ipc.menu.onExportPresentationOnly(() => {
+            exportPresentationOnly()
         })
-
-        window.ipc.menu.onCreateTemplate(async () => {
-            const folderPath = await window.ipc.files.selectOutputFolder('Export Template')
-            await window.ipc.presentation.exportTemplate(folderPath)
-            toast({
-                title: 'Standard Template Export successful',
-                description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
-            })
+        window.ipc.menu.onCreateTemplate(() => {
+            createTemplate()
         })
-
-        window.ipc.menu.onReloadPreviews(reloadAllPreviews)
-        window.ipc.menu.onOpenPreviews(openPreviewWindow)
+        window.ipc.menu.onReloadPreviews(() => {
+            reloadPreviews()
+        })
+        window.ipc.menu.onOpenPreviews(() => {
+            openPreview()
+        })
     })
 
     return <></>
