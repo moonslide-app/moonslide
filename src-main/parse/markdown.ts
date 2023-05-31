@@ -2,7 +2,6 @@ import MarkdownIt from 'markdown-it'
 import MarkdownItAttrs from 'markdown-it-attrs'
 import MarkdownItBracketedSpans from 'markdown-it-bracketed-spans'
 import MarkdownItReplaceLink from 'markdown-it-replace-link'
-import sanitizeHtml from '../presentation/sanitize'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { LocalImage, transformImagePath } from './imagePath'
 import { transformTokens } from './transformTokens'
@@ -34,6 +33,5 @@ export function parseMarkdown(request: ParseRequest): ParseMarkdownResult {
     const parsed = markdownIt.parse(request.markdownContent, {})
     const transformed = transformTokens(parsed)
     const rendered = markdownIt.renderer.render(transformed, {}, {})
-    const sanitized = sanitizeHtml(rendered)
-    return { html: sanitized, localImages }
+    return { html: rendered, localImages }
 }
