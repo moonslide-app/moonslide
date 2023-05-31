@@ -19,5 +19,11 @@ export function PreviewSlide(props: { presentationHtml: string; slideHtml: strin
         }
     }, [slideHtml.current])
 
-    return <iframe ref={iframeRef} srcDoc={props.presentationHtml} className="w-full aspect-[16/9]"></iframe>
+    return (
+        <iframe
+            ref={iframeRef}
+            srcDoc={props.presentationHtml}
+            className="w-full aspect-[16/9] pointer-events-none"
+        ></iframe>
+    )
 }

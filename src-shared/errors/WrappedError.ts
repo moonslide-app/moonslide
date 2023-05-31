@@ -7,10 +7,12 @@ import { ZodError } from 'zod'
 
 export class WrappedError {
     readonly type = 'WrappedError'
+    readonly title: string
     readonly message: string
     readonly underlyingErrorMessage?: string
 
-    constructor(message: string, underlyingError?: unknown) {
+    constructor(title: string, message: string, underlyingError?: unknown) {
+        this.title = title
         this.message = message
         this.underlyingErrorMessage = extractUnderlyingErrorMessage(underlyingError)
     }
@@ -61,7 +63,7 @@ function extractUnderlyingErrorMessage(error: unknown): string | undefined {
 
 export class MissingStartSeparatorError extends WrappedError {
     constructor(separator: string) {
-        super(`Missing start seperator '${separator}' at the start of the file.`)
+        super('Missing Start Seperator', `Missing start seperator '${separator}' at the start of the file.`)
     }
 }
 
@@ -69,7 +71,7 @@ export class YamlConfigError extends WrappedError {
     readonly slideNumber: number
 
     constructor(slideNumber: number, underlyingError: unknown) {
-        super(`The YAML config of slide ${slideNumber} contains an error.`, underlyingError)
+        super('YAML Config Error', `The YAML config of slide ${slideNumber} contains an error.`, underlyingError)
         this.slideNumber = slideNumber
     }
 }
@@ -78,14 +80,14 @@ export class TemplateNotFoundError extends WrappedError {
     readonly templatePath: string
 
     constructor(templatePath: string, underlyingError: unknown) {
-        super(`The requested template '${templatePath}' was not found.`, underlyingError)
+        super('Template Not Found', `The requested template '${templatePath}' was not found.`, underlyingError)
         this.templatePath = templatePath
     }
 }
 
 export class TemplateConfigError extends WrappedError {
     constructor(underlyingError: unknown) {
-        super('The is an error in the config.yml file of the template.', underlyingError)
+        super('Template Error', 'The is an error in the config.yml file of the template.', underlyingError)
     }
 }
 
@@ -93,7 +95,7 @@ export class TemplatePathReferenceError extends WrappedError {
     readonly notFoundPath: string
 
     constructor(notFoundPath: string) {
-        super(`The template references the file '${notFoundPath}' which was not found.`)
+        super('Template Error', `The template references the file '${notFoundPath}' which was not found.`)
         this.notFoundPath = notFoundPath
     }
 }

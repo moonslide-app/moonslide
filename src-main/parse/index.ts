@@ -1,12 +1,15 @@
 import { Presentation, Slide } from '../../src-shared/entities/Presentation'
-import { parsePresentationConfig } from '../../src-shared/entities/PresentationConfig'
+import {
+    parsePresentationConfig,
+    stripPresentationConfigProperties,
+} from '../../src-shared/entities/PresentationConfig'
 import { mergeWithDefaults, parseSlideConfig } from '../../src-shared/entities/SlideConfig'
 import { YAMLError, parse as yamlParse } from 'yaml'
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
 import { findAndLoadTemplate } from '../presentation/template'
 import { buildHTMLSlide, buildHTMLPresentation, concatSlidesHtml } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
-import { LocalImage } from './imagePath'
+import { LocalImage, isLikelyPath, transformImagePath } from './imagePath'
 import { MissingStartSeparatorError, YamlConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
 
 export const FIRST_SLIDE_SEPERATOR = '---'
@@ -15,7 +18,7 @@ const SLOT_SEPERATOR = '\n***'
 
 export async function parse(request: ParseRequest): Promise<Presentation> {
     const { markdownContent, markdownFilePath } = request
-    const { presentationConfig, slidesMarkdown, slidesConfig } = parseConfig(markdownContent)
+    const { localImages, presentationConfig, slidesMarkdown, slidesConfig } = parseConfig(markdownContent, request)
 
     const template = await findAndLoadTemplate(presentationConfig.template, markdownFilePath)
 
@@ -27,7 +30,6 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
     const slideWrapperHtml = await template.getSlideHtml()
     const templateConfig = template.getConfigLocalFile()
 
-    const localImages: LocalImage[] = []
     const parsedSlides: Slide[] = await Promise.all(
         slidesConfig.map(async (slideConfig, i) => {
             const markdown = slidesMarkdown[i] || ''
@@ -77,7 +79,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
     }
 }
 
-function parseConfig(markdownContent: string) {
+function parseConfig(markdownContent: string, request: ParseRequest) {
     const hasContent = markdownContent && markdownContent.trim()
 
     if (hasContent && !markdownContent.startsWith(FIRST_SLIDE_SEPERATOR)) {
@@ -98,10 +100,15 @@ function parseConfig(markdownContent: string) {
     )
 
     const presentationConfig = wrapErrorIfThrows(
-        () => parsePresentationConfig(jsonConfigParts[0]),
+        () => {
+            const first = jsonConfigParts[0]
+            jsonConfigParts[0] = stripPresentationConfigProperties(first)
+            return parsePresentationConfig(first)
+        },
         err => new YamlConfigError(1, err)
     )
 
+    const localImages: LocalImage[] = []
     const slidesConfig = jsonConfigParts
         .map((json, idx) =>
             wrapErrorIfThrows(
@@ -110,8 +117,24 @@ function parseConfig(markdownContent: string) {
             )
         )
         .map(slideConfig => mergeWithDefaults(slideConfig, presentationConfig.defaults))
+        .map(slideConfig => {
+            const data = slideConfig.data ?? {}
+            Object.keys(data).forEach(key => {
+                const value = data[key]
+                if (isLikelyPath(value)) {
+                    const localImage = transformImagePath(value, request)
+                    if (localImage) {
+                        data[key] = localImage.transformedPath
+                        localImages.push(localImage)
+                    }
+                }
+            })
+            slideConfig.data = data
+            return slideConfig
+        })
 
     return {
+        localImages,
         presentationConfig,
         slidesMarkdown,
         slidesConfig,
@@ -124,7 +147,7 @@ function parseSlideYaml(content: string) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
-            const parsed = yamlParse(strippedContent)
+            const parsed = yamlParse(strippedContent, { strict: true })
 
             // This clause catches the case, that a separator is
             // beeing typed (-) and parsed as an array
@@ -140,9 +163,10 @@ function parseSlideYaml(content: string) {
         } catch (error) {
             if (error instanceof YAMLError) {
                 if (error.code === 'MISSING_CHAR') {
-                    const removeLine = error.linePos?.[0].line
-                    if (removeLine) {
-                        strippedContent = removeLineFromString(strippedContent, removeLine)
+                    const affectedLine = (error.linePos?.[0].line ?? 0) - 1
+                    // only ignore error if line does not contain ':'.
+                    if (affectedLine >= 0 && !doesLineContainColon(strippedContent, affectedLine)) {
+                        strippedContent = removeLineFromString(strippedContent, affectedLine)
                         continue
                     }
                 }
@@ -152,8 +176,14 @@ function parseSlideYaml(content: string) {
     }
 }
 
+function doesLineContainColon(string: string, line: number): boolean {
+    const split = string.split('\n')
+    const interesting = split.at(line) ?? ''
+    return interesting.includes(':')
+}
+
 function removeLineFromString(string: string, line: number): string {
     const split = string.split('\n')
-    split.splice(line - 1, 1)
+    split.splice(line, 1)
     return split.join('\n')
 }

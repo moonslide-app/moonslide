@@ -8,6 +8,7 @@ import {
 } from '../../src-main/helpers/assets'
 import { TemplateConfig, getThemeMatching } from '../../src-shared/entities/TemplateConfig'
 import { PresentationConfig } from '../../src-shared/entities/PresentationConfig'
+import escapeHtml from 'escape-html'
 
 // presentation
 const STYLESHEETS_TOKEN = '@@stylesheets@@'
@@ -46,8 +47,8 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
         buildingFile = buildingFile.replace(token, content ?? '')
     }
 
-    replaceToken(TITLE_TOKEN, presentationConfig.title)
-    replaceToken(AUTHOR_TOKEN, presentationConfig.author)
+    replaceToken(TITLE_TOKEN, escapeHtml(presentationConfig.title))
+    replaceToken(AUTHOR_TOKEN, escapeHtml(presentationConfig.author))
     replaceToken(SLIDES_TOKEN, slidesHtml)
 
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
@@ -143,16 +144,13 @@ export function buildHTMLSlide(
     buildingFile = slideWrapper.replace(CONTENT_TOKEN, buildingFile)
 
     const classes = [...(content.slideConfig.class ?? [])]
-    const stylesObject = { ...(content.slideConfig.style ?? {}) }
-    const styles = Object.entries(stylesObject).map(([key, value]) => `${key}: ${value};`)
-    const transition = content.slideConfig.transition
-    const transitionSpeed = content.slideConfig['transition-speed']
+    const dataTags = content.slideConfig.data ?? {}
 
     let sectionOpenTag = `<section`
-    if (classes.length > 0) sectionOpenTag += ` class="${classes.reduce((prev, next) => `${prev} ${next}`)}"`
-    if (styles.length > 0) sectionOpenTag += ` style="${styles.reduce((prev, next) => `${prev} ${next}`)}"`
-    if (transition) sectionOpenTag += ` data-transition="${transition}"`
-    if (transitionSpeed) sectionOpenTag += `data-transition-speed="${transitionSpeed}"`
+    if (classes.length > 0) sectionOpenTag += ` class="${escapeHtml(classes.join(' '))}"`
+    Object.entries(dataTags).forEach(([key, value]) => {
+        sectionOpenTag += ` data-${escapeHtml(key)}="${value ? escapeHtml(value.toString()) : ''}"`
+    })
     sectionOpenTag += '>'
 
     buildingFile = `${sectionOpenTag}${buildingFile}</section>`

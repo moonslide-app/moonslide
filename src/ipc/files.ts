@@ -1,4 +1,5 @@
 import { ipcRenderer } from 'electron'
+import { unwrapPromise } from '../../src-shared/errors/wrapPromise'
 
 const files = {
     selectFile(title: string, filters?: Electron.FileFilter[]): Promise<string> {
@@ -16,11 +17,14 @@ const files = {
     showSaveChangesDialog(): Promise<boolean> {
         return ipcRenderer.invoke('dialog:saveChanges')
     },
+    existsFile(filePath: string): Promise<boolean> {
+        return ipcRenderer.invoke('file:exists', filePath)
+    },
     async getFileContent(filePath: string): Promise<string> {
-        return await ipcRenderer.invoke('file:getContent', filePath)
+        return await unwrapPromise(ipcRenderer.invoke('file:getContent', filePath))
     },
     async saveFile(filePath: string, content: string): Promise<void> {
-        await ipcRenderer.invoke('file:save', filePath, content)
+        return await unwrapPromise(ipcRenderer.invoke('file:save', filePath, content))
     },
 } as const
 

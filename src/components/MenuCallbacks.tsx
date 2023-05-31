@@ -1,86 +1,138 @@
 import { useEditorStore } from '../store'
-import { useEffect } from 'react'
-import { markdownFilter } from '../store/FileFilters'
+import { htmlFilter, markdownFilter } from '../store/FileFilters'
 import { openPreviewWindow } from './PreviewWindow'
+import { toast } from './ui/use-toast'
+import { useEffectOnce } from 'usehooks-ts'
 
 export function MenuCallbacks() {
-    const [
+    const {
         changeEditingFile,
         saveContentToEditingFile,
         saveOrDiscardChanges,
         exportHTMLPresentation,
         reloadAllPreviews,
-        parsingError,
-    ] = useEditorStore(state => [
-        state.changeEditingFile,
-        state.saveContentToEditingFile,
-        state.saveOrDiscardChanges,
-        state.exportHTMLPresentation,
-        state.reloadAllPreviews,
-        state.parsingError,
-    ])
+        editingFile,
+        content,
+        getContent,
+        updateContent,
+    } = useEditorStore()
 
-    useEffect(() => {
-        window.ipc.menu.onNew(async () => {
-            const filePath = await window.ipc.files.selectOutputFile('New Presentation', [markdownFilter])
-            await saveOrDiscardChanges()
-            await window.ipc.files.saveFile(filePath, '')
-            changeEditingFile(filePath)
+    // If the file does not exist on the system anymore (path is loaded from localstorage)
+    // the editor should just display the same content without a file.
+    useEffectOnce(() => {
+        if (editingFile.path !== undefined) {
+            window.ipc.files.existsFile(editingFile.path).then(editingFileExists => {
+                if (!editingFileExists) {
+                    const currentContent = content
+                    changeEditingFile(undefined)
+                    updateContent(currentContent)
+                }
+            })
+        }
+    })
+
+    async function newPresentation() {
+        const filePath = await window.ipc.files.selectOutputFile('New Presentation', [markdownFilter])
+        await saveOrDiscardChanges()
+        await window.ipc.files.saveFile(filePath, '')
+        changeEditingFile(filePath)
+    }
+
+    async function open() {
+        const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
+        await saveOrDiscardChanges()
+        changeEditingFile(filePath)
+    }
+
+    async function save() {
+        await saveContentToEditingFile()
+    }
+
+    async function saveAs() {
+        const filePath = await window.ipc.files.selectOutputFile('Save Presentation', [markdownFilter])
+        await window.ipc.files.saveFile(filePath, getContent())
+        await changeEditingFile(filePath)
+    }
+
+    async function exportPdf() {
+        const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
+            { name: 'PDF', extensions: ['pdf'] },
+        ])
+        await window.ipc.presentation.exportPdf(filePath)
+        toast({
+            title: 'PDF Export successful',
+            description: `The presentation was exported to '${filePath}'.`,
         })
+    }
 
-        window.ipc.menu.onOpen(async () => {
-            const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
-            await saveOrDiscardChanges()
-            changeEditingFile(undefined) // TODO: workaround if same file is opened, improve this
-            changeEditingFile(filePath)
+    async function exportPresentationBundle() {
+        const folderPath = await window.ipc.files.selectOutputFolder('Export Presentation Bundle')
+        await exportHTMLPresentation(folderPath, true)
+        toast({
+            title: 'HTML Bundle Export successful',
+            description: `The presentation was exported to '${folderPath}'.`,
         })
+    }
 
-        window.ipc.menu.onSave(async () => {
-            await saveContentToEditingFile()
+    async function exportPresentationOnly() {
+        const filePath = await window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter])
+        await exportHTMLPresentation(filePath, false)
+        toast({
+            title: 'HTML Presentation Export successful',
+            description: `The presentation was exported to '${filePath}'.`,
         })
+    }
 
-        window.ipc.menu.onSaveAs(async () => {
-            const filePath = await window.ipc.files.selectOutputFile('Save Presentation', [markdownFilter])
-            await changeEditingFile(filePath, false)
-            await saveContentToEditingFile()
+    async function createTemplate() {
+        const folderPath = await window.ipc.files.selectOutputFolder('Export Template')
+        await window.ipc.presentation.exportTemplate(folderPath)
+        toast({
+            title: 'Standard Template Export successful',
+            description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
         })
+    }
 
-        window.ipc.menu.onExportPdf(async () => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export pdf when there are still parsing errors.')
-                return
-            }
+    async function reloadPreviews() {
+        await reloadAllPreviews()
+    }
 
-            const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
-                { name: 'PDF', extensions: ['pdf'] },
-            ])
+    async function openPreview() {
+        openPreviewWindow()
+    }
 
-            // TODO: Catch errors and show toast
-            await window.ipc.presentation.exportPdf(filePath)
+    // it has to be this ugly, so we can capture the errors
+    useEffectOnce(() => {
+        window.ipc.menu.onNew(() => {
+            newPresentation()
         })
-
+        window.ipc.menu.onOpen(() => {
+            open()
+        })
+        window.ipc.menu.onSave(() => {
+            save()
+        })
+        window.ipc.menu.onSaveAs(() => {
+            saveAs()
+        })
+        window.ipc.menu.onExportPdf(() => {
+            exportPdf()
+        })
         window.ipc.menu.onExportPresentationBundle(() => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export presentation when there are still parsing errors.')
-                return
-            }
-            // TODO: Catch errors and show toast
-            exportHTMLPresentation(true)
+            exportPresentationBundle()
         })
         window.ipc.menu.onExportPresentationOnly(() => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export presentation when there are still parsing errors.')
-                return
-            }
-            // TODO: Catch errors and show toast
-            exportHTMLPresentation(false)
+            exportPresentationOnly()
         })
-        window.ipc.menu.onReloadPreviews(reloadAllPreviews)
-        window.ipc.menu.onOpenPreviews(openPreviewWindow)
-    }, [changeEditingFile, saveContentToEditingFile, saveOrDiscardChanges])
+        window.ipc.menu.onCreateTemplate(() => {
+            createTemplate()
+        })
+        window.ipc.menu.onReloadPreviews(() => {
+            reloadPreviews()
+        })
+        window.ipc.menu.onOpenPreviews(() => {
+            openPreview()
+        })
+    })
 
     return <></>
 }

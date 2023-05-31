@@ -3,7 +3,6 @@ import { copy, existsSync } from 'fs-extra'
 import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from '../../src-shared/entities/TemplateConfig'
 import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
-import sanitizeHtml from './sanitize'
 import { getLocalFileUrl } from '../helpers/protocol'
 import {
     TemplateConfigError,
@@ -110,8 +109,7 @@ class TemplateImpl implements Template {
     async getSlideHtml() {
         if (this.config.slide === undefined) return undefined
         else {
-            const fileContents = (await readFile(this.config.slide)).toString()
-            return sanitizeHtml(fileContents)
+            return (await readFile(this.config.slide)).toString()
         }
     }
 
@@ -126,9 +124,8 @@ class TemplateImpl implements Template {
         for (let i = 0; i < availableLayouts.length; i++) {
             const layoutName = availableLayouts[i]
             const fileContents = (await readFile(layoutPaths[i])).toString()
-            const sanitized = sanitizeHtml(fileContents)
-            layoutsHtml[layoutName] = sanitized
-            if (isDefault[i]) defaultLayoutHtml = defaultLayoutHtml ?? sanitized
+            layoutsHtml[layoutName] = fileContents
+            if (isDefault[i]) defaultLayoutHtml = defaultLayoutHtml ?? fileContents
         }
 
         return { availableLayouts, layoutsHtml, defaultLayoutHtml }

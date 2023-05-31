@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import { readFile } from 'fs/promises'
+import { loadTemplate } from '../presentation/template'
 
 export const PRESENTATION_SCRIPT_FILENAME = 'presentation.js'
 export const PREVIEW_SMALL_SCRIPT_FILENAME = 'preview-small.js'
@@ -26,4 +27,10 @@ export function isTemplate(possibleTemplate: string): boolean {
 
 export function getTemplateFolder(template: string): string {
     return resolve(__dirname, 'templates', template)
+}
+
+export async function exportStandardTemplate(exportPath: string): Promise<void> {
+    const templateFolder = getTemplateFolder(TEMPLATE_STANDARD)
+    const template = await loadTemplate(templateFolder)
+    template.copyTo(exportPath)
 }

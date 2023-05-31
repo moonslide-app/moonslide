@@ -3,7 +3,6 @@ var RevealEditor = {
     initialize(config, ...args) {
         const newConfig = {
             ...config,
-            plugins: [],
             hash: false,
             controls: false,
             progress: false,
@@ -17,6 +16,7 @@ var RevealEditor = {
             autoSlide: false,
             transition: 'none',
             slideNumber: false,
+            autoPlayMedia: false,
         }
         Reveal.initialize(newConfig, ...args)
     },
@@ -35,7 +35,7 @@ function updatePreview(newSlides) {
     slidesContainer.appendChild(parsedNewSlides)
     // prevent flickering for fragments on configure
     performWithDisabledLayout(() => Reveal.configure({}))
-
+    runAllPlugins()
     Reveal.configure({})
 }
 
@@ -47,6 +47,10 @@ function performWithDisabledLayout(action) {
     action()
 
     config.disableLayout = actualDisableLayout
+}
+
+function runAllPlugins() {
+    Object.values(Reveal.getPlugins()).forEach(plugin => plugin.init(Reveal))
 }
 
 function removeAllChildren(htmlElement) {

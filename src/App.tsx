@@ -9,12 +9,11 @@ import { PreviewWindow } from './components/PreviewWindow'
 import { ErrorAlert } from './components/ErrorAlert'
 import { MarkdownToolbar } from './components/MarkdownToolbar'
 import { useRef } from 'react'
+import { Toaster } from './components/ui/toaster'
+import { GlobalErrors } from './components/GlobalErrors'
 
 function App() {
-    const [editingFilePath, reloadAllPreviews] = useEditorStore(state => [
-        state.editingFilePath,
-        state.reloadAllPreviews,
-    ])
+    const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
     const templateConfig = useEditorStore(state => state.parsedPresentation?.templateConfig)
 
     useEffectOnce(() => {
@@ -25,9 +24,11 @@ function App() {
 
     return (
         <div className="flex flex-col h-screen m-auto">
+            <Toaster />
+            <GlobalErrors />
             <MenuCallbacks />
             <PreviewWindow />
-            <p className="text-sm font-medium">Editing File: {editingFilePath}</p>
+            <p className="text-sm font-medium">Editing File: {editingFile.path}</p>
             <div className="flex-grow">
                 <Allotment separator={false}>
                     <Allotment.Pane minSize={300} className="border-r-[1px]" snap>

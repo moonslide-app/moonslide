@@ -1,7 +1,8 @@
 import { history, indentWithTab, redo, undo } from '@codemirror/commands'
 import { StreamLanguage, LRLanguage, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
 import { tags } from '@lezer/highlight'
-import { parser as mdParser, Strikethrough } from '@lezer/markdown'
+import { GFM, parser as mdParser, parseCode } from '@lezer/markdown'
+import { parser as htmlParser } from '@lezer/html'
 import { parseMixed } from '@lezer/common'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
 import { EditorState } from '@codemirror/state'
@@ -28,6 +29,11 @@ const myHighlightStyle = HighlightStyle.define([
     { tag: tags.emphasis, class: 'italic' },
     { tag: tags.strong, class: 'font-bold' },
     { tag: tags.strikethrough, class: 'line-through' },
+    { tag: tags.monospace, class: 'text-slate-500' },
+    { tag: tags.angleBracket, class: 'text-violet-300' },
+    { tag: tags.tagName, class: 'text-violet-700 font-bold' },
+    { tag: tags.attributeName, class: 'text-violet-500' },
+    { tag: tags.attributeValue, class: 'text-rose-500' },
 ])
 
 const myTheme = EditorView.baseTheme({
@@ -36,10 +42,20 @@ const myTheme = EditorView.baseTheme({
     },
 })
 
+const markdownParser = mdParser.configure([
+    GFM,
+    parseCode({
+        htmlParser,
+    }),
+])
+
 const mixedParser = parser.configure({
     wrap: parseMixed(node => {
         if (node.name === 'YamlContent') return { parser: StreamLanguage.define(yaml).parser }
-        else if (node.name === 'MarkdownContent') return { parser: mdParser.configure(Strikethrough) }
+        else if (node.name === 'MarkdownContent')
+            return {
+                parser: markdownParser,
+            }
         else if (node.name === 'StartDelimiter') return { parser: mdParser }
         return null
     }),
@@ -61,7 +77,7 @@ export type CodeMirrorEditorRef = {
 export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?: Ref<CodeMirrorEditorRef>) => {
     const editorView = useRef<EditorView | undefined>()
 
-    const editingFilePath = useEditorStore(state => state.editingFilePath)
+    const editingFile = useEditorStore(state => state.editingFile)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
 
     useCodeMirrorEditorRef(ref, editorView)
@@ -100,7 +116,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
         window.ipc.menu.onRedo(() => view && redo(view))
 
         return () => view?.destroy()
-    }, [editingFilePath])
+    }, [editingFile.openedAt])
 
     return <div ref={editorDomNode} className={`flex-grow overflow-y-auto ${props?.className}`}></div>
 })
