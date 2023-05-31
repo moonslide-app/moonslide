@@ -5,14 +5,14 @@ reveal:
   entry: ./reveal_js/dist/reveal.js
   stylesheets: ./reveal_js/dist/reveal.css
 # Additional stylesheets which are loaded after reveal and theme stylesheets.
-stylesheets:
-  - ./reveal_js/plugin/highlight/monokai.css
-  - ./styles/index.css
+stylesheets: ./styles/index.css
 # Additional scripts which are loaded after the reveal entry script, but before the entry script
 # This property is suitable to specify additional (reveal.js) plugins.
 scripts: 
   - ./reveal_js/plugin/highlight/highlight.js
   - ./reveal_js/plugin/math/math.js
+  - ./reveal_js/plugin/search/search.js
+  - ./reveal_js/plugin/zoom/zoom.js
 # HTML file which allows to define a wrapper around all slides. 
 # Must contain a `@@content@@` token where the slide content will be placed.
 slide: ./slide.html
@@ -23,10 +23,12 @@ themes:
     stylesheets:
       - ./reveal_js/dist/theme/black.css
       - ./styles/colors/black.css
+      - ./styles/code/stackoverflow-dark.css
   - name: white
     stylesheets:
       - ./reveal_js/dist/theme/white.css
       - ./styles/colors/white.css
+      - ./styles/code/stackoverflow-light.css
 # Definition of layouts which are used to build the slides.
 # Every layout must contain at least one `@@slot@@` token where the content is placed.
 layouts:

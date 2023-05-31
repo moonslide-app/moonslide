@@ -1,5 +1,5 @@
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
-import { isAbsolute, resolve, dirname, extname, relative } from 'path'
+import { isAbsolute, resolve, dirname, extname, relative, basename } from 'path'
 import { parse } from 'url'
 import { getLocalFileUrl } from '../helpers/protocol'
 import { MEDIA_FOLDER_NAME } from '../presentation/media'
@@ -33,6 +33,11 @@ export type LocalImage = {
 export type RequiredCopyAction = {
     fromResolvedPath: string
     toRelativePath: string
+}
+
+export function isLikelyPath(maybePath: unknown): maybePath is string {
+    if (typeof maybePath !== 'string') return false
+    return basename(maybePath) !== maybePath
 }
 
 export function transformImagePath(path: string, request: ParseRequest): LocalImage | undefined {

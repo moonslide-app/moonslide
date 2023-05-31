@@ -1,7 +1,8 @@
 import { useEditorStore } from '../store'
 import { useEffect } from 'react'
-import { markdownFilter } from '../store/FileFilters'
+import { htmlFilter, markdownFilter } from '../store/FileFilters'
 import { openPreviewWindow } from './PreviewWindow'
+import { toast } from './ui/use-toast'
 
 export function MenuCallbacks() {
     const [
@@ -10,14 +11,12 @@ export function MenuCallbacks() {
         saveOrDiscardChanges,
         exportHTMLPresentation,
         reloadAllPreviews,
-        parsingError,
     ] = useEditorStore(state => [
         state.changeEditingFile,
         state.saveContentToEditingFile,
         state.saveOrDiscardChanges,
         state.exportHTMLPresentation,
         state.reloadAllPreviews,
-        state.parsingError,
     ])
 
     useEffect(() => {
@@ -46,38 +45,42 @@ export function MenuCallbacks() {
         })
 
         window.ipc.menu.onExportPdf(async () => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export pdf when there are still parsing errors.')
-                return
-            }
-
             const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
                 { name: 'PDF', extensions: ['pdf'] },
             ])
-
-            // TODO: Catch errors and show toast
             await window.ipc.presentation.exportPdf(filePath)
+            toast({
+                title: 'PDF Export successful',
+                description: `The presentation was exported to '${filePath}'.`,
+            })
         })
 
-        window.ipc.menu.onExportPresentationBundle(() => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export presentation when there are still parsing errors.')
-                return
-            }
-            // TODO: Catch errors and show toast
-            exportHTMLPresentation(true)
+        window.ipc.menu.onExportPresentationBundle(async () => {
+            const folderPath = await window.ipc.files.selectOutputFolder('Export Presentation Bundle')
+            await exportHTMLPresentation(folderPath, true)
+            toast({
+                title: 'HTML Bundle Export successful',
+                description: `The presentation was exported to '${folderPath}'.`,
+            })
         })
-        window.ipc.menu.onExportPresentationOnly(() => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export presentation when there are still parsing errors.')
-                return
-            }
-            // TODO: Catch errors and show toast
-            exportHTMLPresentation(false)
+        window.ipc.menu.onExportPresentationOnly(async () => {
+            const filePath = await window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter])
+            await exportHTMLPresentation(filePath, false)
+            toast({
+                title: 'HTML Presentation Export successful',
+                description: `The presentation was exported to '${filePath}'.`,
+            })
         })
+
+        window.ipc.menu.onCreateTemplate(async () => {
+            const folderPath = await window.ipc.files.selectOutputFolder('Export Template')
+            await window.ipc.presentation.exportTemplate(folderPath)
+            toast({
+                title: 'Standard Template Export successful',
+                description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
+            })
+        })
+
         window.ipc.menu.onReloadPreviews(reloadAllPreviews)
         window.ipc.menu.onOpenPreviews(openPreviewWindow)
     }, [changeEditingFile, saveContentToEditingFile, saveOrDiscardChanges])

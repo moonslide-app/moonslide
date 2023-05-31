@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Presentation, comparePresentations } from '../../src-shared/entities/Presentation'
-import { htmlFilter, markdownFilter } from './FileFilters'
+import { markdownFilter } from './FileFilters'
 
 export type EditorStore = {
     /**
@@ -67,13 +67,14 @@ export type EditorStore = {
     saveOrDiscardChanges(): Promise<void>
     /**
      * Exports the presentation as html.
+     * @param outputPath The path where the presentation should be exported to.
      * @param standalone If `true` the whole template folder is copied with the presentation.
      */
-    exportHTMLPresentation(standalone?: boolean): Promise<void>
+    exportHTMLPresentation(outputPath: string, standalone?: boolean): Promise<void>
 }
 
 let debounceTimeout: number | undefined = undefined
-const DEBOUNCE_INTERVAL = 100
+const DEBOUNCE_INTERVAL = 350
 
 export const useEditorStore = create<EditorStore>()(
     persist(
@@ -150,21 +151,15 @@ export const useEditorStore = create<EditorStore>()(
                     if (saveFile) await saveContentToEditingFile()
                 }
             },
-            async exportHTMLPresentation(standalone = true) {
+            async exportHTMLPresentation(outputPath: string, standalone = true) {
                 const { editingFilePath, content } = get()
                 if (editingFilePath) {
-                    const outputPath = await (standalone
-                        ? window.ipc.files.selectOutputFolder('Export Presentation Bundle')
-                        : window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter]))
-
-                    if (outputPath) {
-                        await window.ipc.presentation.exportHtml({
-                            markdownContent: content,
-                            markdownFilePath: editingFilePath,
-                            outputPath,
-                            mode: standalone ? 'export-standalone' : 'export-relative',
-                        })
-                    }
+                    await window.ipc.presentation.exportHtml({
+                        markdownContent: content,
+                        markdownFilePath: editingFilePath,
+                        outputPath,
+                        mode: standalone ? 'export-standalone' : 'export-relative',
+                    })
                 }
             },
         }),

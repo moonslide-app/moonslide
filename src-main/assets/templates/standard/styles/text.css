@@ -73,6 +73,14 @@
 
 /* Other colors */
 
+.reveal .text-white {
+    color: white;
+}
+
+.reveal .text-black {
+    color: black;
+}
+
 .reveal .text-slate {
     color: var(--color-slate);
 }
