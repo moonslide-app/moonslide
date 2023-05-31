@@ -2,16 +2,16 @@ import { gracefulStringSchema, nullishToArray, nullishToOptional, stringOrArrayS
 import { parse } from 'yaml'
 import { z } from 'zod'
 
+const toolbarItemConfigSchema = z.object({
+    key: z.string(),
+    displayName: z.string().nullish().transform(nullishToOptional),
+    hidden: z.boolean().nullish().transform(nullishToOptional),
+})
+
 const toolbarEntryConfigSchema = z
     .object({
         name: z.string(),
-        items: z
-            .object({
-                key: z.string(),
-                displayName: z.string().nullish().transform(nullishToOptional),
-                hidden: z.boolean().nullish().transform(nullishToOptional),
-            })
-            .array(),
+        items: toolbarItemConfigSchema.array(),
     })
     .array()
     .nullish()
@@ -55,6 +55,7 @@ const templateConfigSchema = z.object({
         .transform(nullishToOptional),
 })
 
+export type ToolbarItemConfigSchema = z.infer<typeof toolbarItemConfigSchema>
 export type ToolbarEntryConfig = z.infer<typeof toolbarEntryConfigSchema>
 export type TemplateConfig = z.infer<typeof templateConfigSchema>
 

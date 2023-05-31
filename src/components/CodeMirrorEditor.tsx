@@ -48,7 +48,7 @@ const mixedParser = parser.configure({
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
 
 export type CodeMirrorEditorRef = {
-    onAddSlide(layout?: string): void
+    onAddSlide(layout?: string, slots?: number): void
     onAddFormat(prefix: string, suffix?: string): void
     onAddBlock(prefix: string): void
     onAddHeading(prefix: string): void
@@ -66,9 +66,15 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
 
     useImperativeHandle(ref, () => ({
         onAddSlide(layout) {
-            if (editorView.current && layout) {
-                editorView.current.dispatch(editorView.current.state.replaceSelection(layout))
-            }
+            if (!editorView.current) return
+
+            const { doc } = editorView.current.state
+
+            const layoutTag = layout ? `layout: ${layout}\n` : ''
+            const newSlideTag = `\n---\n${layoutTag}---\n\n`
+            const position = insertAtPosition(editorView.current, newSlideTag, doc.length)
+
+            setCursorPosition(editorView.current, position)
         },
         onAddFormat(prefix, suffix) {
             if (!editorView.current) return

@@ -175,18 +175,33 @@ const ToolbarItemSeparator = React.forwardRef<
 ))
 ToolbarItemSeparator.displayName = CommandPrimitive.Separator.displayName
 
-const ToolbarItem = React.forwardRef<
+interface ToolbarItemValue {
+    key: string
+}
+
+type ToolbarItemProps<T extends ToolbarItemValue> = Omit<
+    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>,
+    'value' | 'onSelect'
+> & {
+    valueKey: string
+    value?: T
+    onSelect?: (value: T | undefined) => void
+    searchValues: string[]
+    hidden?: boolean
+}
+
+interface ToolbarItemForwarded extends React.FC<ToolbarItemProps<ToolbarItemValue>> {
+    <T extends ToolbarItemValue>(props: ToolbarItemProps<T>): ReturnType<React.FC<ToolbarItemProps<T>>>
+}
+
+const ToolbarItem: ToolbarItemForwarded = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive.Item>,
-    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item> & {
-        value: string
-        searchValues: string[]
-        hidden?: boolean
-    }
->(({ className, onSelect, value, searchValues: newSearchValues, hidden, ...props }, ref) => {
+    ToolbarItemProps<ToolbarItemValue>
+>(({ className, onSelect, valueKey, value, searchValues: newSearchValues, hidden, ...props }, ref) => {
     const search = useCommandState(state => state.search)
     const [, setOpen] = React.useContext(ToolbarOpenContext) ?? []
     const [searchValues, searchValueActions] = React.useContext(SearchValuesContext) ?? []
-    if (searchValues?.get(value) !== newSearchValues) searchValueActions?.set(value, newSearchValues)
+    if (searchValues?.get(valueKey) !== newSearchValues) searchValueActions?.set(valueKey, newSearchValues)
 
     if (hidden && !search) return null
 
@@ -197,11 +212,11 @@ const ToolbarItem = React.forwardRef<
                 'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
                 className
             )}
-            onSelect={(v: string) => {
-                if (onSelect) onSelect(v)
+            onSelect={() => {
+                if (onSelect) onSelect(value)
                 if (setOpen) setOpen(false)
             }}
-            value={value}
+            value={valueKey}
             {...props}
         />
     )
@@ -213,6 +228,8 @@ const ToolbarItemShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLS
     return <span className={cn('ml-auto text-xs tracking-widest text-muted-foreground', className)} {...props} />
 }
 ToolbarItemShortcut.displayName = 'ToolbarItemShortcut'
+
+export type { ToolbarItemValue }
 
 export {
     Toolbar,

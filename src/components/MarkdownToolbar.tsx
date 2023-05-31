@@ -1,5 +1,5 @@
 import { isNonNullable } from '../../src-shared/entities/utils'
-import { TemplateConfig, ToolbarEntryConfig } from '../../src-shared/entities/TemplateConfig'
+import { TemplateConfig, ToolbarEntryConfig, ToolbarItemConfigSchema } from '../../src-shared/entities/TemplateConfig'
 import {
     ToolbarItemsEmpty,
     ToolbarItemGroup,
@@ -44,56 +44,56 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                 <ToolbarItemsList>
                     <ToolbarItemGroup>
                         <ToolbarItem
-                            value="format:strong"
+                            valueKey="format:strong"
                             searchValues={['format strong', 'format bold']}
                             onSelect={() => formatStrong(editorRef)}
                         >
                             <strong>**Strong**</strong>
                         </ToolbarItem>
                         <ToolbarItem
-                            value="format:emphasize"
+                            valueKey="format:emphasize"
                             searchValues={['format emphasize', 'format emphasise', 'format italic']}
                             onSelect={() => formatEmphasize(editorRef)}
                         >
                             <em>*Emphasize*</em>
                         </ToolbarItem>
                         <ToolbarItem
-                            value="format:strikethrough"
+                            valueKey="format:strikethrough"
                             searchValues={['format strikethrough', 'format strike-through']}
                             onSelect={() => formatStrikethrough(editorRef)}
                         >
                             <s>~~Strikethrough</s>
                         </ToolbarItem>
                         <ToolbarItem
-                            value="format:link"
+                            valueKey="format:link"
                             searchValues={['format link', 'format url']}
                             onSelect={() => formatLink(editorRef)}
                         >
                             [Link](https://...)
                         </ToolbarItem>
                         <ToolbarItem
-                            value="format:code-inline"
+                            valueKey="format:code-inline"
                             searchValues={['format code inline']}
                             onSelect={() => formatCodeInline(editorRef)}
                         >
                             `Code`
                         </ToolbarItem>
                         <ToolbarItem
-                            value="format:code-block"
+                            valueKey="format:code-block"
                             searchValues={['format code block']}
                             onSelect={() => formatCodeBlock(editorRef)}
                         >
                             ```Code Block```
                         </ToolbarItem>
                         <ToolbarItem
-                            value="format:math-inline"
+                            valueKey="format:math-inline"
                             searchValues={['format math inline']}
                             onSelect={() => formatMathInline(editorRef)}
                         >
                             $Math$
                         </ToolbarItem>
                         <ToolbarItem
-                            value="format:math-block"
+                            valueKey="format:math-block"
                             searchValues={['format math block']}
                             onSelect={() => formatMathBlock(editorRef)}
                         >
@@ -117,28 +117,29 @@ function ItemsBlock(props: { editorRef: CodeMirrorEditorRef }) {
                 <ToolbarItemsList>
                     <ToolbarItemGroup heading="Headings">
                         <ToolbarItem
-                            value="block:h1"
+                            valueKey="block:h1"
+                            value={{ key: 'test' }}
                             searchValues={['format h1', 'format heading 1', 'format title']}
                             onSelect={() => blockH1(editorRef)}
                         >
                             <strong># Title</strong>
                         </ToolbarItem>
                         <ToolbarItem
-                            value="block:h2"
+                            valueKey="block:h2"
                             searchValues={['format h2', 'format heading 2', 'format subtitle']}
                             onSelect={() => blockH2(editorRef)}
                         >
                             <strong>## Subtitle</strong>
                         </ToolbarItem>
                         <ToolbarItem
-                            value="block:h3"
+                            valueKey="block:h3"
                             searchValues={['format h3', 'format heading 3']}
                             onSelect={() => blockH3(editorRef)}
                         >
                             <strong>### Heading</strong>
                         </ToolbarItem>
                         <ToolbarItem
-                            value="block:h4"
+                            valueKey="block:h4"
                             searchValues={['format h4', 'format heading 4', 'format subheading']}
                             onSelect={() => blockH4(editorRef)}
                         >
@@ -148,21 +149,21 @@ function ItemsBlock(props: { editorRef: CodeMirrorEditorRef }) {
                     <ToolbarItemSeparator />
                     <ToolbarItemGroup heading="Lists">
                         <ToolbarItem
-                            value="block:ol"
+                            valueKey="block:ol"
                             searchValues={['format ol', 'format ordered list']}
                             onSelect={() => blockOl(editorRef)}
                         >
                             1. Ordered List
                         </ToolbarItem>
                         <ToolbarItem
-                            value="block:ul"
+                            valueKey="block:ul"
                             searchValues={['format ul', 'format unordered list']}
                             onSelect={() => blockUl(editorRef)}
                         >
                             - Unordered List
                         </ToolbarItem>
                         <ToolbarItem
-                            value="block:task-list"
+                            valueKey="block:task-list"
                             searchValues={['format task list', 'format task-list']}
                             onSelect={() => blockTaskList(editorRef)}
                         >
@@ -171,7 +172,7 @@ function ItemsBlock(props: { editorRef: CodeMirrorEditorRef }) {
                     </ToolbarItemGroup>
                     <ToolbarItemGroup heading="Blocks">
                         <ToolbarItem
-                            value="block:blockquote"
+                            valueKey="block:blockquote"
                             searchValues={['format blockquote', 'format quote']}
                             onSelect={() => blockBlockquote(editorRef)}
                         >
@@ -190,7 +191,7 @@ function ItemsTemplateConfigurable(props: {
     buttonTitle: string
     placeholder?: string
     emptyText?: string
-    onSelect?: (attribute: string) => void
+    onSelect?: (value: ToolbarItemConfigSchema | undefined) => void
 }) {
     const { layoutsConfig, buttonTitle, placeholder, emptyText, onSelect } = props
 
@@ -205,7 +206,8 @@ function ItemsTemplateConfigurable(props: {
                             <ToolbarItemGroup heading={layout.name}>
                                 {layout.items.map(item => (
                                     <ToolbarItem
-                                        value={item.key}
+                                        valueKey={item.key}
+                                        value={item}
                                         searchValues={[item.key, layout.name, item.displayName].filter(isNonNullable)}
                                         hidden={item.hidden}
                                         onSelect={onSelect}
@@ -235,7 +237,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="+"
                     placeholder="Search layouts..."
                     emptyText="No layout found."
-                    onSelect={editorRef?.onAddSlide}
+                    onSelect={value => value && editorRef?.onAddSlide(value.key)}
                 />
             )}
             {editorRef && <ItemsFormat editorRef={editorRef} />}
@@ -247,7 +249,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Modifiers"
                     placeholder="Search modifiers..."
                     emptyText="No modifier found."
-                    onSelect={editorRef?.onAddAttribute}
+                    onSelect={value => value && editorRef?.onAddAttribute(value.key)}
                 />
             )}
             {toolbar?.slideClasses && (
@@ -256,7 +258,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Classes"
                     placeholder="Search classes..."
                     emptyText="No class found."
-                    onSelect={editorRef?.onAddClass}
+                    onSelect={value => value && editorRef?.onAddClass(value.key)}
                 />
             )}
             {toolbar?.dataTags && (
@@ -265,7 +267,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Data"
                     placeholder="Search data tags..."
                     emptyText="No data tag found."
-                    onSelect={editorRef?.onAddDataTag}
+                    onSelect={value => value && editorRef?.onAddDataTag(value.key)}
                 />
             )}
         </Toolbar>
