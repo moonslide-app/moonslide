@@ -1,7 +1,8 @@
 import { useEditorStore } from '../store'
 import { useEffect } from 'react'
-import { markdownFilter } from '../store/FileFilters'
+import { htmlFilter, markdownFilter } from '../store/FileFilters'
 import { openPreviewWindow } from './PreviewWindow'
+import { toast } from './ui/use-toast'
 
 export function MenuCallbacks() {
     const [
@@ -48,13 +49,27 @@ export function MenuCallbacks() {
                 { name: 'PDF', extensions: ['pdf'] },
             ])
             await window.ipc.presentation.exportPdf(filePath)
+            toast({
+                title: 'PDF Export successful',
+                description: `The presentation was exported to '${filePath}'.`,
+            })
         })
 
-        window.ipc.menu.onExportPresentationBundle(() => {
-            exportHTMLPresentation(true)
+        window.ipc.menu.onExportPresentationBundle(async () => {
+            const folderPath = await window.ipc.files.selectOutputFolder('Export Presentation Bundle')
+            await exportHTMLPresentation(folderPath, true)
+            toast({
+                title: 'HTML Bundle Export successful',
+                description: `The presentation was exported to '${folderPath}'.`,
+            })
         })
-        window.ipc.menu.onExportPresentationOnly(() => {
-            exportHTMLPresentation(false)
+        window.ipc.menu.onExportPresentationOnly(async () => {
+            const filePath = await window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter])
+            await exportHTMLPresentation(filePath, false)
+            toast({
+                title: 'HTML Presentation Export successful',
+                description: `The presentation was exported to '${filePath}'.`,
+            })
         })
         window.ipc.menu.onReloadPreviews(reloadAllPreviews)
         window.ipc.menu.onOpenPreviews(openPreviewWindow)
