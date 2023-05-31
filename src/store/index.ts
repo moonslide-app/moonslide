@@ -129,14 +129,13 @@ export const useEditorStore = create<EditorStore>()(
                 const { parsedPresentation } = get()
                 set(state => ({ ...state, parsedPresentation: newParsedPresentation }))
 
-                const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
-                if (comparison.templateChange || comparison.themeChange) {
-                    clearTimeout(fullReloadTimeout)
-                    fullReloadTimeout = window.setTimeout(
-                        () => set(state => ({ ...state, lastFullUpdate: Date.now() })),
-                        FULL_RELOAD_INTERVAL
-                    )
-                }
+                clearTimeout(fullReloadTimeout)
+                fullReloadTimeout = window.setTimeout(() => {
+                    const comparison = comparePresentations(parsedPresentation, newParsedPresentation)
+                    if (comparison.templateChange || comparison.themeChange || comparison.titleChange) {
+                        set(state => ({ ...state, lastFullUpdate: Date.now() }))
+                    }
+                }, FULL_RELOAD_INTERVAL)
             },
             async reloadAllPreviews() {
                 await get().parsePresentation()
