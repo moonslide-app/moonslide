@@ -63,7 +63,7 @@ const mixedParser = parser.configure({
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
 
 export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
-    const editingFilePath = useEditorStore(state => state.editingFilePath)
+    const editingFile = useEditorStore(state => state.editingFile)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
@@ -96,7 +96,7 @@ export function CodeMirrorEditor(props?: CodeMirrorEditorProps) {
         window.ipc.menu.onRedo(() => view && redo(view))
 
         return () => view?.destroy()
-    }, [editingFilePath])
+    }, [editingFile.openedAt])
 
     return <div ref={editorDomNode} className={`h-full overflow-y-auto ${props?.className}`}></div>
 }

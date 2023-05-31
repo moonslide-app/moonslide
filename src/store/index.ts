@@ -3,19 +3,30 @@ import { persist } from 'zustand/middleware'
 import { Presentation, comparePresentations } from '../../src-shared/entities/Presentation'
 import { markdownFilter } from './FileFilters'
 
+export type EditingFile = {
+    /**
+     * The absolute path of the file.
+     */
+    path: string | undefined
+    /**
+     * Time stamp when the editing file was opened.
+     */
+    openedAt: number
+    /**
+     * Contains the content at the state when the last save occured.
+     */
+    lastSavedContent: string
+}
+
 export type EditorStore = {
     /**
-     * The absolute path of the current editing markdown file.
+     * The current editing markdown file.
      */
-    editingFilePath: string | undefined
+    editingFile: EditingFile
     /**
      * The file contents of the editing markdown file.
      */
     content: string
-    /**
-     * Contains the `content` at the state when the last save occured.
-     */
-    lastSavedContent: string
     /**
      * The presentation, which was parsed from the `content`.
      */
@@ -32,15 +43,18 @@ export type EditorStore = {
     /**
      * Changes the editing file path.
      * This will try to read the file from the new path and
-     * call `updateContent` with the new file content
-     * if `updateContent` is not set to `false`.
+     * call `updateContent` with the new file content.
      */
-    changeEditingFile(newFilePath: string | undefined, updateContent?: boolean): Promise<void>
+    changeEditingFile(newFilePath: string | undefined): Promise<void>
     /**
      * Updates the content in the store. The newContent is parsed and will
      * result in a debounced call to `parsePresentation` if successful.
      */
     updateContent(newContent: string): void
+    /**
+     * Returns the current content.
+     */
+    getContent(): string
     /**
      * Parses the current content and calls `updateParsedPresentation` with
      * the parsed presentation if successful.
@@ -79,10 +93,13 @@ const DEBOUNCE_INTERVAL = 350
 export const useEditorStore = create<EditorStore>()(
     persist(
         (set, get) => ({
-            editingFilePath: undefined,
-            templateFolderPath: undefined,
+            editingFile: {
+                path: undefined,
+                lastSavedContent: '',
+                openedAt: Date.now(),
+            },
             content: '',
-            lastSavedContent: '',
+            getContent: () => get().content,
             parsedPresentation: undefined,
             parsingError: undefined,
             lastFullUpdate: 0,
@@ -92,11 +109,11 @@ export const useEditorStore = create<EditorStore>()(
                 debounceTimeout = window.setTimeout(get().parsePresentation, DEBOUNCE_INTERVAL)
             },
             parsePresentation: () => {
-                const { content, editingFilePath } = get()
+                const { content, editingFile } = get()
                 return window.ipc.presentation
                     .parsePresentation({
                         markdownContent: content,
-                        markdownFilePath: editingFilePath ?? '.',
+                        markdownFilePath: editingFile.path ?? '.',
                         imageMode: 'preview',
                     })
                     .then(parsedPresentation => {
@@ -122,21 +139,18 @@ export const useEditorStore = create<EditorStore>()(
                 await get().parsePresentation()
                 set(state => ({ ...state, lastFullUpdate: Date.now() }))
             },
-            async changeEditingFile(newFilePath, updateContent = true) {
-                if (updateContent) {
-                    if (newFilePath !== undefined) {
-                        const fileContent = await window.ipc.files.getFileContent(newFilePath)
-                        await get().updateContent(fileContent)
-                    } else {
-                        await get().updateContent('')
-                    }
-                }
-                set(state => ({ ...state, editingFilePath: newFilePath, editingFileSaved: true }))
+            async changeEditingFile(newFilePath) {
+                const newContent = newFilePath !== undefined ? await window.ipc.files.getFileContent(newFilePath) : ''
+                await get().updateContent(newContent)
+                set(state => ({
+                    ...state,
+                    editingFile: { path: newFilePath, lastSavedContent: newContent, openedAt: Date.now() },
+                }))
             },
             async saveContentToEditingFile() {
-                const { editingFilePath, content } = get()
-                if (editingFilePath) {
-                    await window.ipc.files.saveFile(editingFilePath, content)
+                const { editingFile, content } = get()
+                if (editingFile.path) {
+                    await window.ipc.files.saveFile(editingFile.path, content)
                     set(state => ({ ...state, lastSavedContent: content }))
                 } else {
                     const filePath = await window.ipc.files.selectOutputFile('Save new presentation', [markdownFilter])
@@ -145,21 +159,23 @@ export const useEditorStore = create<EditorStore>()(
                 }
             },
             async saveOrDiscardChanges() {
-                const { content, lastSavedContent, saveContentToEditingFile } = get()
-                if (content !== lastSavedContent) {
+                const { content, editingFile, saveContentToEditingFile } = get()
+                if (content !== editingFile.lastSavedContent) {
                     const saveFile = await window.ipc.files.showSaveChangesDialog()
                     if (saveFile) await saveContentToEditingFile()
                 }
             },
             async exportHTMLPresentation(outputPath: string, standalone = true) {
-                const { editingFilePath, content } = get()
-                if (editingFilePath) {
+                const { content, editingFile } = get()
+                if (editingFile.path) {
                     await window.ipc.presentation.exportHtml({
                         markdownContent: content,
-                        markdownFilePath: editingFilePath,
+                        markdownFilePath: editingFile.path,
                         outputPath,
                         mode: standalone ? 'export-standalone' : 'export-relative',
                     })
+                } else {
+                    throw new Error('Can not export presentation before it is saved into a file.')
                 }
             },
         }),
