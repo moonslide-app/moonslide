@@ -315,7 +315,7 @@ function findLastSlideUntil(state: EditorState, position: number): SlideSelectio
 
     const currentMarkdown = {
         from: currentFrontMatter.to + 1,
-        to: (nextFrontMatter?.from ?? lastNonEmptyLine(state, currentFrontMatter.to + 1).to) - 1,
+        to: (nextFrontMatter?.from ?? lastNonEmptyLine(state, currentFrontMatter.to + 1, 2).to) - 1,
     }
 
     const frontMatterSecondLine = state.doc.lineAt(currentFrontMatter.from).number + 1
@@ -577,8 +577,9 @@ function removeHeadingFromLine(editorView: EditorView, line: Line): Line {
     return editorView.state.doc.lineAt(newSelection.from)
 }
 
-function lastNonEmptyLine(state: EditorState, afterPosition: number): Line {
+function lastNonEmptyLine(state: EditorState, afterPosition: number, offset?: number): Line {
     const regexQuery = '^.*\\S+.*$' // match all lines that contain any non-whitespace character
+    const maxLines = state.doc.lines
     let currentLine = state.doc.lineAt(afterPosition).number - 1
     let lastLine = currentLine
 
@@ -590,6 +591,7 @@ function lastNonEmptyLine(state: EditorState, afterPosition: number): Line {
         if (match) lastLine = currentLine
     }
 
+    lastLine = Math.min(maxLines, lastLine + (offset ?? 0))
     return state.doc.line(lastLine)
 }
 
