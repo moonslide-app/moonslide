@@ -76,9 +76,11 @@ function findLastSlideUntil(state: EditorState, position: number): SlideSelectio
     if (cursor.done) nextFrontMatter = undefined // cursor was in last slide, there is no next
     if (!currentFrontMatter) return undefined
 
+    const endOfDocument = lastNonEmptyLine(state, currentFrontMatter.to + 1, 3)
+
     const currentMarkdown = {
         from: currentFrontMatter.to + 1,
-        to: (nextFrontMatter?.from ?? lastNonEmptyLine(state, currentFrontMatter.to + 1, 2).to) - 1,
+        to: (nextFrontMatter?.from ?? endOfDocument.from) - 1,
     }
 
     const frontMatterSecondLine = state.doc.lineAt(currentFrontMatter.from).number + 1
@@ -151,6 +153,20 @@ export function rangeHasLineStartingWith(start: string, state: EditorState, rang
 }
 
 /**
+ * Uses `markdownSelectionInSlide` to determine the current selection and
+ * then returns the line where the selection starts.
+ * @param editorView The editor view to perform actions in.
+ * @param currentSlide The current slide to search in.
+ * @returns The line where the markdown selection starts
+ */
+export function currentMarkdownLineInSlide(editorView: EditorView, currentSlide: SlideSelection): Line {
+    const { state } = editorView
+    const markdownSelection = markdownSelectionInSlide(editorView, currentSlide)
+
+    return state.doc.lineAt(markdownSelection.from)
+}
+
+/**
  * Returns the position of the next line that follows 1-n lines
  * that match the given regex query + the first match of the query.
  * @param line The line after which the search should start.
@@ -167,44 +183,44 @@ export function nextLineAfterMatches(
     range: SimpleRange,
     regexQuery: string
 ): { nextPosition: number; firstMatch: string } | undefined {
-    const { doc } = state
+    const firstLine = state.doc.line(line.number + 1)
+    const firstMatchQuery = firstLine.text.match(regexQuery)
+    if (!firstMatchQuery) return undefined
+    const firstMatch = firstMatchQuery[0]
 
-    const startLine = line.number + 1
-    const endLine = doc.lineAt(range.to).number
+    const lastLine = lastLineMatching(state, { from: firstLine.from, to: range.to }, regexQuery)
+    if (!lastLine) return undefined
 
-    const regExp = new RegExp(regexQuery)
+    const nextLine = state.doc.line(lastLine.number + 1)
 
-    let currentLine = startLine - 1 // iterator.next starts at first line
-    let firstMatch: string | undefined
-
-    const it = doc.iterLines(startLine, endLine)
-    while (!it.done) {
-        const line = it.next().value
-        const match = regExp.exec(line)
-        if (!match) break
-
-        currentLine++
-        if (firstMatch === undefined) firstMatch = match[0]
-    }
-
-    if (firstMatch === undefined) return undefined
-
-    const nextLine = doc.line(currentLine + 1)
     return { nextPosition: nextLine.from, firstMatch }
 }
 
 /**
- * Uses `markdownSelectionInSlide` to determine the current selection and
- * then returns the line where the selection starts.
- * @param editorView The editor view to perform actions in.
- * @param currentSlide The current slide to search in.
- * @returns The line where the markdown selection starts
+ * Returns the last line inside the given range that matches the query.
+ * @param state The state to search in.
+ * @param range The range to search in.
+ * @param regex The regex query used to match lines.
+ * @returns The last line matching, `undefined` if no line is found.
  */
-export function currentMarkdownLineInSlide(editorView: EditorView, currentSlide: SlideSelection): Line {
-    const { state } = editorView
-    const markdownSelection = markdownSelectionInSlide(editorView, currentSlide)
+export function lastLineMatching(state: EditorState, range: SimpleRange, regex: string): Line | undefined {
+    const startLine = state.doc.lineAt(range.from)
+    const endLine = state.doc.lineAt(range.to)
+    const maxLine = Math.min(endLine.number, state.doc.lines)
+    let currentLine = startLine.number - 1
+    let lastLine = currentLine
 
-    return state.doc.lineAt(markdownSelection.from)
+    const it = state.doc.iterLines(startLine.number, maxLine + 1)
+    do {
+        const value = it.next().value
+        currentLine++
+
+        const match = value.match(regex)
+        if (match) lastLine = currentLine
+    } while (!it.done)
+
+    lastLine = Math.min(maxLine, lastLine)
+    return state.doc.line(lastLine)
 }
 
 /**
@@ -219,16 +235,11 @@ export function currentMarkdownLineInSlide(editorView: EditorView, currentSlide:
 export function lastNonEmptyLine(state: EditorState, afterPosition: number, offset?: number): Line {
     const regexQuery = '^.*\\S+.*$' // match all lines that contain any non-whitespace character
     const maxLines = state.doc.lines
-    let currentLine = state.doc.lineAt(afterPosition).number - 1
-    let lastLine = currentLine
 
-    const it = state.doc.iterLines(currentLine)
-    while (!it.done) {
-        const value = it.next().value
-        currentLine++
-        const match = value.match(regexQuery)
-        if (match) lastLine = currentLine
-    }
+    let lastLine = (
+        lastLineMatching(state, { from: afterPosition, to: state.doc.length }, regexQuery) ??
+        state.doc.line(afterPosition)
+    ).number
 
     lastLine = Math.min(maxLines, lastLine + (offset ?? 0))
     return state.doc.line(lastLine)
@@ -438,6 +449,7 @@ export function isYAMLArray(
     // Line starting with at least 1 white space character (excluding newline),
     // followed by a `- `, capture the match
     const regexQuery = '^[^\\S\\r\\n]+- '
+
     const match = nextLineAfterMatches(line, state, range, regexQuery)
 
     if (!match) return undefined
@@ -488,7 +500,6 @@ export function setCursorPosition(editorView: EditorView, position: number) {
  * @param selection The selection that should be selected.
  */
 export function selectRange(editorView: EditorView, selection: SelectionRange) {
-    console.log('new selection', selection)
     editorView.dispatch({
         selection,
     })
