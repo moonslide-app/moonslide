@@ -1,12 +1,17 @@
 import { LocalImage } from '../../src-main/parse/imagePath'
 import { PresentationConfig } from './PresentationConfig'
 import { SlideConfig } from './SlideConfig'
+import { TemplateConfig } from './TemplateConfig'
 
 export type Presentation = {
     /**
      * The parsed config of the presentation.
      */
     config: PresentationConfig
+    /**
+     * Template config
+     */
+    templateConfig: TemplateConfig
     /**
      * The slides which are present in the presentation
      */
@@ -33,12 +38,6 @@ export type Presentation = {
      * All local image files referenced in the presentation
      */
     images: LocalImage[]
-    /**
-     * Layouts of this presentations template.
-     * The key is the name of the layout,
-     * the value the html content of the layout.
-     */
-    layoutsHtml: Record<string, string>
 }
 
 export type Slide = {

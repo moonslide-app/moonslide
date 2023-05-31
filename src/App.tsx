@@ -1,4 +1,4 @@
-import { CodeMirrorEditor } from './components/CodeMirrorEditor'
+import { CodeMirrorEditor, CodeMirrorEditorRef } from './components/CodeMirrorEditor'
 import { PreviewSlides } from './components/PreviewSlides'
 import { MenuCallbacks } from './components/MenuCallbacks'
 import { useEditorStore } from './store'
@@ -7,15 +7,20 @@ import { Allotment } from 'allotment'
 import 'allotment/dist/style.css'
 import { PreviewWindow } from './components/PreviewWindow'
 import { ErrorAlert } from './components/ErrorAlert'
+import { MarkdownToolbar } from './components/MarkdownToolbar'
+import { useRef } from 'react'
 import { Toaster } from './components/ui/toaster'
 import { GlobalErrors } from './components/GlobalErrors'
 
 function App() {
     const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
+    const templateConfig = useEditorStore(state => state.parsedPresentation?.templateConfig)
 
     useEffectOnce(() => {
         reloadAllPreviews()
     })
+
+    const codeEditorRef = useRef<CodeMirrorEditorRef>(null)
 
     return (
         <div className="flex flex-col h-screen m-auto">
@@ -27,7 +32,13 @@ function App() {
             <div className="flex-grow">
                 <Allotment separator={false}>
                     <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
-                        <CodeMirrorEditor />
+                        <div className="flex flex-col h-full">
+                            <MarkdownToolbar
+                                templateConfig={templateConfig}
+                                editorRef={codeEditorRef.current ?? undefined}
+                            />
+                            <CodeMirrorEditor ref={codeEditorRef} />
+                        </div>
                     </Allotment.Pane>
                     <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
                         <PreviewSlides />
