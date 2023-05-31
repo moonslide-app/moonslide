@@ -148,7 +148,6 @@ function parseSlideYaml(content: string) {
     while (true) {
         try {
             const parsed = yamlParse(strippedContent, { strict: true })
-            console.log(parsed)
 
             // This clause catches the case, that a separator is
             // beeing typed (-) and parsed as an array
@@ -162,7 +161,6 @@ function parseSlideYaml(content: string) {
             if (typeof parsed === 'object') return parsed
             else return undefined
         } catch (error) {
-            console.log(error)
             if (error instanceof YAMLError) {
                 if (error.code === 'MISSING_CHAR') {
                     const affectedLine = (error.linePos?.[0].line ?? 0) - 1
