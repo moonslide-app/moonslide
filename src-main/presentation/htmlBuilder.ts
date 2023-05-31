@@ -143,16 +143,13 @@ export function buildHTMLSlide(
     buildingFile = slideWrapper.replace(CONTENT_TOKEN, buildingFile)
 
     const classes = [...(content.slideConfig.class ?? [])]
-    const stylesObject = { ...(content.slideConfig.style ?? {}) }
-    const styles = Object.entries(stylesObject).map(([key, value]) => `${key}: ${value};`)
-    const transition = content.slideConfig.transition
-    const transitionSpeed = content.slideConfig['transition-speed']
+    const dataTags = content.slideConfig.data ?? {}
 
     let sectionOpenTag = `<section`
-    if (classes.length > 0) sectionOpenTag += ` class="${classes.reduce((prev, next) => `${prev} ${next}`)}"`
-    if (styles.length > 0) sectionOpenTag += ` style="${styles.reduce((prev, next) => `${prev} ${next}`)}"`
-    if (transition) sectionOpenTag += ` data-transition="${transition}"`
-    if (transitionSpeed) sectionOpenTag += `data-transition-speed="${transitionSpeed}"`
+    if (classes.length > 0) sectionOpenTag += ` class="${classes.join(' ')}"`
+    Object.entries(dataTags).forEach(([key, value]) => {
+        sectionOpenTag += ` data-${key}="${value}"`
+    })
     sectionOpenTag += '>'
 
     buildingFile = `${sectionOpenTag}${buildingFile}</section>`

@@ -5,5 +5,5 @@ RevealEditor.initialize({
     center: true,
     slideNumber: true,
     transition: 'slide',
-    plugins: [RevealHighlight, RevealMath],
+    plugins: [RevealHighlight, RevealMath, RevealZoom, RevealSearch],
 })

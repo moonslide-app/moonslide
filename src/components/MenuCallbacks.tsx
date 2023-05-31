@@ -10,14 +10,12 @@ export function MenuCallbacks() {
         saveOrDiscardChanges,
         exportHTMLPresentation,
         reloadAllPreviews,
-        parsingError,
     ] = useEditorStore(state => [
         state.changeEditingFile,
         state.saveContentToEditingFile,
         state.saveOrDiscardChanges,
         state.exportHTMLPresentation,
         state.reloadAllPreviews,
-        state.parsingError,
     ])
 
     useEffect(() => {
@@ -46,12 +44,6 @@ export function MenuCallbacks() {
         })
 
         window.ipc.menu.onExportPdf(async () => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export pdf when there are still parsing errors.')
-                return
-            }
-
             const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
                 { name: 'PDF', extensions: ['pdf'] },
             ])
@@ -61,20 +53,10 @@ export function MenuCallbacks() {
         })
 
         window.ipc.menu.onExportPresentationBundle(() => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export presentation when there are still parsing errors.')
-                return
-            }
             // TODO: Catch errors and show toast
             exportHTMLPresentation(true)
         })
         window.ipc.menu.onExportPresentationOnly(() => {
-            if (parsingError !== undefined) {
-                // TODO: Show toast
-                console.warn('Cannot export presentation when there are still parsing errors.')
-                return
-            }
             // TODO: Catch errors and show toast
             exportHTMLPresentation(false)
         })

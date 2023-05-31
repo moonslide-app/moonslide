@@ -21,7 +21,10 @@ export function parseMarkdown(request: ParseRequest): ParseMarkdownResult {
         return image?.transformedPath ?? link
     }
 
-    const markdownItOptions = { replaceLink } as MarkdownIt.Options
+    const markdownItOptions: MarkdownIt.Options = {
+        html: true,
+        replaceLink,
+    } as MarkdownIt.Options
 
     const markdownIt = new MarkdownIt(markdownItOptions)
         .use(MarkdownItAttrs)

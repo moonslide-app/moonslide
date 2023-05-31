@@ -73,7 +73,7 @@ export type EditorStore = {
 }
 
 let debounceTimeout: number | undefined = undefined
-const DEBOUNCE_INTERVAL = 100
+const DEBOUNCE_INTERVAL = 350
 
 export const useEditorStore = create<EditorStore>()(
     persist(

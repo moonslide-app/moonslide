@@ -1,4 +1,4 @@
-import { shell, Menu, BrowserWindow, app } from 'electron'
+import { shell, Menu, BrowserWindow } from 'electron'
 import { TEMPLATE_STANDARD, getTemplateFolder } from '../helpers/assets'
 import { selectOutputFolder } from '../helpers/files'
 import { loadTemplate } from '../presentation/template'
