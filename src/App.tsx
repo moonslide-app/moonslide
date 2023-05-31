@@ -13,10 +13,7 @@ import { Toaster } from './components/ui/toaster'
 import { GlobalErrors } from './components/GlobalErrors'
 
 function App() {
-    const [editingFilePath, reloadAllPreviews] = useEditorStore(state => [
-        state.editingFilePath,
-        state.reloadAllPreviews,
-    ])
+    const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
     const templateConfig = useEditorStore(state => state.parsedPresentation?.templateConfig)
 
     useEffectOnce(() => {
@@ -31,7 +28,7 @@ function App() {
             <GlobalErrors />
             <MenuCallbacks />
             <PreviewWindow />
-            <p className="text-sm font-medium">Editing File: {editingFilePath}</p>
+            <p className="text-sm font-medium">Editing File: {editingFile.path}</p>
             <div className="flex-grow">
                 <Allotment separator={false}>
                     <Allotment.Pane minSize={300} className="border-r-[1px]" snap>

@@ -77,7 +77,7 @@ export type CodeMirrorEditorRef = {
 export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?: Ref<CodeMirrorEditorRef>) => {
     const editorView = useRef<EditorView | undefined>()
 
-    const editingFilePath = useEditorStore(state => state.editingFilePath)
+    const editingFile = useEditorStore(state => state.editingFile)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
 
     useCodeMirrorEditorRef(ref, editorView)
@@ -116,7 +116,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
         window.ipc.menu.onRedo(() => view && redo(view))
 
         return () => view?.destroy()
-    }, [editingFilePath])
+    }, [editingFile.openedAt])
 
     return <div ref={editorDomNode} className={`flex-grow overflow-y-auto ${props?.className}`}></div>
 })

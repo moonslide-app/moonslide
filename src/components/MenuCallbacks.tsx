@@ -1,25 +1,37 @@
 import { useEditorStore } from '../store'
-import { useEffect } from 'react'
 import { htmlFilter, markdownFilter } from '../store/FileFilters'
 import { openPreviewWindow } from './PreviewWindow'
 import { toast } from './ui/use-toast'
+import { useEffectOnce } from 'usehooks-ts'
 
 export function MenuCallbacks() {
-    const [
+    const {
         changeEditingFile,
         saveContentToEditingFile,
         saveOrDiscardChanges,
         exportHTMLPresentation,
         reloadAllPreviews,
-    ] = useEditorStore(state => [
-        state.changeEditingFile,
-        state.saveContentToEditingFile,
-        state.saveOrDiscardChanges,
-        state.exportHTMLPresentation,
-        state.reloadAllPreviews,
-    ])
+        editingFile,
+        content,
+        getContent,
+        updateContent,
+    } = useEditorStore()
 
-    useEffect(() => {
+    // If the file does not exist on the system anymore (path is loaded from localstorage)
+    // the editor should just display the same content without a file.
+    useEffectOnce(() => {
+        if (editingFile.path !== undefined) {
+            window.ipc.files.existsFile(editingFile.path).then(editingFileExists => {
+                if (!editingFileExists) {
+                    const currentContent = content
+                    changeEditingFile(undefined)
+                    updateContent(currentContent)
+                }
+            })
+        }
+    })
+
+    useEffectOnce(() => {
         window.ipc.menu.onNew(async () => {
             const filePath = await window.ipc.files.selectOutputFile('New Presentation', [markdownFilter])
             await saveOrDiscardChanges()
@@ -30,7 +42,6 @@ export function MenuCallbacks() {
         window.ipc.menu.onOpen(async () => {
             const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
             await saveOrDiscardChanges()
-            changeEditingFile(undefined) // TODO: workaround if same file is opened, improve this
             changeEditingFile(filePath)
         })
 
@@ -40,8 +51,8 @@ export function MenuCallbacks() {
 
         window.ipc.menu.onSaveAs(async () => {
             const filePath = await window.ipc.files.selectOutputFile('Save Presentation', [markdownFilter])
-            await changeEditingFile(filePath, false)
-            await saveContentToEditingFile()
+            await window.ipc.files.saveFile(filePath, getContent())
+            await changeEditingFile(filePath)
         })
 
         window.ipc.menu.onExportPdf(async () => {
@@ -83,7 +94,7 @@ export function MenuCallbacks() {
 
         window.ipc.menu.onReloadPreviews(reloadAllPreviews)
         window.ipc.menu.onOpenPreviews(openPreviewWindow)
-    }, [changeEditingFile, saveContentToEditingFile, saveOrDiscardChanges])
+    })
 
     return <></>
 }
