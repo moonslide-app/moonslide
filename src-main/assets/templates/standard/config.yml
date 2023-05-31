@@ -1,14 +1,14 @@
-# Entry point script which must call `RevealEditor.configure()`. 
+# Entry point script which must call `RevealEditor.configure()`.
 entry: ./index.js
 # Entry point script and stylesheet(s) of the reveal.js distribution.
-reveal: 
+reveal:
   entry: ./reveal_js/dist/reveal.js
   stylesheets: ./reveal_js/dist/reveal.css
 # Additional stylesheets which are loaded after reveal and theme stylesheets.
 stylesheets: ./styles/index.css
 # Additional scripts which are loaded after the reveal entry script, but before the entry script
 # This property is suitable to specify additional (reveal.js) plugins.
-scripts: 
+scripts:
   - ./reveal_js/plugin/highlight/highlight.js
   - ./reveal_js/plugin/math/math.js
   - ./reveal_js/plugin/search/search.js
@@ -69,3 +69,181 @@ layouts:
     path: ./layouts/title-grid-3-right.html
   - name: title-grid-4
     path: ./layouts/title-grid-4.html
+
+# The following contents are related to the toolbar
+toolbar:
+  layouts:
+    - name: Basic
+      items:
+        - key: default
+          value: ''
+          displayName: Default
+        - key: base
+          displayName: Base
+    - name: Columns
+      items:
+        - key: cols-2
+          displayName: Two Column
+          slots: 2
+        - key: cols-3
+          displayName: Three Column
+          slots: 3
+        - key: cols-4
+          displayName: Four Columns
+          slots: 4
+    - name: Grid
+      items:
+        - key: grid-3
+          displayName: Grid 3 Left
+          slots: 3
+        - key: grid-3-right
+          displayName: Grid 3 Right
+          slots: 3
+        - key: grid-4
+          displayName: Grid 4
+          slots: 4
+        - key: grid-5
+          displayName: Grid 5
+          slots: 5
+        - key: grid-6
+          displayName: Grid 6
+          slots: 6
+        - key: grid-7
+          displayName: Grid 7
+          slots: 7
+        - key: grid-8
+          displayName: Grid 8
+          slots: 8
+        - key: grid-9
+          displayName: Grid 9
+          slots: 9
+    - name: Title + Content
+      items:
+        - key: title-content
+          displayName: Title + Content
+          slots: 2
+        - key: title-cols-2
+          displayName: Title + Two Columns
+          slots: 3
+        - key: title-cols-3
+          displayName: Title + Three Columns
+          slots: 4
+        - key: title-grid-3
+          displayName: Title + Grid 3 Left
+          slots: 4
+        - key: title-grid-3-right
+          displayName: Title + Grid 3 Right
+          slots: 4
+        - key: title-grid-4
+          displayName: Title + Grid 4
+          slots: 5
+  modifiers:
+    - name: Margins
+      items:
+        - key: .m-0
+          displayName: Margin 0
+          hidden: true
+        - key: .m-0\.5
+          displayName: Margin 0.5
+          hidden: true
+        - key: .m-1
+          displayName: Margin 1
+          hidden: true
+        - key: .m-1\.5
+          displayName: Margin 1.5
+          hidden: true
+        - key: .m-2
+          displayName: Margin 2
+        - key: .m-2\.5
+          displayName: Margin 2.5
+          hidden: true
+        - key: .m-3
+          displayName: Margin 3
+          hidden: true
+        - key: .m-3\.5
+          displayName: Margin 3.5
+          hidden: true
+        - key: .m-4
+          displayName: Margin 4
+        - key: .m-5
+          displayName: Margin 5
+          hidden: true
+        - key: .m-6
+          displayName: Margin 6
+          hidden: true
+        - key: .m-7
+          displayName: Margin 7
+          hidden: true
+        - key: .m-8
+          displayName: Margin 8
+          hidden: true
+        - key: .m-9
+          displayName: Margin 9
+          hidden: true
+        - key: .m-10
+          displayName: Margin 10
+          hidden: true
+        - key: .m-11
+          displayName: Margin 11
+          hidden: true
+        - key: .m-12
+          displayName: Margin 12
+        - key: .m-14
+          displayName: Margin 14
+          hidden: true
+        - key: .m-16
+          displayName: Margin 16
+          hidden: true
+        - key: .m-20
+          displayName: Margin 20
+          hidden: true
+        - key: .m-24
+          displayName: Margin 24
+          hidden: true
+        - key: .m-28
+          displayName: Margin 28
+          hidden: true
+        - key: .m-32
+          displayName: Margin 32
+          hidden: true
+        - key: .m-36
+          displayName: Margin 36
+          hidden: true
+        - key: .m-40
+          displayName: Margin 40
+          hidden: true
+        - key: .m-44
+          displayName: Margin 44
+        - key: .m-48
+          displayName: Margin 48
+          hidden: true
+        - key: .m-52
+          displayName: Margin 52
+          hidden: true
+        - key: .m-56
+          displayName: Margin 56
+        - key: .m-60
+          displayName: Margin 60
+          hidden: true
+        - key: .m-64
+          displayName: Margin 64
+          hidden: true
+        - key: .m-72
+          displayName: Margin 72
+          hidden: true
+        - key: .m-80
+          displayName: Margin 80
+          hidden: true
+        - key: .m-96
+          displayName: Margin 96
+          hidden: true
+  dataTags:
+    - name: Background
+      items:
+        - key: 'background-image'
+          displayName: Background Image
+  slideClasses:
+    - name: Margins
+      items:
+        - key: m-0
+          displayName: Margin 0
