@@ -47,17 +47,13 @@ export function MenuCallbacks() {
             const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
                 { name: 'PDF', extensions: ['pdf'] },
             ])
-
-            // TODO: Catch errors and show toast
             await window.ipc.presentation.exportPdf(filePath)
         })
 
         window.ipc.menu.onExportPresentationBundle(() => {
-            // TODO: Catch errors and show toast
             exportHTMLPresentation(true)
         })
         window.ipc.menu.onExportPresentationOnly(() => {
-            // TODO: Catch errors and show toast
             exportHTMLPresentation(false)
         })
         window.ipc.menu.onReloadPreviews(reloadAllPreviews)

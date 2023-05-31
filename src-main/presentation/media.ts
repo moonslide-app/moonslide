@@ -16,7 +16,11 @@ export async function prepareMedia(exportFolder: string, images: LocalImage[]): 
         const copyAction = image.requiredCopyAction
         if (copyAction) {
             const toResolvedPath = resolve(exportFolder, copyAction.toRelativePath)
-            await cp(copyAction.fromResolvedPath, toResolvedPath)
+            try {
+                await cp(copyAction.fromResolvedPath, toResolvedPath)
+            } catch (error) {
+                console.warn(`Ignoring error while copying media files: ${error}`)
+            }
         }
     }
 }
