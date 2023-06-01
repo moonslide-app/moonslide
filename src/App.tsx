@@ -1,5 +1,5 @@
 import { CodeMirrorEditor, CodeMirrorEditorRef } from './components/CodeMirrorEditor'
-import { PreviewSlides } from './components/PreviewSlides'
+import { PreviewSlides, PreviewSlidesRef } from './components/PreviewSlides'
 import { MenuCallbacks } from './components/MenuCallbacks'
 import { useEditorStore } from './store'
 import { useEffectOnce } from 'usehooks-ts'
@@ -21,6 +21,7 @@ function App() {
     })
 
     const codeEditorRef = useRef<CodeMirrorEditorRef>(null)
+    const previewSlidesRef = useRef<PreviewSlidesRef>(null)
 
     return (
         <div className="flex flex-col h-screen m-auto">
@@ -37,11 +38,17 @@ function App() {
                                 templateConfig={templateConfig}
                                 editorRef={codeEditorRef.current ?? undefined}
                             />
-                            <CodeMirrorEditor ref={codeEditorRef} />
+                            <CodeMirrorEditor
+                                ref={codeEditorRef}
+                                onUpdateCurrentSlide={num => previewSlidesRef?.current?.scrollToSlide(num)}
+                            />
                         </div>
                     </Allotment.Pane>
                     <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
-                        <PreviewSlides />
+                        <PreviewSlides
+                            ref={previewSlidesRef}
+                            clickOnSlide={num => codeEditorRef.current?.onScrollToSlide(num)}
+                        />
                     </Allotment.Pane>
                 </Allotment>
             </div>

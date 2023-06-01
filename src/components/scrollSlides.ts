@@ -3,12 +3,20 @@ import { RefObject, useEffect, useState } from 'react'
 export function useScrollSlides(ref: RefObject<HTMLElement>) {
     const [selectedSlide, setSelectedSlide] = useState(0)
 
-    function scrollToSlide(slideNumber: number) {
+    function selectSlide(slideNumber: number, scrollCenter?: boolean) {
+        setSelectedSlide(slideNumber)
+        scrollToSlide(slideNumber, scrollCenter)
+    }
+
+    function scrollToSlide(slideNumber: number, scrollCenter?: boolean) {
         const currentRef = ref.current
         const child = currentRef?.children.item(slideNumber)
         if (currentRef && child) {
-            child.scrollIntoView({ block: 'nearest' })
-            // currentRef.scroll({ top: currentRef.scrollTop - 10 })
+            if (scrollCenter) {
+                child.scrollIntoView({ block: 'center' })
+            } else {
+                child.scrollIntoView({ block: 'nearest' })
+            }
         }
     }
 
@@ -16,5 +24,5 @@ export function useScrollSlides(ref: RefObject<HTMLElement>) {
         scrollToSlide(selectedSlide)
     }, [selectedSlide])
 
-    return { selectedSlide, setSelectedSlide, scrollToSlide }
+    return { selectedSlide, selectSlide }
 }

@@ -28,6 +28,9 @@ export function useCodeMirrorEditorRef(
     editorView: RefObject<EditorView | undefined>
 ) {
     useImperativeHandle(ref, () => ({
+        onScrollToSlide(slideNumber) {
+            console.log('Code Mirror will scroll to slide ' + slideNumber)
+        },
         onAddSlide(layout, slots) {
             if (!editorView.current) return
             const { doc } = editorView.current.state

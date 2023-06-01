@@ -1,9 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { Ref, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useEditorStore } from '../store'
 import { PreviewSlide } from './PreviewSlide'
 import { useScrollSlides } from './scrollSlides'
 
-export function PreviewSlides() {
+export type PreviewSlidesRef = {
+    scrollToSlide: (slideNumber: number) => void
+}
+
+export type PreviewSlidesProps = {
+    clickOnSlide?: (slideNumber: number) => void
+}
+
+export const PreviewSlides = forwardRef((props: PreviewSlidesProps, ref: Ref<PreviewSlidesRef>) => {
     const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
 
     const slides = useEditorStore(state => state.parsedPresentation?.slides)
@@ -21,7 +29,18 @@ export function PreviewSlides() {
     }, [slides])
 
     const slidesDivRef = useRef<HTMLDivElement>(null)
-    const { selectedSlide, setSelectedSlide } = useScrollSlides(slidesDivRef)
+    const { selectedSlide, selectSlide } = useScrollSlides(slidesDivRef)
+
+    useImperativeHandle(ref, () => ({
+        scrollToSlide(slideNumber) {
+            selectSlide(slideNumber, true)
+        },
+    }))
+
+    function clickOnSlide(slideNumber: number) {
+        selectSlide(slideNumber, false)
+        props.clickOnSlide?.(slideNumber)
+    }
 
     return (
         <div ref={slidesDivRef} className="space-y-2 p-4 h-full overflow-y-auto bg-white" key={lastFullUpdate}>
@@ -34,7 +53,7 @@ export function PreviewSlides() {
                                 ? 'bg-violet-200'
                                 : 'bg-gray-100 focus-visible:bg-violet-100 hover:bg-violet-100')
                         }
-                        onClick={() => setSelectedSlide(idx)}
+                        onClick={() => clickOnSlide(idx)}
                     >
                         <div className="flex items-start pt-3">
                             <div className="w-8 flex justify-center">
@@ -57,4 +76,4 @@ export function PreviewSlides() {
                 ))}
         </div>
     )
-}
+})

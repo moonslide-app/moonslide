@@ -11,9 +11,11 @@ import { Ref, forwardRef, useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
 import { useCodeMirrorEditorRef } from '../editor/useCodeMirrorEditorRef'
+import { findCurrentSlide } from '../editor/codeMirrorHelpers'
 
 export type CodeMirrorEditorProps = {
     className?: string
+    onUpdateCurrentSlide?: (slideNumber: number) => void
 }
 
 const myHighlightStyle = HighlightStyle.define([
@@ -64,6 +66,7 @@ const mixedParser = parser.configure({
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
 
 export type CodeMirrorEditorRef = {
+    onScrollToSlide(slideNumber: number): void
     onAddSlide(layout?: string, slots?: number): void
     onAddFormat(prefix: string, suffix?: string): void
     onAddBlock(prefix: string): void
@@ -86,7 +89,18 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
 
     useEffect(() => {
         const updatePlugin = ViewPlugin.define(() => ({
-            update: viewUpdate => updateContent(viewUpdate.state.doc.sliceString(0)),
+            update: viewUpdate => {
+                try {
+                    const slideNumber = findCurrentSlide(viewUpdate.state)?.index
+                    if (slideNumber) props?.onUpdateCurrentSlide?.(slideNumber)
+                } catch (error) {
+                    console.warn('Could not find out current slide number: ' + error)
+                }
+
+                if (viewUpdate.docChanged) {
+                    updateContent(viewUpdate.state.doc.sliceString(0))
+                }
+            },
         }))
 
         const state = EditorState.create({
