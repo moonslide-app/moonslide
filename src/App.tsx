@@ -5,7 +5,7 @@ import { useEditorStore } from './store'
 import { useEffectOnce } from 'usehooks-ts'
 import { Allotment } from 'allotment'
 import 'allotment/dist/style.css'
-import { PreviewWindow } from './components/PreviewWindow'
+import { PreviewWindow, PreviewWindowRef } from './components/PreviewWindow'
 import { ErrorAlert } from './components/ErrorAlert'
 import { MarkdownToolbar } from './components/MarkdownToolbar'
 import { useRef } from 'react'
@@ -22,13 +22,19 @@ function App() {
 
     const codeEditorRef = useRef<CodeMirrorEditorRef>(null)
     const previewSlidesRef = useRef<PreviewSlidesRef>(null)
+    const previewWindowRef = useRef<PreviewWindowRef>(null)
+
+    function showSlide(slideNumber: number) {
+        previewSlidesRef.current?.scrollToSlide(slideNumber)
+        previewWindowRef.current?.showSlide(slideNumber)
+    }
 
     return (
         <div className="flex flex-col h-screen m-auto">
             <Toaster />
             <GlobalErrors />
             <MenuCallbacks />
-            <PreviewWindow />
+            <PreviewWindow ref={previewWindowRef} />
             <p className="text-sm font-medium">Editing File: {editingFile.path}</p>
             <div className="flex-grow">
                 <Allotment separator={false}>
@@ -38,10 +44,7 @@ function App() {
                                 templateConfig={templateConfig}
                                 editorRef={codeEditorRef.current ?? undefined}
                             />
-                            <CodeMirrorEditor
-                                ref={codeEditorRef}
-                                onUpdateCurrentSlide={num => previewSlidesRef?.current?.scrollToSlide(num)}
-                            />
+                            <CodeMirrorEditor ref={codeEditorRef} onUpdateCurrentSlide={showSlide} />
                         </div>
                     </Allotment.Pane>
                     <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
