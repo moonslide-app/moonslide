@@ -11,6 +11,7 @@ import {
     extractLineAttributes,
     findCurrentSlide,
     findLastSlide,
+    findLastSlideUntil,
     insertAtEndOfLine,
     insertAtPosition,
     insertLine,
@@ -29,7 +30,11 @@ export function useCodeMirrorEditorRef(
 ) {
     useImperativeHandle(ref, () => ({
         onScrollToSlide(slideNumber) {
-            console.log('Code Mirror will scroll to slide ' + slideNumber)
+            if (!editorView.current) return
+            const slidePosition = findLastSlideUntil(editorView.current?.state, { slideNumber })
+            if (slidePosition) {
+                setCursorPosition(editorView.current, slidePosition?.markdown.from)
+            }
         },
         onAddSlide(layout, slots) {
             if (!editorView.current) return
@@ -94,7 +99,6 @@ export function useCodeMirrorEditorRef(
                 let newAttributes = `{ ${className} }`
 
                 const existingAttributes = extractLineAttributes(currentLine)
-                console.log('existing attributes', existingAttributes)
                 if (existingAttributes) {
                     const { originalAttributes, extractedAttributes } = existingAttributes
                     const attributesStart = currentLine.to - originalAttributes.length

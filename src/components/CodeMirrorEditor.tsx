@@ -90,9 +90,12 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
     useEffect(() => {
         const updatePlugin = ViewPlugin.define(() => ({
             update: viewUpdate => {
+                // ignore focus updates
+                if (viewUpdate.focusChanged) return
+
                 try {
-                    const slideNumber = findCurrentSlide(viewUpdate.state)?.index
-                    if (slideNumber) props?.onUpdateCurrentSlide?.(slideNumber)
+                    const slideRange = findCurrentSlide(viewUpdate.state)
+                    if (slideRange) props?.onUpdateCurrentSlide?.(slideRange.index)
                 } catch (error) {
                     console.warn('Could not find out current slide number: ' + error)
                 }

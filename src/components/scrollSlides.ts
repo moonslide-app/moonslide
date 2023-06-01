@@ -2,21 +2,25 @@ import { RefObject, useEffect, useState } from 'react'
 
 export function useScrollSlides(ref: RefObject<HTMLElement>) {
     const [selectedSlide, setSelectedSlide] = useState(0)
+    const [selectedSlideNotThere, setSelectedSlideNotThere] = useState(false)
 
-    function selectSlide(slideNumber: number, scrollCenter?: boolean) {
+    /**
+     * Selects the slide with the given number and scrolls it into the view
+     * if it is not already fully displayed.
+     */
+    function selectSlide(slideNumber: number) {
         setSelectedSlide(slideNumber)
-        scrollToSlide(slideNumber, scrollCenter)
+        scrollToSlide(slideNumber)
     }
 
-    function scrollToSlide(slideNumber: number, scrollCenter?: boolean) {
+    function scrollToSlide(slideNumber: number) {
         const currentRef = ref.current
         const child = currentRef?.children.item(slideNumber)
         if (currentRef && child) {
-            if (scrollCenter) {
-                child.scrollIntoView({ block: 'center' })
-            } else {
-                child.scrollIntoView({ block: 'nearest' })
-            }
+            child.scrollIntoView({ block: 'nearest' })
+            setSelectedSlideNotThere(false)
+        } else if (!child) {
+            setSelectedSlideNotThere(true)
         }
     }
 
@@ -24,5 +28,16 @@ export function useScrollSlides(ref: RefObject<HTMLElement>) {
         scrollToSlide(selectedSlide)
     }, [selectedSlide])
 
-    return { selectedSlide, selectSlide }
+    /**
+     * This function should be called, when the slides change.
+     * This helps to set focus on a newly generated slide, which
+     * appears much later after the call to `selectSlide`.
+     */
+    function onSlidesChange() {
+        if (selectedSlideNotThere) {
+            setTimeout(() => scrollToSlide(selectedSlide), 10)
+        }
+    }
+
+    return { selectedSlide, selectSlide, onSlidesChange }
 }

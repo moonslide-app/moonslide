@@ -23,22 +23,23 @@ export const PreviewSlides = forwardRef((props: PreviewSlidesProps, ref: Ref<Pre
     }, [lastFullUpdate])
 
     useEffect(() => {
+        onSlidesChange()
         if (currentPresentationsHtml?.length !== cachedPresentationsHtml?.length) {
             setCachedPresentationsHtml(currentPresentationsHtml)
         }
     }, [slides])
 
     const slidesDivRef = useRef<HTMLDivElement>(null)
-    const { selectedSlide, selectSlide } = useScrollSlides(slidesDivRef)
+    const { selectedSlide, selectSlide, onSlidesChange } = useScrollSlides(slidesDivRef)
 
     useImperativeHandle(ref, () => ({
         scrollToSlide(slideNumber) {
-            selectSlide(slideNumber, true)
+            selectSlide(slideNumber)
         },
     }))
 
     function clickOnSlide(slideNumber: number) {
-        selectSlide(slideNumber, false)
+        selectSlide(slideNumber)
         props.clickOnSlide?.(slideNumber)
     }
 
