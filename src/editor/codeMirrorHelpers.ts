@@ -15,6 +15,7 @@ export type SlideSelection = {
     index: number
     frontMatter: SelectionRange
     markdown: SelectionRange
+    fullSlide: SelectionRange
 }
 
 export type ModifiedString = {
@@ -86,7 +87,7 @@ export function findLastSlideUntil(
     const currentMarkdownEnd = nextFrontMatter ? nextFrontMatter.from - 1 : endOfDocument.to
 
     const currentMarkdown = {
-        from: currentFrontMatter.to + 1,
+        from: Math.min(currentFrontMatter.to + 1, endOfDocument.to),
         to: currentMarkdownEnd,
     }
 
@@ -98,10 +99,16 @@ export function findLastSlideUntil(
         to: state.doc.line(frontMatterSecondLastLine).to,
     }
 
+    const fullSlide: SimpleRange = {
+        from: currentFrontMatter.from,
+        to: currentMarkdown.to,
+    }
+
     return {
         index: currentIndex,
         frontMatter: EditorSelection.range(trimmedFrontMatter.from, trimmedFrontMatter.to),
         markdown: EditorSelection.range(currentMarkdown.from, currentMarkdown.to),
+        fullSlide: EditorSelection.range(fullSlide.from, fullSlide.to),
     }
 }
 
