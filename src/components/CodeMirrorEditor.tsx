@@ -42,10 +42,12 @@ const myHighlightStyle = HighlightStyle.define([
 const myTheme = EditorView.baseTheme({
     '&': {
         fontSize: '12pt',
+        height: '100%',
     },
-    '& .active-slide': {
-        backgroundColor: '#eee',
+    '.active-slide': {
+        backgroundColor: '#f5f3ff',
     },
+    '.cm-scroller': { overflow: 'auto', height: '100%' },
 })
 
 const markdownParser = mdParser.configure([
@@ -139,5 +141,5 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
         return () => view?.destroy()
     }, [editingFile.openedAt])
 
-    return <div ref={editorDomNode} className={`flex-grow overflow-y-auto ${props?.className}`}></div>
+    return <div ref={editorDomNode} className={`flex-grow overflow-hidden ${props?.className ?? ''}`}></div>
 })

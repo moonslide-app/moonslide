@@ -497,8 +497,9 @@ export function isYAMLMultiline(
  * @param position The position to which the cursor should be set.
  */
 export function setCursorPosition(editorView: EditorView, position: number) {
-    editorView.dispatch({ selection: { anchor: position, head: position }, scrollIntoView: true })
+    editorView.dispatch({ selection: { anchor: position, head: position } })
     editorView.focus()
+    scrollToCursor(editorView)
 }
 
 /**
@@ -510,4 +511,20 @@ export function selectRange(editorView: EditorView, selection: SelectionRange) {
     editorView.dispatch({
         selection,
     })
+}
+
+/**
+ * Scrolls the cursor to the center of the editor
+ * @param editorView The editor view to perform actions in.
+ * @param topPercent Percantage of the height where the cursor is scrolled.
+ */
+export function scrollToCursor(editorView: EditorView, topPercent = 0.25) {
+    const cursor = editorView.coordsAtPos(editorView.state.selection.main.head)
+    const scroller = editorView.scrollDOM.getBoundingClientRect()
+    if (cursor) {
+        const curMid = (cursor.top + cursor.bottom) / 2
+        const eltDiff = scroller.bottom - scroller.top
+        const eltMid = scroller.top + eltDiff * topPercent
+        if (Math.abs(curMid - eltMid) > 5) editorView.scrollDOM.scrollTop += curMid - eltMid
+    }
 }
