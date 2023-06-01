@@ -35,7 +35,7 @@ export type ModifiedString = {
  */
 export function findCurrentSlide(state: EditorState): SlideSelection | undefined {
     const currentPosition = state.selection.main.from
-    return findLastSlideUntil(state, currentPosition)
+    return findLastSlideUntil(state, { position: currentPosition })
 }
 
 /**
@@ -46,37 +46,43 @@ export function findCurrentSlide(state: EditorState): SlideSelection | undefined
  */
 export function findLastSlide(state: EditorState): SlideSelection | undefined {
     const endPosition = state.doc.length
-    return findLastSlideUntil(state, endPosition)
+    return findLastSlideUntil(state, { position: endPosition })
 }
 
 /**
  * Find the selection range for both front matter and markdown that
  * represents the last slide up to the position passed.
  * @param state Editor state to search in.
- * @param position Position up to which slides are searched.
+ * @param position Position up to which slides are searched. Either a position in the document or a slidenumber can be provided.
  * @returns Information about the last found slide or `undefined` if no slide is found.
  */
-function findLastSlideUntil(state: EditorState, position: number): SlideSelection | undefined {
+export function findLastSlideUntil(
+    state: EditorState,
+    until: { position: number } | { slideNumber: number }
+): SlideSelection | undefined {
     const regexQuery = '^---(.|\n)*?^---'
 
     const cursor = new RegExpCursor(state.doc, regexQuery)
 
     let currentFrontMatter: SimpleRange | undefined
-    let nextFrontMatter: SimpleRange | undefined
+    let nextFrontMatter: SimpleRange | undefined = cursor.next().value
+    let currentIndex = -1
 
-    let nextIndex = -1
-
+    // cursor is done when calling next() and there is nothing left
     while (!cursor.done) {
+        currentIndex++
         currentFrontMatter = nextFrontMatter
         nextFrontMatter = cursor.next().value
-        nextIndex++
-        if (nextFrontMatter && nextFrontMatter.from > position) break
+
+        if ('slideNumber' in until && currentIndex >= until.slideNumber) break
+        if ('position' in until && nextFrontMatter && nextFrontMatter.from > until.position) break
     }
 
     if (cursor.done) nextFrontMatter = undefined // cursor was in last slide, there is no next
     if (!currentFrontMatter) return undefined
+    if (currentIndex === -1) return undefined
 
-    const endOfDocument = lastNonEmptyLine(state, currentFrontMatter.to + 1, 2)
+    const endOfDocument = lastNonEmptyLine(state, currentFrontMatter.to, 2)
     const currentMarkdownEnd = nextFrontMatter ? nextFrontMatter.from - 1 : endOfDocument.to
 
     const currentMarkdown = {
@@ -93,7 +99,7 @@ function findLastSlideUntil(state: EditorState, position: number): SlideSelectio
     }
 
     return {
-        index: nextIndex - 1,
+        index: currentIndex,
         frontMatter: EditorSelection.range(trimmedFrontMatter.from, trimmedFrontMatter.to),
         markdown: EditorSelection.range(currentMarkdown.from, currentMarkdown.to),
     }
@@ -491,8 +497,9 @@ export function isYAMLMultiline(
  * @param position The position to which the cursor should be set.
  */
 export function setCursorPosition(editorView: EditorView, position: number) {
-    editorView.dispatch({ selection: { anchor: position, head: position }, scrollIntoView: true })
+    editorView.dispatch({ selection: { anchor: position, head: position } })
     editorView.focus()
+    scrollToCursor(editorView)
 }
 
 /**
@@ -504,4 +511,20 @@ export function selectRange(editorView: EditorView, selection: SelectionRange) {
     editorView.dispatch({
         selection,
     })
+}
+
+/**
+ * Scrolls the cursor to the center of the editor
+ * @param editorView The editor view to perform actions in.
+ * @param topPercent Percantage of the height where the cursor is scrolled.
+ */
+export function scrollToCursor(editorView: EditorView, topPercent = 0.25) {
+    const cursor = editorView.coordsAtPos(editorView.state.selection.main.head)
+    const scroller = editorView.scrollDOM.getBoundingClientRect()
+    if (cursor) {
+        const cursorMiddle = (cursor.top + cursor.bottom) / 2
+        const scrollerHeight = scroller.bottom - scroller.top
+        const scrollerMiddle = scroller.top + scrollerHeight * topPercent
+        if (Math.abs(cursorMiddle - scrollerMiddle) > 5) editorView.scrollDOM.scrollTop += cursorMiddle - scrollerMiddle
+    }
 }

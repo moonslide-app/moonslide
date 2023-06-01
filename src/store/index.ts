@@ -143,6 +143,7 @@ export const useEditorStore = create<EditorStore>()(
             },
             async changeEditingFile(newFilePath) {
                 const newContent = newFilePath !== undefined ? await window.ipc.files.getFileContent(newFilePath) : ''
+                get().updateParsedPresentation(undefined)
                 await get().updateContent(newContent)
                 set(state => ({
                     ...state,
