@@ -11,9 +11,12 @@ import { Ref, forwardRef, useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
 import { useCodeMirrorEditorRef } from '../editor/useCodeMirrorEditorRef'
+import { findCurrentSlide } from '../editor/codeMirrorHelpers'
+import { showActiveSlide } from '../editor/showActiveSlide'
 
 export type CodeMirrorEditorProps = {
     className?: string
+    onUpdateCurrentSlide?: (slideNumber: number) => void
 }
 
 const myHighlightStyle = HighlightStyle.define([
@@ -39,7 +42,12 @@ const myHighlightStyle = HighlightStyle.define([
 const myTheme = EditorView.baseTheme({
     '&': {
         fontSize: '12pt',
+        height: '100%',
     },
+    '.active-slide': {
+        backgroundColor: '#f5f3ff',
+    },
+    '.cm-scroller': { overflow: 'auto', height: '100%' },
 })
 
 const markdownParser = mdParser.configure([
@@ -64,6 +72,7 @@ const mixedParser = parser.configure({
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
 
 export type CodeMirrorEditorRef = {
+    onScrollToSlide(slideNumber: number): void
     onAddSlide(layout?: string, slots?: number): void
     onAddFormat(prefix: string, suffix?: string): void
     onAddBlock(prefix: string): void
@@ -86,7 +95,21 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
 
     useEffect(() => {
         const updatePlugin = ViewPlugin.define(() => ({
-            update: viewUpdate => updateContent(viewUpdate.state.doc.sliceString(0)),
+            update: viewUpdate => {
+                // ignore focus updates
+                if (viewUpdate.focusChanged) return
+
+                try {
+                    const slideRange = findCurrentSlide(viewUpdate.state)
+                    if (slideRange) props?.onUpdateCurrentSlide?.(slideRange.index)
+                } catch (error) {
+                    console.warn('Could not find out current slide number: ' + error)
+                }
+
+                if (viewUpdate.docChanged) {
+                    updateContent(viewUpdate.state.doc.sliceString(0))
+                }
+            },
         }))
 
         const state = EditorState.create({
@@ -95,6 +118,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                 myTheme,
                 mixedPlugin,
                 syntaxHighlighting(myHighlightStyle),
+                showActiveSlide,
                 updatePlugin,
                 keymap.of([indentWithTab]),
                 history(),
@@ -117,5 +141,5 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
         return () => view?.destroy()
     }, [editingFile.openedAt])
 
-    return <div ref={editorDomNode} className={`flex-grow overflow-y-auto ${props?.className}`}></div>
+    return <div ref={editorDomNode} className={`flex-grow overflow-hidden ${props?.className ?? ''}`}></div>
 })

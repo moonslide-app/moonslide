@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { useEditorStore } from '../store'
 
 let currentPreviewWindow: Window | undefined
@@ -9,9 +9,29 @@ export function openPreviewWindow() {
     return currentPreviewWindow
 }
 
-export function PreviewWindow() {
+export type PreviewWindowRef = {
+    showSlide: (slideNumber: number) => void
+}
+
+export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
     const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
     const currentSlidesHtml = useEditorStore(state => state.parsedPresentation?.slidesHtml)
+    const currentSlideNumber = useRef(0)
+
+    function sendShowSlideMessage(slideNumber: number) {
+        const message = {
+            name: 'reveal-editor:show-slide',
+            slideNumber: slideNumber,
+        }
+        currentPreviewWindow?.postMessage(message, '*')
+    }
+
+    useImperativeHandle(ref, () => ({
+        showSlide(slideNumber) {
+            currentSlideNumber.current = slideNumber
+            sendShowSlideMessage(slideNumber)
+        },
+    }))
 
     useEffect(() => {
         if (currentPreviewWindow) {
@@ -20,6 +40,7 @@ export function PreviewWindow() {
             }
 
             currentPreviewWindow.postMessage(message, '*')
+            sendShowSlideMessage(currentSlideNumber.current)
         }
     }, [lastFullUpdate])
 
@@ -31,8 +52,9 @@ export function PreviewWindow() {
             }
 
             currentPreviewWindow.postMessage(message, '*')
+            sendShowSlideMessage(currentSlideNumber.current)
         }
     }, [currentSlidesHtml])
 
     return <></>
-}
+})

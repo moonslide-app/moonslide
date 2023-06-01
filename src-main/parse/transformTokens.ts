@@ -60,7 +60,8 @@ export function transformTokens(initialTokens: Token[]): Token[] {
 }
 
 function isBlockImage(token: Token | undefined): boolean {
-    const children = token?.children?.filter(token => !!token.content.trim()) ?? []
+    // ignore children which are empty (and not images)
+    const children = token?.children?.filter(token => token.type === 'image' || token.content.trim()) ?? []
     const imageChild = children.at(0)
     return token?.type === 'inline' && children.length == 1 && imageChild?.type === 'image'
 }

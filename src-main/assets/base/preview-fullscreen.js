@@ -14,6 +14,8 @@ window.addEventListener('message', event => {
         updatePreview(event.data.newSlides)
     } else if (event.data.name === 'reveal-editor:reload') {
         window.location.reload()
+    } else if (event.data.name === 'reveal-editor:show-slide') {
+        Reveal.slide(event.data.slideNumber)
     }
 })
 
