@@ -6,7 +6,7 @@ import { parser as htmlParser } from '@lezer/html'
 import { parseMixed } from '@lezer/common'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
 import { EditorState } from '@codemirror/state'
-import { EditorView, ViewPlugin, keymap, drawSelection, lineNumbers } from '@codemirror/view'
+import { EditorView, ViewPlugin, keymap, drawSelection } from '@codemirror/view'
 import { Ref, forwardRef, useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
@@ -100,7 +100,6 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                 history(),
                 EditorView.lineWrapping,
                 drawSelection(),
-                lineNumbers(),
             ],
         })
 
