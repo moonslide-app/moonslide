@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-export function PreviewSlide(props: { presentationHtml: string; slideHtml: string }) {
+export function PreviewSlide(props: { presentationHtml: string; slideHtml: string; selected?: boolean }) {
     const iframeRef = useRef<HTMLIFrameElement>(null)
     const slideHtml = useRef(props.slideHtml)
 
@@ -19,11 +19,8 @@ export function PreviewSlide(props: { presentationHtml: string; slideHtml: strin
         }
     }, [slideHtml.current])
 
-    return (
-        <iframe
-            ref={iframeRef}
-            srcDoc={props.presentationHtml}
-            className="w-full aspect-[16/9] pointer-events-none"
-        ></iframe>
-    )
+    const className =
+        'w-full aspect-[16/9] pointer-events-none rounded-lg ' + (props.selected ? 'border-4 border-violet-400' : 'p-1')
+
+    return <iframe ref={iframeRef} tabIndex={-1} srcDoc={props.presentationHtml} className={className}></iframe>
 }

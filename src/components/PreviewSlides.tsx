@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useEditorStore } from '../store'
 import { PreviewSlide } from './PreviewSlide'
+import { useScrollSlides } from './scrollSlides'
 
 export function PreviewSlides() {
     const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
@@ -19,14 +20,40 @@ export function PreviewSlides() {
         }
     }, [slides])
 
+    const slidesDivRef = useRef<HTMLDivElement>(null)
+    const { selectedSlide, setSelectedSlide } = useScrollSlides(slidesDivRef)
+
     return (
-        <div className="space-y-4 p-4 h-full overflow-y-auto bg-gray-100" key={lastFullUpdate}>
+        <div ref={slidesDivRef} className="space-y-2 p-4 h-full overflow-y-auto bg-white" key={lastFullUpdate}>
             {slides &&
                 slides.map((slide, idx) => (
-                    <PreviewSlide
-                        presentationHtml={(cachedPresentationsHtml && cachedPresentationsHtml[idx]) ?? ''}
-                        slideHtml={slide.slideHtml ?? ''}
-                    ></PreviewSlide>
+                    <button
+                        className={
+                            'flex w-full focus:outline-none rounded-lg  ' +
+                            (idx === selectedSlide
+                                ? 'bg-violet-200'
+                                : 'bg-gray-100 focus-visible:bg-violet-100 hover:bg-violet-100')
+                        }
+                        onClick={() => setSelectedSlide(idx)}
+                    >
+                        <div className="flex items-start pt-3">
+                            <div className="w-8 flex justify-center">
+                                <span
+                                    className={
+                                        'text-sm font-bold ' +
+                                        (idx === selectedSlide ? 'text-violet-500' : 'text-gray-500')
+                                    }
+                                >
+                                    {idx + 1}
+                                </span>
+                            </div>
+                        </div>
+                        <PreviewSlide
+                            presentationHtml={(cachedPresentationsHtml && cachedPresentationsHtml[idx]) ?? ''}
+                            slideHtml={slide.slideHtml ?? ''}
+                            selected={idx === selectedSlide}
+                        ></PreviewSlide>
+                    </button>
                 ))}
         </div>
     )
