@@ -32,7 +32,7 @@ function activeSlideDecorator(view: EditorView) {
     for (const { from, to } of view.visibleRanges) {
         for (let pos = from; pos <= to; ) {
             const line = view.state.doc.lineAt(pos)
-            if (line.to >= currentSlide.frontMatter.from - 1 && line.to <= currentSlide.markdown.to) {
+            if (line.to >= currentSlide.fullSlide.from && line.to <= currentSlide.fullSlide.to) {
                 builder.add(line.from, line.from, activeDecoration)
             }
             pos = line.to + 1
