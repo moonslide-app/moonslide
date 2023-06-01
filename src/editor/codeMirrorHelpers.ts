@@ -522,9 +522,9 @@ export function scrollToCursor(editorView: EditorView, topPercent = 0.25) {
     const cursor = editorView.coordsAtPos(editorView.state.selection.main.head)
     const scroller = editorView.scrollDOM.getBoundingClientRect()
     if (cursor) {
-        const curMid = (cursor.top + cursor.bottom) / 2
-        const eltDiff = scroller.bottom - scroller.top
-        const eltMid = scroller.top + eltDiff * topPercent
-        if (Math.abs(curMid - eltMid) > 5) editorView.scrollDOM.scrollTop += curMid - eltMid
+        const cursorMiddle = (cursor.top + cursor.bottom) / 2
+        const scrollerHeight = scroller.bottom - scroller.top
+        const scrollerMiddle = scroller.top + scrollerHeight * topPercent
+        if (Math.abs(cursorMiddle - scrollerMiddle) > 5) editorView.scrollDOM.scrollTop += cursorMiddle - scrollerMiddle
     }
 }
