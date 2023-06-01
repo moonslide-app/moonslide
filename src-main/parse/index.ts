@@ -132,6 +132,8 @@ function parseConfig(markdownContent: string, request: ParseRequest) {
             slideConfig.data = data
             return slideConfig
         })
+        // remove yaml config if markdown block does not exist
+        .slice(0, slidesMarkdown.length)
 
     return {
         localImages,
