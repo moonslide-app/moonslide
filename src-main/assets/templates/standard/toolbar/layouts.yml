@@ -8,10 +8,10 @@
 - name: Columns
   items:
     - key: cols-2
-      displayName: Two Column
+      displayName: Two Columns
       slots: 2
     - key: cols-3
-      displayName: Three Column
+      displayName: Three Columns
       slots: 3
     - key: cols-4
       displayName: Four Columns

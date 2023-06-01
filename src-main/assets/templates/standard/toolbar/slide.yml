@@ -1,4 +1,28 @@
+- name: Transition
+  items: 
+    - key: 'transition'
+      displayName: 'Transition'
+    - key: 'transition-speed'
+      displayName: 'Transition Speed'
 - name: Background
   items:
+    - key: 'background-color'
+      displayName: Color
+    - key: 'background-opacity'
+      displayName: 'Opacity'
     - key: 'background-image'
-      displayName: Background Image
+      displayName: Image
+    - key: 'background-size'
+      displayName: Size
+    - key: 'background-position'
+      displayName: 'Position'
+    - key: 'background-video'
+      displayName: Video
+    - key: 'background-video-muted'
+      displayName: 'Video Muted'
+    - key: 'background-video-loop'
+      displayName: 'Video Loop'
+- name: Auto Animate
+  items: 
+    - key: 'auto-animate: true'
+      displayName: 'Auto Animate'

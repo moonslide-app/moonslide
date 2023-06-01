@@ -31,7 +31,6 @@ themes:
       - ./styles/code/stackoverflow-light.css
 # Definition of layouts which are used to build the slides.
 # Every layout must contain at least one `@@slot@@` token where the content is placed.
-
 layouts:
   - name: base
     default: true
@@ -70,7 +69,8 @@ layouts:
     path: ./layouts/title-grid-3-right.html
   - name: title-grid-4
     path: ./layouts/title-grid-4.html
-# The following contents are related to the toolbar
+# For every section of the toolbar a separate file can be specified 
+# which lists all items to show in this section
 toolbar:
   layouts: ./toolbar/layouts.yml
   textStyles: ./toolbar/textStyles.yml
