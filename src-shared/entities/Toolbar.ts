@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { gracefulStringSchema, nullishToOptional } from './zodUtils'
+import { addUUID, gracefulStringSchema, nullishToOptional } from './zodUtils'
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs-extra'
 import {
@@ -10,16 +10,20 @@ import {
 import { resolve } from 'path'
 import { parse as yamlParse } from 'yaml'
 
-const toolbarItemSchema = z.object({
+const baseSchema = z.object({
     key: z.string(),
     value: z.string().nullish(),
     displayName: z.string().nullish().transform(nullishToOptional),
     hidden: z.boolean().nullish().transform(nullishToOptional),
 })
 
-const toolbarLayoutItemSchema = toolbarItemSchema.extend({
-    slots: z.number().nullish().transform(nullishToOptional),
-})
+const toolbarItemSchema = baseSchema.transform(addUUID)
+
+const toolbarLayoutItemSchema = baseSchema
+    .extend({
+        slots: z.number().nullish().transform(nullishToOptional),
+    })
+    .transform(addUUID)
 
 export const toolbarEntrySchema = z.object({
     name: z.string(),
@@ -47,9 +51,9 @@ export async function loadToolbarFromPaths(paths: ToolbarFilePaths, templateFold
 
     return {
         layouts: layouts ?? [],
-        modifiers: textStyles ?? [],
-        dataTags: slide ?? [],
-        slideClasses: slideStyles ?? [],
+        textStyles: textStyles ?? [],
+        slide: slide ?? [],
+        slideStyles: slideStyles ?? [],
     }
 }
 
@@ -75,9 +79,9 @@ async function loadAndParseFileContents<T extends typeof toolbarEntrySchema | ty
 
 export type Toolbar = {
     layouts: ToolbarLayoutEntry[]
-    modifiers: ToolbarEntry[] // textStyles
-    dataTags: ToolbarEntry[] // slide
-    slideClasses: ToolbarEntry[] // slideStyles
+    textStyles: ToolbarEntry[]
+    slide: ToolbarEntry[]
+    slideStyles: ToolbarEntry[]
 }
 
 export type ToolbarFilePaths = z.infer<typeof toolbarFilePathsSchema>

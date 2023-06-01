@@ -175,13 +175,15 @@ const ToolbarItemSeparator = React.forwardRef<
 ))
 ToolbarItemSeparator.displayName = CommandPrimitive.Separator.displayName
 
-interface ToolbarItemValue {
-    key: string
+type ToolbarItemValue = {
+    id: string
 }
 
-type ToolbarItemProps<T> = Omit<React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>, 'value' | 'onSelect'> & {
-    valueKey: string
-    value?: T
+type ToolbarItemProps<T extends ToolbarItemValue> = Omit<
+    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>,
+    'value' | 'onSelect'
+> & {
+    value: T
     onSelect?: (value: T | undefined) => void
     searchValues: string[]
     hidden?: boolean
@@ -194,11 +196,11 @@ interface ToolbarItemForwarded extends React.FC<ToolbarItemProps<ToolbarItemValu
 const ToolbarItem: ToolbarItemForwarded = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive.Item>,
     ToolbarItemProps<ToolbarItemValue>
->(({ className, onSelect, valueKey, value, searchValues: newSearchValues, hidden, ...props }, ref) => {
+>(({ className, onSelect, value, searchValues: newSearchValues, hidden, ...props }, ref) => {
     const search = useCommandState(state => state.search)
     const [, setOpen] = React.useContext(ToolbarOpenContext) ?? []
     const [searchValues, searchValueActions] = React.useContext(SearchValuesContext) ?? []
-    if (searchValues?.get(valueKey) !== newSearchValues) searchValueActions?.set(valueKey, newSearchValues)
+    if (searchValues?.get(value.id) !== newSearchValues) searchValueActions?.set(value.id, newSearchValues)
 
     if (hidden && !search) return null
 
@@ -213,7 +215,7 @@ const ToolbarItem: ToolbarItemForwarded = React.forwardRef<
                 if (onSelect) onSelect(value)
                 if (setOpen) setOpen(false)
             }}
-            value={valueKey}
+            value={value.id}
             {...props}
         />
     )
