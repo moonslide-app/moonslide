@@ -12,6 +12,7 @@ import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
 import { useCodeMirrorEditorRef } from '../editor/useCodeMirrorEditorRef'
 import { findCurrentSlide } from '../editor/codeMirrorHelpers'
+import { showActiveSlide } from '../editor/showActiveSlide'
 
 export type CodeMirrorEditorProps = {
     className?: string
@@ -41,6 +42,9 @@ const myHighlightStyle = HighlightStyle.define([
 const myTheme = EditorView.baseTheme({
     '&': {
         fontSize: '12pt',
+    },
+    '& .active-slide': {
+        backgroundColor: '#eee',
     },
 })
 
@@ -112,6 +116,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                 myTheme,
                 mixedPlugin,
                 syntaxHighlighting(myHighlightStyle),
+                showActiveSlide,
                 updatePlugin,
                 keymap.of([indentWithTab]),
                 history(),

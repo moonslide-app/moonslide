@@ -1,4 +1,4 @@
-import { Ref, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { useEditorStore } from '../store'
 
 let currentPreviewWindow: Window | undefined
