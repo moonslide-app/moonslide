@@ -1,0 +1,99 @@
+- name: Margins
+  items:
+  - key: .m-0
+    displayName: Margin 0
+    hidden: true
+  - key: .m-0\.5
+    displayName: Margin 0.5
+    hidden: true
+  - key: .m-1
+    displayName: Margin 1
+    hidden: true
+  - key: .m-1\.5
+    displayName: Margin 1.5
+    hidden: true
+  - key: .m-2
+    displayName: Margin 2
+  - key: .m-2\.5
+    displayName: Margin 2.5
+    hidden: true
+  - key: .m-3
+    displayName: Margin 3
+    hidden: true
+  - key: .m-3\.5
+    displayName: Margin 3.5
+    hidden: true
+  - key: .m-4
+    displayName: Margin 4
+  - key: .m-5
+    displayName: Margin 5
+    hidden: true
+  - key: .m-6
+    displayName: Margin 6
+    hidden: true
+  - key: .m-7
+    displayName: Margin 7
+    hidden: true
+  - key: .m-8
+    displayName: Margin 8
+    hidden: true
+  - key: .m-9
+    displayName: Margin 9
+    hidden: true
+  - key: .m-10
+    displayName: Margin 10
+    hidden: true
+  - key: .m-11
+    displayName: Margin 11
+    hidden: true
+  - key: .m-12
+    displayName: Margin 12
+  - key: .m-14
+    displayName: Margin 14
+    hidden: true
+  - key: .m-16
+    displayName: Margin 16
+    hidden: true
+  - key: .m-20
+    displayName: Margin 20
+    hidden: true
+  - key: .m-24
+    displayName: Margin 24
+    hidden: true
+  - key: .m-28
+    displayName: Margin 28
+    hidden: true
+  - key: .m-32
+    displayName: Margin 32
+    hidden: true
+  - key: .m-36
+    displayName: Margin 36
+    hidden: true
+  - key: .m-40
+    displayName: Margin 40
+    hidden: true
+  - key: .m-44
+    displayName: Margin 44
+  - key: .m-48
+    displayName: Margin 48
+    hidden: true
+  - key: .m-52
+    displayName: Margin 52
+    hidden: true
+  - key: .m-56
+    displayName: Margin 56
+  - key: .m-60
+    displayName: Margin 60
+    hidden: true
+  - key: .m-64
+    displayName: Margin 64
+    hidden: true
+  - key: .m-72
+    displayName: Margin 72
+    hidden: true
+  - key: .m-80
+    displayName: Margin 80
+    hidden: true
+  - key: .m-96
+    displayName: Margin 96
+    hidden: true

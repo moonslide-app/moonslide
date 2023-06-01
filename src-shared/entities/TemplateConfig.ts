@@ -1,26 +1,8 @@
 import { gracefulStringSchema, nullishToArray, nullishToOptional, stringOrArraySchema } from './zodUtils'
-import { parse } from 'yaml'
+import { parse as yamlParse } from 'yaml'
 import { z } from 'zod'
-
-const toolbarItemConfigSchema = z.object({
-    key: z.string(),
-    value: z.string().nullish(),
-    displayName: z.string().nullish().transform(nullishToOptional),
-    hidden: z.boolean().nullish().transform(nullishToOptional),
-})
-
-const toolbarLayoutItemConfigSchema = toolbarItemConfigSchema.extend({
-    slots: z.number().nullish().transform(nullishToOptional),
-})
-
-const toolbarEntryConfigSchema = z.object({
-    name: z.string(),
-    items: toolbarItemConfigSchema.array(),
-})
-
-const toolbarLayoutEntryConfigSchema = toolbarEntryConfigSchema
-    .omit({ items: true })
-    .extend({ items: toolbarLayoutItemConfigSchema.array() })
+import { Toolbar, loadToolbarFromPaths, toolbarFilePathsSchema } from './Toolbar'
+import { TemplateConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
 
 const templateConfigSchema = z.object({
     entry: z.string(),
@@ -49,26 +31,26 @@ const templateConfigSchema = z.object({
         .array()
         .nullish()
         .transform(nullishToArray),
-    toolbar: z
-        .object({
-            layouts: toolbarLayoutEntryConfigSchema.array().nullish().transform(nullishToArray),
-            modifiers: toolbarEntryConfigSchema.array().nullish().transform(nullishToArray),
-            slideClasses: toolbarEntryConfigSchema.array().nullish().transform(nullishToArray),
-            dataTags: toolbarEntryConfigSchema.array().nullish().transform(nullishToArray),
-        })
-        .nullish()
-        .transform(nullishToOptional),
+    toolbar: toolbarFilePathsSchema.nullish().transform(nullishToOptional),
 })
 
-export type ToolbarItemConfig = z.infer<typeof toolbarItemConfigSchema>
-export type ToolbarLayoutItemConfig = z.infer<typeof toolbarLayoutItemConfigSchema>
-export type ToolbarEntryConfig = z.infer<typeof toolbarEntryConfigSchema>
-export type ToolbarLayoutEntryConfig = z.infer<typeof toolbarLayoutEntryConfigSchema>
-export type TemplateConfig = z.infer<typeof templateConfigSchema>
+/**
+ * Contains the paths for the toolbar config files.
+ */
+type TemplateConfigWithToolbarPaths = z.infer<typeof templateConfigSchema>
 
-export function parseTemplateConfig(yamlString: string): TemplateConfig {
-    const parsedObject = parse(yamlString)
-    return templateConfigSchema.parse(parsedObject)
+export type TemplateConfig = Omit<TemplateConfigWithToolbarPaths, 'toolbar'> & {
+    toolbar: Toolbar
+}
+
+export async function parseTemplateConfig(yamlString: string, templateFolderPath: string): Promise<TemplateConfig> {
+    const templateConfig = wrapErrorIfThrows(
+        () => templateConfigSchema.parse(yamlParse(yamlString)),
+        error => new TemplateConfigError(error)
+    )
+
+    const paths = templateConfig.toolbar ?? {}
+    return { ...templateConfig, toolbar: await loadToolbarFromPaths(paths, templateFolderPath) }
 }
 
 export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: string) => string): TemplateConfig {

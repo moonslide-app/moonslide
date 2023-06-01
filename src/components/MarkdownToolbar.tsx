@@ -1,11 +1,11 @@
 import { isNonNullable } from '../../src-shared/entities/utils'
+import { TemplateConfig } from '../../src-shared/entities/TemplateConfig'
 import {
-    TemplateConfig,
-    ToolbarEntryConfig,
-    ToolbarItemConfig,
-    ToolbarLayoutEntryConfig,
-    ToolbarLayoutItemConfig,
-} from '../../src-shared/entities/TemplateConfig'
+    ToolbarEntry,
+    ToolbarItem as ToolbarItemType,
+    ToolbarLayoutEntry,
+    ToolbarLayoutItem,
+} from '../../src-shared/entities/Toolbar'
 import {
     ToolbarItemsEmpty,
     ToolbarItemGroup,
@@ -194,8 +194,8 @@ function ItemsBlock(props: { editorRef: CodeMirrorEditorRef }) {
 }
 
 function ItemsTemplateConfigurable<
-    Item extends ToolbarItemConfig & ToolbarItemValue,
-    Layout extends { items: Item[] } & ToolbarEntryConfig
+    Item extends ToolbarItemType & ToolbarItemValue,
+    Layout extends { items: Item[] } & ToolbarEntry
 >(props: {
     layoutsConfig: Layout[]
     buttonTitle: string
@@ -248,7 +248,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
     return (
         <Toolbar className="m-4">
             {toolbar?.layouts && (
-                <ItemsTemplateConfigurable<ToolbarLayoutItemConfig, ToolbarLayoutEntryConfig>
+                <ItemsTemplateConfigurable<ToolbarLayoutItem, ToolbarLayoutEntry>
                     layoutsConfig={toolbar.layouts}
                     buttonTitle="+"
                     placeholder="Search layouts..."

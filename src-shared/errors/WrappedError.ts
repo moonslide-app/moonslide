@@ -87,7 +87,7 @@ export class TemplateNotFoundError extends WrappedError {
 
 export class TemplateConfigError extends WrappedError {
     constructor(underlyingError: unknown) {
-        super('Template Error', 'The is an error in the config.yml file of the template.', underlyingError)
+        super('Template Error', 'There is an error in the config.yml file of the template.', underlyingError)
     }
 }
 
@@ -97,5 +97,20 @@ export class TemplatePathReferenceError extends WrappedError {
     constructor(notFoundPath: string) {
         super('Template Error', `The template references the file '${notFoundPath}' which was not found.`)
         this.notFoundPath = notFoundPath
+    }
+}
+
+export class ToolbarYamlConfigError extends WrappedError {
+    readonly propertyName: string
+    readonly filePath: string
+
+    constructor(propertyName: string, filePath: string, underlyingError: unknown) {
+        super(
+            'Toolbar Config Error',
+            `There is an error inside the config of the toolbar property '${propertyName}' (${filePath}).`,
+            underlyingError
+        )
+        this.propertyName = propertyName
+        this.filePath = filePath
     }
 }
