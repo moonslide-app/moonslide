@@ -55,8 +55,19 @@ export function transformTokens(initialTokens: Token[]): Token[] {
     })
 
     tokens = replaceBgImages(tokens)
+    tokens = addBlankToLinks(tokens)
 
     return tokens
+}
+
+function addBlankToLinks(tokens: Token[]): Token[] {
+    return tokens.map(token => {
+        if (token.children) token.children = addBlankToLinks(token.children)
+        if (token.type === 'link_open') {
+            token.attrSet('target', '_blank')
+        }
+        return token
+    })
 }
 
 function isBlockImage(token: Token | undefined): boolean {
