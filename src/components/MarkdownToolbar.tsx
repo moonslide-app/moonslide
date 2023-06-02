@@ -208,17 +208,11 @@ function ItemsTemplateConfigurable<
                                 {layout.items.map(item => (
                                     <ToolbarItem
                                         value={item}
-                                        searchValues={[item.key, layout.name, item.value, item.displayName].filter(
-                                            isNonNullable
-                                        )}
+                                        searchValues={[item.key, layout.name, item.displayName].filter(isNonNullable)}
                                         hidden={item.hidden}
                                         onSelect={onSelect}
                                     >
-                                        {buildItemLabel({
-                                            displayName: item.displayName,
-                                            value: item.value ?? undefined,
-                                            key: item.key,
-                                        })}
+                                        {buildItemLabel(item)}
                                     </ToolbarItem>
                                 ))}
                             </ToolbarItemGroup>
@@ -243,7 +237,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="+"
                     placeholder="Search layouts..."
                     emptyText="No layout found."
-                    onSelect={item => item && editorRef?.onAddSlide(item.value ?? item.key, item.slots)}
+                    onSelect={item => item && editorRef?.onAddSlide(item.key, item.slots)}
                 />
             )}
             {editorRef && <ItemsHeadings editorRef={editorRef} />}
@@ -255,7 +249,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Text Styles"
                     placeholder="Search text styles..."
                     emptyText="No text style found."
-                    onSelect={value => value && editorRef?.onAddAttribute(value.key)}
+                    onSelect={item => item && editorRef?.onAddAttribute(item.key)}
                 />
             )}
             {toolbar?.slide && (
@@ -264,7 +258,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Slide"
                     placeholder="Search slide properties..."
                     emptyText="No slide properties found."
-                    onSelect={value => value && editorRef?.onAddDataTag(value.key)}
+                    onSelect={item => item && editorRef?.onAddDataTag(item.key)}
                 />
             )}
             {toolbar?.slideStyles && (
@@ -273,7 +267,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Slide Styles"
                     placeholder="Search slide styles..."
                     emptyText="No slide styles found."
-                    onSelect={value => value && editorRef?.onAddClass(value.key)}
+                    onSelect={item => item && editorRef?.onAddClass(item.key)}
                 />
             )}
             {editorRef && <ToolbarButton onClick={async () => await selectMedia(editorRef)}>Media</ToolbarButton>}
@@ -281,18 +275,14 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
     )
 }
 
-function buildItemLabel(item: { displayName?: string; value?: string; key?: string }): string {
+function buildItemLabel(item: { displayName?: string; key?: string }): string {
     const parts: (string | undefined)[] = []
 
     if (item.displayName) {
         parts.push(item.displayName)
     }
 
-    if (isNonNullable(item.value)) {
-        if (item.value) {
-            parts.push(`(${item.value})`)
-        }
-    } else if (item.key) {
+    if (item.key?.trim()) {
         parts.push(`(${item.key})`)
     }
 

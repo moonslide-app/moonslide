@@ -12,7 +12,6 @@ import { parse as yamlParse } from 'yaml'
 
 const baseSchema = z.object({
     key: z.string(),
-    value: z.string().nullish(),
     displayName: z.string().nullish().transform(nullishToOptional),
     hidden: z.boolean().nullish().transform(nullishToOptional),
 })
