@@ -45,8 +45,10 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
     if (!process.env.CI) return {}
     if (process.platform !== 'darwin') return {}
 
-    if (!process.env.APPLE_ID || !process.env.APPLE_APP_SPECIFIC_PASSWORD) {
-        console.warn('Should be notarizing, but environment variables APPLE_ID or APPLE_ID_PASSWORD are missing!')
+    if (!process.env.APPLE_ID || !process.env.APPLE_APP_SPECIFIC_PASSWORD || !process.env.APPLE_TEAM_ID) {
+        console.warn(
+            'Should be notarizing, but environment variables APPLE_ID, APPLE_ID_PASSWORD or APPLE_TEAM_ID are missing!'
+        )
         return {}
     }
 
@@ -55,9 +57,10 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
             identity: process.env.MACOS_CERT_IDENTITY,
         },
         osxNotarize: {
+            tool: 'notarytool',
             appleId: process.env.APPLE_ID,
             appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
-            ascProvider: process.env.APPLE_TEAM_ID,
+            teamId: process.env.APPLE_TEAM_ID,
         },
     }
 }
