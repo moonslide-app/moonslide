@@ -2,7 +2,7 @@
   items: 
   - name: Enable Animation
     key: .fragment
-    description: In order to use any other animation feature, the class `fragment` has to be applied. It comes with a standard fade-in animation. 
+    description: In order to use any other animation feature, the class `fragment` **must** be applied. It comes with a standard fade-in animation. 
 - name: Entrance Animation
   description: Elements start invisible and enter with the specified animation.
   items: 

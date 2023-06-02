@@ -31,13 +31,9 @@ function HelpTooltipText(props: { text: string }) {
                 },
                 a({ href, children }) {
                     return (
-                        <a
-                            href={href}
-                            target="_blank"
-                            className="font-bold hover:underline flex items-center hover:text-gray-600"
-                        >
+                        <a href={href} target="_blank" className="font-bold hover:underline hover:text-gray-600">
                             {children}
-                            <ExternalLinkIcon className="h-3 -ml-1" />
+                            <ExternalLinkIcon className="inline h-3 -mx-1 mb-0.5" />
                         </a>
                     )
                 },
