@@ -1,8 +1,171 @@
 - name: Vertical Position
   items:
-  - name: At Top of Parent
+  - name: Top of Parent
     key: position-top
-  - name: At Center of Parent
+  - name: Center of Parent
     key: position-center
-  - name: At Bottom of Parent
+  - name: Bottom of Parent
     key: position-bottom
+- name: Text Alignment
+  items: 
+  - name: Text Left
+    key: text-left
+  - name: Text Center
+    key: text-center
+  - name: Text Right
+    key: text-right
+- name: Background Color
+  items: 
+  - name: White
+    key: bg-white
+  - name: Black
+    key: bg-black
+  - name: Slate
+    key: bg-slate
+    hidden: true
+  - name: Gray
+    key: bg-gray
+  - name: Zinc
+    key: bg-zinc
+    hidden: true
+  - name: Neutral
+    key: bg-neutral
+    hidden: true
+  - name: Stone
+    key: bg-stone
+    hidden: true
+  - name: Red
+    key: bg-red
+  - name: Orange
+    key: bg-orange
+    hidden: true
+  - name: Amber
+    key: bg-amber
+    hidden: true
+  - name: Yellow
+    key: bg-yellow
+    hidden: true
+  - name: Lime
+    key: bg-lime
+    hidden: true
+  - name: Green
+    key: bg-green
+  - name: Emerald
+    key: bg-emerald
+    hidden: true
+  - name: Teal
+    key: bg-teal
+    hidden: true
+  - name: Cyan
+    key: bg-cyan
+    hidden: true
+  - name: Sky
+    key: bg-sky
+    hidden: true
+  - name: Blue
+    key: bg-blue
+  - name: Indigo
+    key: bg-indigo
+    hidden: true
+  - name: Violet
+    key: bg-violet
+    hidden: true
+  - name: Purple
+    key: bg-purple
+    hidden: true
+  - name: Fuchsia
+    key: bg-fuchsia
+    hidden: true
+  - name: Pink
+    key: bg-pink
+    hidden: true
+  - name: Rose
+    key: bg-rose
+    hidden: true
+- name: Font Size
+  items: 
+  - name: Extra Small
+    key: text-xs
+  - name: Small
+    key: text-sm
+  - name: Base
+    key: text-base
+  - name: Large
+    key: text-lg
+  - name: Extra Large
+    key: text-xl
+  - name: Extra Large ${{value}}
+    key: text-${{value}}
+    hidden: true
+    values: ['2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl']
+    shownValues: ['2xl']
+- name: Font Color
+  items: 
+  - name: Main
+    key: text-main
+  - name: White
+    key: text-white
+  - name: Black
+    key: text-black
+  - name: Slate
+    key: text-slate
+    hidden: true
+  - name: Gray
+    key: text-gray
+  - name: Zinc
+    key: text-zinc
+    hidden: true
+  - name: Neutral
+    key: text-neutral
+    hidden: true
+  - name: Stone
+    key: text-stone
+    hidden: true
+  - name: Red
+    key: text-red
+  - name: Orange
+    key: text-orange
+    hidden: true
+  - name: Amber
+    key: text-amber
+    hidden: true
+  - name: Yellow
+    key: text-yellow
+    hidden: true
+  - name: Lime
+    key: text-lime
+    hidden: true
+  - name: Green
+    key: text-green
+  - name: Emerald
+    key: text-emerald
+    hidden: true
+  - name: Teal
+    key: text-teal
+    hidden: true
+  - name: Cyan
+    key: text-cyan
+    hidden: true
+  - name: Sky
+    key: text-sky
+    hidden: true
+  - name: Blue
+    key: text-blue
+  - name: Indigo
+    key: text-indigo
+    hidden: true
+  - name: Violet
+    key: text-violet
+    hidden: true
+  - name: Purple
+    key: text-purple
+    hidden: true
+  - name: Fuchsia
+    key: text-fuchsia
+    hidden: true
+  - name: Pink
+    key: text-pink
+    hidden: true
+  - name: Rose
+    key: text-rose
+    hidden: true

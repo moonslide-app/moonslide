@@ -6,8 +6,6 @@
       key: 'transition-speed'
 - name: Background
   items:
-    - name: Color
-      key: 'background-color'
     - name: 'Opacity'
       key: 'background-opacity'
     - name: Image

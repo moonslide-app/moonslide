@@ -1,6 +1,7 @@
-@import './text.css';
 @import './reveal.css';
 @import './layouts.css';
 @import './image.css';
+@import './text.css';
+@import './background.css';
 @import './margin.css';
 @import './size.css';

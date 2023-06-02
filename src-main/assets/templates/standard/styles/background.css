@@ -1,0 +1,95 @@
+.reveal .bg-white.slide-background {
+    background-color: white;
+}
+
+.reveal .bg-black.slide-background {
+    background-color: black;
+}
+
+.reveal .bg-slate.slide-background {
+    background-color: var(--color-slate);
+}
+
+.reveal .bg-gray.slide-background {
+    background-color: var(--color-gray);
+}
+
+.reveal .bg-zinc.slide-background {
+    background-color: var(--color-zinc);
+}
+
+.reveal .bg-neutral.slide-background {
+    background-color: var(--color-neutral);
+}
+
+.reveal .bg-stone.slide-background {
+    background-color: var(--color-stone);
+}
+
+.reveal .bg-red.slide-background {
+    background-color: var(--color-red);
+}
+
+.reveal .bg-orange.slide-background {
+    background-color: var(--color-orange);
+}
+
+.reveal .bg-amber.slide-background {
+    background-color: var(--color-amber);
+}
+
+.reveal .bg-yellow.slide-background {
+    background-color: var(--color-yellow);
+}
+
+.reveal .bg-lime.slide-background {
+    background-color: var(--color-lime);
+}
+
+.reveal .bg-green.slide-background {
+    background-color: var(--color-green);
+}
+
+.reveal .bg-emerald.slide-background {
+    background-color: var(--color-emerald);
+}
+
+.reveal .bg-teal.slide-background {
+    background-color: var(--color-teal);
+}
+
+.reveal .bg-cyan.slide-background {
+    background-color: var(--color-cyan);
+}
+
+.reveal .bg-sky.slide-background {
+    background-color: var(--color-sky);
+}
+
+.reveal .bg-blue.slide-background {
+    background-color: var(--color-blue);
+}
+
+.reveal .bg-indigo.slide-background {
+    background-color: var(--color-inidgo);
+}
+
+.reveal .bg-violet.slide-background {
+    background-color: var(--color-violet);
+}
+
+.reveal .bg-purple.slide-background {
+    background-color: var(--color-purple);
+}
+
+.reveal .bg-fuchsia.slide-background {
+    background-color: var(--color-fuchsia);
+}
+
+.reveal .bg-pink.slide-background {
+    background-color: var(--color-pink);
+}
+
+.reveal .bg-rose.slide-background {
+    background-color: var(--color-rose);
+}
