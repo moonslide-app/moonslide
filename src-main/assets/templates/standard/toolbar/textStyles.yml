@@ -1,104 +1,69 @@
-- name: Image
+- name: Text Alignment
   items: 
-  - key: .image-block
-    name: 
-
-- name: Margins
+  - name: Text Left
+    key: .text-left
+  - name: Text Center
+    key: .text-center
+  - name: Text Right
+    key: .text-right
+- name: Font Size
+  items: 
+  - name: Extrasmall
+    key: .text-xs
+- name: Font Color
+  items: 
+  - name: Main
+    key: .text-main
+- name: Block Image
+  items: 
+  - name: Image Cover 
+    key: .image-cover
+  - name: Image Contain
+    key: .image-contain
+  - name: Image Center
+    key: .image-center
+  - name: Image Top
+    key: .image-top
+  - name: Image Bottom
+    key: .image-bottom
+  - name: Image Left
+    key: .image-left
+  - name: Image Right
+    key: .image-right
+- name: Width
+  items: 
+  - key: .w-0
+    name: Width 0
+- name: Height
+  items: 
+  - key: .h-0
+    name: Height 0
+- name: Top Margin
+  items:
+  - key: .mt-0
+    name: Top Margin 0
+- name: Bottom Margin
+  items:
+  - key: .mb-0
+    name: Bottom Margin 0
+- name: Left Margin
+  items:
+  - key: .ml-0
+    name: Left Margin 0
+- name: Right Margin
+  items:
+  - key: .mr-0
+    name: Right Margin 0
+- name: Horizontal Margin
+  items:
+  - key: .mx-0
+    name: Horizontal Margin 0
+- name: Vertical Margin
+  items:
+  - key: .my-0
+    name: Vertical Margin 0
+- name: Margin (All Directions)
   items:
   - key: .m-0
     name: Margin 0
-    hidden: true
-  - key: .m-0\.5
-    name: Margin 0.5
-    hidden: true
-  - key: .m-1
-    name: Margin 1
-    hidden: true
-  - key: .m-1\.5
-    name: Margin 1.5
-    hidden: true
-  - key: .m-2
-    name: Margin 2
-  - key: .m-2\.5
-    name: Margin 2.5
-    hidden: true
-  - key: .m-3
-    name: Margin 3
-    hidden: true
-  - key: .m-3\.5
-    name: Margin 3.5
-    hidden: true
-  - key: .m-4
-    name: Margin 4
-  - key: .m-5
-    name: Margin 5
-    hidden: true
-  - key: .m-6
-    name: Margin 6
-    hidden: true
-  - key: .m-7
-    name: Margin 7
-    hidden: true
-  - key: .m-8
-    name: Margin 8
-    hidden: true
-  - key: .m-9
-    name: Margin 9
-    hidden: true
-  - key: .m-10
-    name: Margin 10
-    hidden: true
-  - key: .m-11
-    name: Margin 11
-    hidden: true
-  - key: .m-12
-    name: Margin 12
-  - key: .m-14
-    name: Margin 14
-    hidden: true
-  - key: .m-16
-    name: Margin 16
-    hidden: true
-  - key: .m-20
-    name: Margin 20
-    hidden: true
-  - key: .m-24
-    name: Margin 24
-    hidden: true
-  - key: .m-28
-    name: Margin 28
-    hidden: true
-  - key: .m-32
-    name: Margin 32
-    hidden: true
-  - key: .m-36
-    name: Margin 36
-    hidden: true
-  - key: .m-40
-    name: Margin 40
-    hidden: true
-  - key: .m-44
-    name: Margin 44
-  - key: .m-48
-    name: Margin 48
-    hidden: true
-  - key: .m-52
-    name: Margin 52
-    hidden: true
-  - key: .m-56
-    name: Margin 56
-  - key: .m-60
-    name: Margin 60
-    hidden: true
-  - key: .m-64
-    name: Margin 64
-    hidden: true
-  - key: .m-72
-    name: Margin 72
-    hidden: true
-  - key: .m-80
-    name: Margin 80
-    hidden: true
-  - key: .m-96
-    name: Margin 96
-    hidden: true
+  

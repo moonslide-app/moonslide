@@ -1,4 +1,27 @@
 /* 
+ * Slides in the standard template are always structured in the follwing way:
+ * <section>
+ *   <div class="slide-wrapper">
+ *     <div class="layout <layoutname>">   
+ *        <div class="slot"> Slot Content </div>
+ *        <div class="slot"> Slot Content </div>
+ *        ...
+ *     </div>
+ *   </div>
+ * </section>
+ */
+
+/* 
+ * Every slide is a section a fill out the whole height
+ * In this way we can control child elements with flex to 
+ * appear at the top / center / bottom of the slides.
+ */
+section {
+    height: 100%;
+    max-height: 100%;
+}
+
+/* 
  * The slide-wrapper may contain header / footer and 
  * the selected layout (with the slide content) which 
  * grows to maximum possible size.

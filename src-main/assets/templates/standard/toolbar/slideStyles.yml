@@ -1,4 +1,8 @@
-- name: Margins
+- name: Vertical Position
   items:
-  - key: m-0
-    displayName: Margin 0
+  - name: At Top of Parent
+    key: position-top
+  - name: At Center of Parent
+    key: position-center
+  - name: At Bottom of Parent
+    key: position-bottom

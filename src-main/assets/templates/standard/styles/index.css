@@ -4,8 +4,3 @@
 @import './image.css';
 @import './margin.css';
 @import './size.css';
-
-section {
-    height: 100%;
-    max-height: 100%;
-}
