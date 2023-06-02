@@ -1,0 +1,54 @@
+- name: Vertical Position
+  items:
+  - name: Top of Parent
+    key: position-top
+  - name: Center of Parent
+    key: position-center
+  - name: Bottom of Parent
+    key: position-bottom
+- name: Text Alignment
+  items: 
+  - name: Text Left
+    key: text-left
+  - name: Text Center
+    key: text-center
+  - name: Text Right
+    key: text-right
+- name: Background Color
+  items: 
+  - name: ${{value}}
+    key: bg-${{value}}
+    hidden: true
+    values: [white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
+    shownValues: [white, black, red, green, blue]
+- name: Font Size
+  items: 
+  - name: Extra Small
+    key: text-xs
+  - name: Small
+    key: text-sm
+  - name: Base
+    key: text-base
+  - name: Large
+    key: text-lg
+  - name: Extra Large
+    key: text-xl
+  - name: Extra Large ${{value}}
+    key: text-${{value}}
+    hidden: true
+    values: [2xl, 3xl, 4xl, 5xl, 6xl, 7xl, 8xl, 9xl]
+    shownValues: [2xl]
+- name: Font Color
+  items: 
+  - name: ${{value}}
+    key: text-${{value}}
+    hidden: true
+    values: [main, white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
+    shownValues: [main, white, black, red, green, blue]
+- name: Vertical Spacing
+  items:
+  - key: space-y-${{value}}
+    name: Vertical Spacing ${{value}}
+    hidden: true
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]

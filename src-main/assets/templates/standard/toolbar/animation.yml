@@ -1,0 +1,53 @@
+- name: Enable Animation
+  items: 
+  - name: Enable Animation
+    key: .fragment
+- name: Entrance Animation
+  items: 
+  - name: Fade Up
+    key: .fade-up
+  - name: Fade Down
+    key: .fade-down
+  - name: Fade Left
+    key: .fade-left
+  - name: Fade Right
+    key: .fade-right
+- name: Emphasis Animation
+  items: 
+  - name: Scale Up
+    key: .grow
+  - name: Scale Down
+    key: .shrink
+  - name: Semi Fade Out
+    key: .semi-fade-out
+  - name: Strike Through
+    key: .strike
+- name: Color Animation
+  items:
+  - name: Highlight ${{value}}
+    key: .custom .hl-${{value}}
+    hidden: true
+    values: [white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
+    shownValues: [red, yellow, green, blue]
+- name: Color Animation Current
+  items:
+  - name: Highlight Current ${{value}} 
+    key: .custom .hl-current-${{value}}
+    hidden: true
+    values: [white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
+    shownValues: [red, yellow, green, blue]
+- name: Exit Animation
+  items: 
+  - name: Fade Out
+    key: .fade-out
+- name: Entry + Exit Animation
+  items: 
+  - name: Fade In Then Out
+    key: .fade-in-then-out
+- name: Animation Order
+  items: 
+  - name: ${{value}}. Animation
+    key: data-fragment-index="${{value}}"
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    hidden: true
+    shownValues: [1, 2, 3]

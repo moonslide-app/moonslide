@@ -4,12 +4,7 @@ import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from '../
 import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import { getLocalFileUrl } from '../helpers/protocol'
-import {
-    TemplateConfigError,
-    TemplateNotFoundError,
-    TemplatePathReferenceError,
-    wrapErrorIfThrows,
-} from '../../src-shared/errors/WrappedError'
+import { TemplateNotFoundError, TemplatePathReferenceError } from '../../src-shared/errors/WrappedError'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
@@ -70,10 +65,8 @@ export async function loadTemplate(templateFolderPath: string): Promise<Template
         throw new TemplateNotFoundError(templateFolderPath, error)
     })
     const configYaml = configFile.toString()
-    const config = wrapErrorIfThrows(
-        () => parseTemplateConfig(configYaml),
-        error => new TemplateConfigError(error)
-    )
+    const config = await parseTemplateConfig(configYaml, templateFolderPath)
+
     const template = new TemplateImpl(templateFolderPath, config)
     await template.validate()
     return template

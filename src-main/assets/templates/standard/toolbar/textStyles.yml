@@ -1,0 +1,112 @@
+- name: Text Alignment
+  items: 
+  - name: Text Left
+    key: .text-left
+  - name: Text Center
+    key: .text-center
+  - name: Text Right
+    key: .text-right
+- name: Font Size
+  items: 
+  - name: Extra Small
+    key: .text-xs
+  - name: Small
+    key: .text-sm
+  - name: Base
+    key: .text-base
+  - name: Large
+    key: .text-lg
+  - name: Extra Large
+    key: .text-xl
+  - name: Extra Large ${{value}}
+    key: .text-${{value}}
+    hidden: true
+    values: ['2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl']
+    shownValues: ['2xl']
+- name: Font Color
+  items: 
+  - name: ${{value}}
+    key: .text-${{value}}
+    hidden: true
+    values: [main, white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
+    shownValues: [main, white, black, red, green, blue]
+- name: Block Image
+  items: 
+  - name: Image Cover 
+    key: .image-cover
+  - name: Image Contain
+    key: .image-contain
+  - name: Image Center
+    key: .image-center
+  - name: Image Top
+    key: .image-top
+  - name: Image Bottom
+    key: .image-bottom
+  - name: Image Left
+    key: .image-left
+  - name: Image Right
+    key: .image-right
+- name: Width
+  items: 
+  - key: .w-${{value}}
+    name: Width ${{value}}
+    hidden: true
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [12, 20, 32, 40]
+- name: Height
+  items: 
+  - name: Height ${{value}}
+    key: .h-${{value}}
+    hidden: true
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [12, 20, 32, 40]
+- name: Top Margin
+  items:
+  - key: .mt-${{value}}
+    name: Top Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
+- name: Bottom Margin
+  items:
+  - key: .mb-${{value}}
+    name: Bottom Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
+- name: Left Margin
+  items:
+  - key: .ml-${{value}}
+    name: Left Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
+- name: Right Margin
+  items:
+  - key: .mr-${{value}}
+    name: Right Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
+- name: Horizontal Margin
+  items:
+  - key: .mx-${{value}}
+    name: Horizontal Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
+- name: Vertical Margin
+  items:
+  - key: .my-${{value}}
+    name: Vertical Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
+- name: Margin (All Directions)
+  items:
+  - key: .m-${{value}}
+    name: Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
+  

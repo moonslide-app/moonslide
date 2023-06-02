@@ -23,3 +23,9 @@ export function nullishToOptional<T>(nullish: T | null | undefined): T | undefin
 export function nullishToArray<T>(nullish: T[] | null | undefined): T[] {
     return !nullish ? [] : nullish
 }
+
+// can be used 1 million days, no problem >.<
+let uniqueId = 1
+export function addUUID<T extends Record<string, unknown>>(object: T): T & { id: string } {
+    return { ...object, id: `my-superb-id-${uniqueId++}` }
+}

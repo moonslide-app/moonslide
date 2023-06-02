@@ -1,7 +1,8 @@
 /* This class is added to all images. */
-/* .image { 
-
-} */
+.image {
+    min-width: 40px;
+    min-height: 40px;
+}
 
 /* This class is added to inline images. */
 /* .image-inline {
