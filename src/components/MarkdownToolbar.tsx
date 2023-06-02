@@ -39,6 +39,7 @@ import {
     formatStrong,
     selectMedia,
 } from '../editor/modifiers'
+import { HelpTooltip } from './HelpTooltip'
 
 function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
     const { editorRef } = props
@@ -205,7 +206,14 @@ function ItemsTemplateConfigurable<
                 <ToolbarItemsList>
                     {layoutsConfig.map((layout, idx, layouts) => (
                         <>
-                            <ToolbarItemGroup heading={layout.name}>
+                            <ToolbarItemGroup
+                                heading={
+                                    <div className="flex justify-between items-center">
+                                        <span>{layout.name}</span>
+                                        {layout.description && <HelpTooltip helpText={layout.description} />}
+                                    </div>
+                                }
+                            >
                                 {layout.items.map(item => (
                                     <ToolbarItem
                                         value={item}
@@ -213,7 +221,10 @@ function ItemsTemplateConfigurable<
                                         hidden={item.hidden}
                                         onSelect={onSelect}
                                     >
-                                        {buildItemLabel(item)}
+                                        <div className="flex-grow flex justify-between items-center">
+                                            <span>{buildItemLabel(item)}</span>
+                                            {item.description && <HelpTooltip helpText={item.description} />}
+                                        </div>
                                     </ToolbarItem>
                                 ))}
                             </ToolbarItemGroup>

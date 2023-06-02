@@ -28,6 +28,7 @@ export type ToolbarItem = {
     id: string
     key: string
     name?: string
+    description?: string
     hidden?: boolean
 }
 
@@ -43,8 +44,9 @@ export type ToolbarLayoutEntry = z.infer<typeof toolbarLayoutEntrySchema>
  */
 
 const baseSchema = z.object({
-    name: z.string().nullish().transform(nullishToOptional),
     key: z.string(),
+    name: gracefulStringSchema,
+    description: gracefulStringSchema,
     hidden: z.boolean().nullish().transform(nullishToOptional),
 })
 
@@ -67,14 +69,15 @@ const toolbarItemsSchema = baseSchema
     .and(templateSchema)
     .or(baseSchema)
     .array()
-    .transform(arr => {
-        const output: ToolbarItem[] = arr
+    .transform(array =>
+        array
             .flatMap(template => {
                 if (!('values' in template)) return template
 
                 return template.values.map(value => ({
                     name: template.name?.replace(VALUE_PLACEHODER, transformName(value)),
                     key: template.key.replace(VALUE_PLACEHODER, transformKey(value)),
+                    description: template.description?.replace(VALUE_PLACEHODER, transformKey(value)),
                     hidden: template.shownValues?.includes(value)
                         ? false
                         : template.hiddenValues?.includes(value)
@@ -83,8 +86,7 @@ const toolbarItemsSchema = baseSchema
                 }))
             })
             .map(addUUID)
-        return output
-    })
+    )
 
 const toolbarLayoutsItemsSchema = baseSchema
     .extend({
@@ -99,11 +101,13 @@ const toolbarLayoutsItemsSchema = baseSchema
 
 export const toolbarEntrySchema = z.object({
     name: z.string(),
+    description: gracefulStringSchema,
     items: toolbarItemsSchema,
 })
 
 export const toolbarLayoutEntrySchema = z.object({
     name: z.string(),
+    description: gracefulStringSchema,
     items: toolbarLayoutsItemsSchema,
 })
 
