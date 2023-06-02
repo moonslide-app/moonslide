@@ -36,6 +36,10 @@ export function registerProtocols() {
     })
 }
 
+export function getFileSchemeUrlFromFileProtocol(url: string): string {
+    return 'file' + url.slice(FILE_PROTOCOL_NAME.length)
+}
+
 export function getLocalFileUrl(absolutePath: string): string {
     return `${FILE_PROTOCOL_NAME}://${absolutePath}`
 }

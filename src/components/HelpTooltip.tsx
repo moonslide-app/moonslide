@@ -1,5 +1,6 @@
-import { InfoIcon } from 'lucide-react'
+import { ExternalLinkIcon, InfoIcon } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
+import ReactMarkdown from 'react-markdown'
 
 export type HelpTooltipProps = {
     helpText: string
@@ -21,16 +22,28 @@ export function HelpTooltip(props: HelpTooltipProps) {
 }
 
 function HelpTooltipText(props: { text: string }) {
-    const splitted = props.text.split(/`(.+?)`/g)
     return (
-        <p className="text-gray-700 font-normal text-sm">
-            {splitted.map((val, idx) =>
-                idx % 2 == 0 ? (
-                    <span>{val}</span>
-                ) : (
-                    <pre className="inline py-0.5 px-1 rounded-sm bg-gray-200 text-xs">{val}</pre>
-                )
-            )}
-        </p>
+        <ReactMarkdown
+            className="text-gray-700 font-normal text-sm"
+            components={{
+                code({ children }) {
+                    return <pre className="inline py-0.5 px-1 rounded-sm bg-gray-200 text-xs">{children}</pre>
+                },
+                a({ href, children }) {
+                    return (
+                        <a
+                            href={href}
+                            target="_blank"
+                            className="font-bold hover:underline flex items-center hover:text-gray-600"
+                        >
+                            {children}
+                            <ExternalLinkIcon className="h-3 -ml-1" />
+                        </a>
+                    )
+                },
+            }}
+        >
+            {props.text}
+        </ReactMarkdown>
     )
 }

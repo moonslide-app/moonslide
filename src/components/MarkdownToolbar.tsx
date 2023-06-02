@@ -208,7 +208,7 @@ function ItemsTemplateConfigurable<
                         <>
                             <ToolbarItemGroup
                                 heading={
-                                    <div className="flex justify-between items-center">
+                                    <div className="flex justify-between items-center space-x-2">
                                         <span>{layout.name}</span>
                                         {layout.description && <HelpTooltip helpText={layout.description} />}
                                     </div>
@@ -221,7 +221,7 @@ function ItemsTemplateConfigurable<
                                         hidden={item.hidden}
                                         onSelect={onSelect}
                                     >
-                                        <div className="flex-grow flex justify-between items-center">
+                                        <div className="flex-grow flex justify-between items-center space-x-2">
                                             <span>{buildItemLabel(item)}</span>
                                             {item.description && <HelpTooltip helpText={item.description} />}
                                         </div>
