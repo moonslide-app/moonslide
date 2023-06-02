@@ -8,12 +8,91 @@
     key: .text-right
 - name: Font Size
   items: 
-  - name: Extrasmall
+  - name: Extra Small
     key: .text-xs
+  - name: Small
+    key: .text-sm
+  - name: Base
+    key: .text-base
+  - name: Large
+    key: .text-lg
+  - name: Extra Large
+    key: .text-xl
+  - name: Extra Large ${{value}}
+    key: .text-${{value}}
+    hidden: true
+    values: ['2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl']
+    shownValues: ['2xl']
 - name: Font Color
   items: 
   - name: Main
     key: .text-main
+  - name: White
+    key: .text-white
+  - name: Black
+    key: .text-black
+  - name: Slate
+    key: .text-slate
+    hidden: true
+  - name: Gray
+    key: .text-gray
+  - name: Zinc
+    key: .text-zinc
+    hidden: true
+  - name: Neutral
+    key: .text-neutral
+    hidden: true
+  - name: Stone
+    key: .text-stone
+    hidden: true
+  - name: Red
+    key: .text-red
+  - name: Orange
+    key: .text-orange
+    hidden: true
+  - name: Amber
+    key: .text-amber
+    hidden: true
+  - name: Yellow
+    key: .text-yellow
+    hidden: true
+  - name: Lime
+    key: .text-lime
+    hidden: true
+  - name: Green
+    key: .text-green
+  - name: Emerald
+    key: .text-emerald
+    hidden: true
+  - name: Teal
+    key: .text-teal
+    hidden: true
+  - name: Cyan
+    key: .text-cyan
+    hidden: true
+  - name: Sky
+    key: .text-sky
+    hidden: true
+  - name: Blue
+    key: .text-blue
+  - name: Indigo
+    key: .text-indigo
+    hidden: true
+  - name: Violet
+    key: .text-violet
+    hidden: true
+  - name: Purple
+    key: .text-purple
+    hidden: true
+  - name: Fuchsia
+    key: .text-fuchsia
+    hidden: true
+  - name: Pink
+    key: .text-pink
+    hidden: true
+  - name: Rose
+    key: .text-rose
+    hidden: true
 - name: Block Image
   items: 
   - name: Image Cover 
@@ -32,38 +111,65 @@
     key: .image-right
 - name: Width
   items: 
-  - key: .w-0
-    name: Width 0
+  - key: .w-${{value}}
+    name: Width ${{value}}
+    hidden: true
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [12, 20, 32, 40]
 - name: Height
   items: 
-  - key: .h-0
-    name: Height 0
+  - name: Height ${{value}}
+    key: .h-${{value}}
+    hidden: true
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [12, 20, 32, 40]
 - name: Top Margin
   items:
-  - key: .mt-0
-    name: Top Margin 0
+  - key: .mt-${{value}}
+    name: Top Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
 - name: Bottom Margin
   items:
-  - key: .mb-0
-    name: Bottom Margin 0
+  - key: .mb-${{value}}
+    name: Bottom Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
 - name: Left Margin
   items:
-  - key: .ml-0
-    name: Left Margin 0
+  - key: .ml-${{value}}
+    name: Left Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
 - name: Right Margin
   items:
-  - key: .mr-0
-    name: Right Margin 0
+  - key: .mr-${{value}}
+    name: Right Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
 - name: Horizontal Margin
   items:
-  - key: .mx-0
-    name: Horizontal Margin 0
+  - key: .mx-${{value}}
+    name: Horizontal Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
 - name: Vertical Margin
   items:
-  - key: .my-0
-    name: Vertical Margin 0
+  - key: .my-${{value}}
+    name: Vertical Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
 - name: Margin (All Directions)
   items:
-  - key: .m-0
-    name: Margin 0
+  - key: .m-${{value}}
+    name: Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
   
