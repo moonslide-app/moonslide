@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { addUUID, gracefulStringSchema, nullishToOptional } from './zodUtils'
+import { addUUID, limit, gracefulStringSchema, nullishToOptional } from './zodUtils'
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs-extra'
 import {
@@ -69,12 +69,12 @@ const toolbarItemsSchema = baseSchema
     .and(templateSchema)
     .or(baseSchema)
     .array()
+    .transform(limit)
     .transform(array =>
         array
             .flatMap(template => {
                 if (!('values' in template)) return template
-
-                return template.values.map(value => ({
+                return limit(template.values).map(value => ({
                     name: template.name?.replace(VALUE_PLACEHODER, transformName(value)),
                     key: template.key.replace(VALUE_PLACEHODER, transformKey(value)),
                     description: template.description?.replace(VALUE_PLACEHODER, transformKey(value)),
@@ -94,6 +94,7 @@ const toolbarLayoutsItemsSchema = baseSchema
     })
     .transform(addUUID)
     .array()
+    .transform(limit)
 
 /*
  * ---------- Other Schemas ----------
@@ -124,8 +125,8 @@ export const toolbarFilePathsSchema = z.object({
  */
 
 export async function loadToolbarFromPaths(paths: ToolbarFilePaths, templateFolderPath: string): Promise<Toolbar> {
-    const entriesParse = toolbarEntrySchema.array().nullish().transform(nullishToOptional).parse
-    const layoutsParse = toolbarLayoutEntrySchema.array().nullish().transform(nullishToOptional).parse
+    const entriesParse = toolbarEntrySchema.array().transform(limit).nullish().transform(nullishToOptional).parse
+    const layoutsParse = toolbarLayoutEntrySchema.array().transform(limit).nullish().transform(nullishToOptional).parse
 
     const folder = templateFolderPath
     const layouts = await loadAndParseFileContents('layouts', paths.layouts, folder, layoutsParse)

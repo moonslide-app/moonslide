@@ -29,3 +29,9 @@ let uniqueId = 1
 export function addUUID<T extends Record<string, unknown>>(object: T): T & { id: string } {
     return { ...object, id: `my-superb-id-${uniqueId++}` }
 }
+
+const DEFAULT_LIMIT = 100
+export function limit<T>(array: T[]): T[] {
+    if (array.length > DEFAULT_LIMIT) throw new Error(`Excceded the limit of ${DEFAULT_LIMIT} values inside an array.`)
+    return array
+}
