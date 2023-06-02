@@ -1,42 +1,25 @@
-import { RangeSetBuilder } from '@codemirror/state'
-import { Decoration, DecorationSet, EditorView, ViewPlugin, ViewUpdate } from '@codemirror/view'
+import { EditorSelection, Extension } from '@codemirror/state'
+import { RectangleMarker, layer } from '@codemirror/view'
 import { findCurrentSlide } from './codeMirrorHelpers'
 
-export const showActiveSlide = ViewPlugin.fromClass(
-    class {
-        decorations: DecorationSet
+export function showActiveSlide(): Extension {
+    return layer({
+        above: false,
+        class: 'active-slide-layer',
+        update(update) {
+            return update.docChanged || update.focusChanged || update.selectionSet
+        },
+        markers(view) {
+            const currentSlide = findCurrentSlide(view.state)
+            if (!currentSlide) return []
 
-        constructor(view: EditorView) {
-            this.decorations = activeSlideDecorator(view)
-        }
+            const { doc } = view.state
+            const range = EditorSelection.range(
+                currentSlide.fullSlide.from,
+                Math.min(doc.length, currentSlide.fullSlide.to + 1)
+            )
 
-        update(update: ViewUpdate) {
-            this.decorations = activeSlideDecorator(update.view)
-        }
-    },
-    {
-        decorations: v => v.decorations,
-    }
-)
-
-const activeDecoration = Decoration.line({
-    attributes: { class: 'active-slide' },
-})
-
-function activeSlideDecorator(view: EditorView) {
-    const builder = new RangeSetBuilder<Decoration>()
-    const currentSlide = findCurrentSlide(view.state)
-
-    if (!currentSlide) return builder.finish()
-
-    for (const { from, to } of view.visibleRanges) {
-        for (let pos = from; pos <= to; ) {
-            const line = view.state.doc.lineAt(pos)
-            if (line.to >= currentSlide.fullSlide.from && line.to <= currentSlide.fullSlide.to) {
-                builder.add(line.from, line.from, activeDecoration)
-            }
-            pos = line.to + 1
-        }
-    }
-    return builder.finish()
+            return RectangleMarker.forRange(view, 'active-slide', range)
+        },
+    })
 }

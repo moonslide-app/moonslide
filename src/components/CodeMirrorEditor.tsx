@@ -44,6 +44,9 @@ const myTheme = EditorView.baseTheme({
         fontSize: '12pt',
         height: '100%',
     },
+    '.active-slide-layer': {
+        zIndex: '-4 !important',
+    },
     '.active-slide': {
         backgroundColor: '#f5f3ff',
     },
@@ -118,7 +121,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
                 myTheme,
                 mixedPlugin,
                 syntaxHighlighting(myHighlightStyle),
-                showActiveSlide,
+                showActiveSlide(),
                 updatePlugin,
                 keymap.of([indentWithTab]),
                 history(),
