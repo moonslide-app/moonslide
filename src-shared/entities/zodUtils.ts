@@ -10,6 +10,11 @@ export const stringOrArraySchema = z
         else return input
     })
 
+export const stringOrNumberSchema = z
+    .string()
+    .or(z.number())
+    .transform(val => val.toString())
+
 /**
  * This input schema allows string, null, undefined and
  * transforms it to string or undefined.
