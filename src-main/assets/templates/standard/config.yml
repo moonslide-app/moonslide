@@ -74,5 +74,6 @@ layouts:
 toolbar:
   layouts: ./toolbar/layouts.yml
   textStyles: ./toolbar/textStyles.yml
+  animation: ./toolbar/animation.yml
   slide: ./toolbar/slide.yml
   slideStyles: ./toolbar/slideStyles.yml

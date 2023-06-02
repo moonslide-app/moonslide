@@ -1,0 +1,199 @@
+/* 
+ * Normal Highlight
+ */
+
+.fragment.hl-white.visible {
+    color: white;
+}
+
+.fragment.hl-black.visible {
+    color: black;
+}
+
+.fragment.hl-slate.visible {
+    color: var(--color-slate);
+}
+
+.fragment.hl-gray.visible {
+    color: var(--color-gray);
+}
+
+.fragment.hl-zinc.visible {
+    color: var(--color-zinc);
+}
+
+.fragment.hl-neutral.visible {
+    color: var(--color-neutral);
+}
+
+.fragment.hl-stone.visible {
+    color: var(--color-stone);
+}
+
+.fragment.hl-red.visible {
+    color: var(--color-red);
+}
+
+.fragment.hl-orange.visible {
+    color: var(--color-orange);
+}
+
+.fragment.hl-amber.visible {
+    color: var(--color-amber);
+}
+
+.fragment.hl-yellow.visible {
+    color: var(--color-yellow);
+}
+
+.fragment.hl-lime.visible {
+    color: var(--color-lime);
+}
+
+.fragment.hl-green.visible {
+    color: var(--color-green);
+}
+
+.fragment.hl-emerald.visible {
+    color: var(--color-emerald);
+}
+
+.fragment.hl-teal.visible {
+    color: var(--color-teal);
+}
+
+.fragment.hl-cyan.visible {
+    color: var(--color-cyan);
+}
+
+.fragment.hl-sky.visible {
+    color: var(--color-sky);
+}
+
+.fragment.hl-blue.visible {
+    color: var(--color-blue);
+}
+
+.fragment.hl-indigo.visible {
+    color: var(--color-inidgo);
+}
+
+.fragment.hl-violet.visible {
+    color: var(--color-violet);
+}
+
+.fragment.hl-purple.visible {
+    color: var(--color-purple);
+}
+
+.fragment.hl-fuchsia.visible {
+    color: var(--color-fuchsia);
+}
+
+.fragment.hl-pink.visible {
+    color: var(--color-pink);
+}
+
+.fragment.hl-rose.visible {
+    color: var(--color-rose);
+}
+
+/* 
+ * Highlight current
+ */
+
+.fragment.hl-current-white.current-fragment {
+    color: white;
+}
+
+.fragment.hl-current-black.current-fragment {
+    color: black;
+}
+
+.fragment.hl-current-slate.current-fragment {
+    color: var(--color-slate);
+}
+
+.fragment.hl-current-gray.current-fragment {
+    color: var(--color-gray);
+}
+
+.fragment.hl-current-zinc.current-fragment {
+    color: var(--color-zinc);
+}
+
+.fragment.hl-current-neutral.current-fragment {
+    color: var(--color-neutral);
+}
+
+.fragment.hl-current-stone.current-fragment {
+    color: var(--color-stone);
+}
+
+.fragment.hl-current-red.current-fragment {
+    color: var(--color-red);
+}
+
+.fragment.hl-current-orange.current-fragment {
+    color: var(--color-orange);
+}
+
+.fragment.hl-current-amber.current-fragment {
+    color: var(--color-amber);
+}
+
+.fragment.hl-current-yellow.current-fragment {
+    color: var(--color-yellow);
+}
+
+.fragment.hl-current-lime.current-fragment {
+    color: var(--color-lime);
+}
+
+.fragment.hl-current-green.current-fragment {
+    color: var(--color-green);
+}
+
+.fragment.hl-current-emerald.current-fragment {
+    color: var(--color-emerald);
+}
+
+.fragment.hl-current-teal.current-fragment {
+    color: var(--color-teal);
+}
+
+.fragment.hl-current-cyan.current-fragment {
+    color: var(--color-cyan);
+}
+
+.fragment.hl-current-sky.current-fragment {
+    color: var(--color-sky);
+}
+
+.fragment.hl-current-blue.current-fragment {
+    color: var(--color-blue);
+}
+
+.fragment.hl-current-indigo.current-fragment {
+    color: var(--color-inidgo);
+}
+
+.fragment.hl-current-violet.current-fragment {
+    color: var(--color-violet);
+}
+
+.fragment.hl-current-purple.current-fragment {
+    color: var(--color-purple);
+}
+
+.fragment.hl-current-fuchsia.current-fragment {
+    color: var(--color-fuchsia);
+}
+
+.fragment.hl-current-pink.current-fragment {
+    color: var(--color-pink);
+}
+
+.fragment.hl-current-rose.current-fragment {
+    color: var(--color-rose);
+}

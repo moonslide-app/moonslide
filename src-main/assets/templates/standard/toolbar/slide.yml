@@ -23,5 +23,5 @@
 - name: Auto Animate
   items: 
     - name: 'Auto Animate'
-      key: 'auto-animate: true'
+      key: 'auto-animate'
       

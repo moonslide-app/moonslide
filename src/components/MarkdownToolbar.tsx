@@ -78,7 +78,6 @@ function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
                             <strong>#### Subheading</strong>
                         </ToolbarItem>
                     </ToolbarItemGroup>
-                    <ToolbarItemSeparator />
                 </ToolbarItemsList>
                 <ToolbarItemsEmpty>No headings found.</ToolbarItemsEmpty>
             </ToolbarItemsContent>
@@ -124,6 +123,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             [Link](https://...)
                         </ToolbarItem>
                     </ToolbarItemGroup>
+                    <ToolbarItemSeparator />
                     <ToolbarItemGroup heading="Code and Math">
                         <ToolbarItem
                             value={{ id: 'format:code-inline' }}
@@ -154,6 +154,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             $$Math Block$$
                         </ToolbarItem>
                     </ToolbarItemGroup>
+                    <ToolbarItemSeparator />
                     <ToolbarItemGroup heading="Blocks">
                         <ToolbarItem
                             value={{ id: 'block:ol' }}
@@ -252,6 +253,17 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     onSelect={item => item && editorRef?.onAddAttribute(item.key)}
                 />
             )}
+
+            {toolbar?.animation && (
+                <ItemsTemplateConfigurable
+                    layoutsConfig={toolbar.animation}
+                    buttonTitle="Animation"
+                    placeholder="Search animations..."
+                    emptyText="No animation found."
+                    onSelect={item => item && editorRef?.onAddAttribute(item.key)}
+                />
+            )}
+
             {toolbar?.slide && (
                 <ItemsTemplateConfigurable
                     layoutsConfig={toolbar.slide}

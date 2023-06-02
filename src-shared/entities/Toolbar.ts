@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { addUUID, gracefulStringSchema, nullishToOptional, stringOrNumberSchema } from './zodUtils'
+import { addUUID, gracefulStringSchema, nullishToOptional } from './zodUtils'
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs-extra'
 import {
@@ -15,10 +15,11 @@ import { parse as yamlParse } from 'yaml'
  */
 
 export type Toolbar = {
-    layouts: ToolbarLayoutEntry[]
-    textStyles: ToolbarEntry[]
-    slide: ToolbarEntry[]
-    slideStyles: ToolbarEntry[]
+    layouts?: ToolbarLayoutEntry[]
+    textStyles?: ToolbarEntry[]
+    animation?: ToolbarEntry[]
+    slide?: ToolbarEntry[]
+    slideStyles?: ToolbarEntry[]
 }
 
 export type ToolbarFilePaths = z.infer<typeof toolbarFilePathsSchema>
@@ -47,11 +48,19 @@ const baseSchema = z.object({
     hidden: z.boolean().nullish().transform(nullishToOptional),
 })
 
+const stringOrNumberArray = z.string().or(z.number()).array()
 const templateSchema = z.object({
-    values: stringOrNumberSchema.array(),
-    shownValues: stringOrNumberSchema.array().nullish().transform(nullishToOptional),
-    hiddenValues: stringOrNumberSchema.array().nullish().transform(nullishToOptional),
+    values: stringOrNumberArray,
+    shownValues: stringOrNumberArray.nullish().transform(nullishToOptional),
+    hiddenValues: stringOrNumberArray.nullish().transform(nullishToOptional),
 })
+
+const transformKey = (value: string | number) => value.toString()
+const transformName = (value: string | number) => {
+    if (typeof value === 'number') return value.toString()
+    else if (!value) return ''
+    else return value.charAt(0).toUpperCase() + value.slice(1)
+}
 
 const VALUE_PLACEHODER = '${{value}}'
 const toolbarItemsSchema = baseSchema
@@ -64,8 +73,8 @@ const toolbarItemsSchema = baseSchema
                 if (!('values' in template)) return template
 
                 return template.values.map(value => ({
-                    name: template.name?.replace(VALUE_PLACEHODER, value),
-                    key: template.key.replace(VALUE_PLACEHODER, value),
+                    name: template.name?.replace(VALUE_PLACEHODER, transformName(value)),
+                    key: template.key.replace(VALUE_PLACEHODER, transformKey(value)),
                     hidden: template.shownValues?.includes(value)
                         ? false
                         : template.hiddenValues?.includes(value)
@@ -101,6 +110,7 @@ export const toolbarLayoutEntrySchema = z.object({
 export const toolbarFilePathsSchema = z.object({
     layouts: gracefulStringSchema,
     textStyles: gracefulStringSchema,
+    animation: gracefulStringSchema,
     slide: gracefulStringSchema,
     slideStyles: gracefulStringSchema,
 })
@@ -116,15 +126,11 @@ export async function loadToolbarFromPaths(paths: ToolbarFilePaths, templateFold
     const folder = templateFolderPath
     const layouts = await loadAndParseFileContents('layouts', paths.layouts, folder, layoutsParse)
     const textStyles = await loadAndParseFileContents('textStyles', paths.textStyles, folder, entriesParse)
+    const animation = await loadAndParseFileContents('animation', paths.animation, folder, entriesParse)
     const slide = await loadAndParseFileContents('slide', paths.slide, folder, entriesParse)
     const slideStyles = await loadAndParseFileContents('slideStyles', paths.slideStyles, folder, entriesParse)
 
-    return {
-        layouts: layouts ?? [],
-        textStyles: textStyles ?? [],
-        slide: slide ?? [],
-        slideStyles: slideStyles ?? [],
-    }
+    return { layouts, textStyles, animation, slide, slideStyles }
 }
 
 async function loadAndParseFileContents<T>(
