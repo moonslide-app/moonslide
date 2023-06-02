@@ -208,7 +208,7 @@ function ItemsTemplateConfigurable<
                                 {layout.items.map(item => (
                                     <ToolbarItem
                                         value={item}
-                                        searchValues={[item.key, layout.name, item.displayName].filter(isNonNullable)}
+                                        searchValues={[item.key, layout.name, item.name].filter(isNonNullable)}
                                         hidden={item.hidden}
                                         onSelect={onSelect}
                                     >
@@ -275,11 +275,11 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
     )
 }
 
-function buildItemLabel(item: { displayName?: string; key?: string }): string {
+function buildItemLabel(item: { name?: string; key?: string }): string {
     const parts: (string | undefined)[] = []
 
-    if (item.displayName) {
-        parts.push(item.displayName)
+    if (item.name) {
+        parts.push(item.name)
     }
 
     if (item.key?.trim()) {
