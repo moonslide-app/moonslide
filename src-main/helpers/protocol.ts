@@ -1,6 +1,7 @@
 import { app, protocol } from 'electron'
 import { resolve } from 'path'
 import { presentationStore } from '../store'
+import { parse } from 'url'
 
 export const REVEAL_PROTOCOL_NAME = 'reveal'
 export const FILE_PROTOCOL_NAME = 'reveal-file'
@@ -31,15 +32,16 @@ export function registerProtocols() {
     })
 
     protocol.registerFileProtocol(FILE_PROTOCOL_NAME, (request, callback) => {
-        const requestedPath = request.url.slice(`${FILE_PROTOCOL_NAME}://`.length)
-        callback({ path: requestedPath })
+        const requestedPath = parse(request.url).pathname
+        if (requestedPath) callback({ path: requestedPath })
+        else callback({ error: 404 })
     })
 }
 
 export function getFileSchemeUrlFromFileProtocol(url: string): string {
-    return 'file' + url.slice(FILE_PROTOCOL_NAME.length)
+    return 'file://' + parse(url).pathname
 }
 
 export function getLocalFileUrl(absolutePath: string): string {
-    return `${FILE_PROTOCOL_NAME}://${absolutePath}`
+    return `${FILE_PROTOCOL_NAME}://${absolutePath}?cache=${Date.now()}`
 }
