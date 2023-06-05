@@ -183,6 +183,7 @@ export function findValueOfArrayInsideRange(
     const regexQuery = `(?:^|\\s)(${innerQuery})(?=$|\\s)`
 
     const found = findRegexQueryInsideRange(state, regexQuery, range)
+    // only extract word without whitespaces
     if (found) return findRegexQueryInsideRange(state, innerQuery, found)
     else return undefined
 }
@@ -419,21 +420,46 @@ export function addSpaceIfNeeded(
  * @returns The original attributes + extracted attributes or
  * `undefined` if no attrs are found.
  */
-export function extractLineAttributes(
-    line: Line
-): { originalAttributes: string; extractedAttributes: string } | undefined {
-    const originalQuery = '(?<=^|\\s){[^{}]*}\\s*$' // matches { .attr } at end of line, if at start of line or has a preceding space
-    const extractQuery = '(?<={).*(?=})' // matches inner part of { .attr }
+export function findAttributes(state: EditorState, endOfLine: boolean, range?: SimpleRange): SimpleRange | undefined {
+    // if end of line -> match attrs at end of line (space in front required or start of line)
+    // if not end line -> just search brackets inside range
+    const originalQuery = endOfLine ? '(^|\\s)\\{[^{}]*\\}\\s*$' : '\\{[^{}]*\\}\\s*'
+    const extractQuery = '(?<=\\{).*(?=\\})' // matches inner part of { .attr }
 
-    const originalMatch = line.text.match(originalQuery)
-    if (!originalMatch) return undefined
-    const originalAttributes = originalMatch[0]
+    const regexCursor = new RegExpCursor(state.doc, originalQuery, undefined, range?.from, range?.to)
+    const match = regexCursor.next().value
+    if (match.from === -1 && match.to === -1) return undefined
 
-    const extractedMatch = originalAttributes.match(extractQuery)
-    if (!extractedMatch) return undefined
-    const extractedAttributes = extractedMatch[0].trim()
+    const extractCursor = new RegExpCursor(state.doc, extractQuery, undefined, match.from, match.to)
+    const extract = extractCursor.next().value
+    if (extract.from === -1 && extract.to === -1) return undefined
+    return extract
+}
 
-    return { originalAttributes, extractedAttributes }
+/**
+ * Tries to find brackets [] (for a bracketed-span) which is inside a selection.
+ * @param state The state of the editor.
+ * @param selection The current selection.
+ * @param range The range where to search.
+ * @returns The first match or undefined.
+ */
+export function findBracketsInsideSelection(state: EditorState, selection: SimpleRange, range: SimpleRange) {
+    const regexQuery = '\\[[^\\[\\]]*\\]'
+    const cursor = new RegExpCursor(state.doc, regexQuery, undefined, range?.from, range?.to)
+    let match = cursor.next().value
+    while (!cursor.done) {
+        const endOfSelectionIsInside = selection.to > match.from && selection.to < match.to
+        const startOfSelectionIsInside = selection.from > match.from && selection.from < match.to
+        const selectionContainsBrackets = selection.from <= match.from && selection.to >= match.to
+        const validMatch = endOfSelectionIsInside || startOfSelectionIsInside || selectionContainsBrackets
+
+        if (validMatch) break
+        else {
+            match = cursor.next().value
+        }
+    }
+    if (cursor.done) return undefined
+    else return match
 }
 
 /**
@@ -550,11 +576,13 @@ export function setCursorPosition(editorView: EditorView, position: number, alwa
  * Select the range passed in the editor.
  * @param editorView The editor to perform actions in.
  * @param selection The selection that should be selected.
+ * @param alwaysScroll If set to `true`, the editor always tries to scroll. Otherwise it just scrolls if
+ * the cursor is not visible.
  */
-export function selectRange(editorView: EditorView, selection: SelectionRange) {
-    editorView.dispatch({
-        selection,
-    })
+export function selectRange(editorView: EditorView, selection: SelectionRange, alwaysScroll = false) {
+    editorView.dispatch({ selection })
+    editorView.focus()
+    scrollToCursor(editorView, { alwaysScroll })
 }
 
 /**

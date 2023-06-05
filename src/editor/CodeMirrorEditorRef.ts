@@ -1,13 +1,15 @@
-import { EditorSelection, SelectionRange } from '@codemirror/state'
+import { EditorSelection } from '@codemirror/state'
 import { EditorView } from 'codemirror'
 import { Ref, RefObject, useImperativeHandle } from 'react'
 import {
     ModifiedString,
+    SimpleRange,
     addSpaceIfNeeded,
     changeInRange,
     createNewSlideTemplate,
     currentMarkdownLineInSlide,
-    extractLineAttributes,
+    findAttributes,
+    findBracketsInsideSelection,
     findCurrentSlide,
     findLastSlide,
     findLastSlideUntil,
@@ -21,6 +23,7 @@ import {
     markdownSelectionInSlide,
     rangeHasLineStartingWith,
     removeHeadingFromLine,
+    selectRange,
     setCursorPosition,
 } from './codeMirrorHelpers'
 import { useEditorStore } from '../store'
@@ -32,7 +35,7 @@ export type CodeMirrorEditorRef = {
     onAddFormat(prefix: string, suffix?: string): void
     onAddBlock(prefix: string): void
     onAddHeading(prefix: string): void
-    onAddAttribute(attribute: string): void
+    onAddAttribute(item: ToolbarItem, group: ToolbarEntry): void
     onAddClass(item: ToolbarItem, group: ToolbarEntry): void
     onAddDataTag(dataTag: string): void
     onAddMedia(path: string): void
@@ -51,7 +54,7 @@ export function useCodeMirrorEditorRef(
                 if (!editorView.current) return
                 const slidePosition = findLastSlideUntil(editorView.current?.state, { slideNumber })
                 if (slidePosition) {
-                    setCursorPosition(editorView.current, slidePosition?.markdown.from)
+                    setCursorPosition(editorView.current, slidePosition?.markdown.from, true)
                 }
             },
             onAddSlide(layout, slots) {
@@ -102,43 +105,57 @@ export function useCodeMirrorEditorRef(
                 const position = insertAtPosition(editorView.current, prefix, line.from)
                 setCursorPosition(editorView.current, position)
             },
-            onAddAttribute(className) {
-                if (!editorView.current) return
+            onAddAttribute(item, group) {
+                const view = editorView.current
+                const state = view?.state
+                const currentSlide = state && findCurrentSlide(state)
+                if (!view || !state || !currentSlide) return
 
-                const currentSlide = findCurrentSlide(editorView.current.state)
-                if (!currentSlide) return
+                const groupValues = group.items.map(value => value.key)
+                let selection = markdownSelectionInSlide(view, currentSlide)
+                const contentSelected = selection.from !== selection.to
+                const currentLine = state.doc.lineAt(selection.from)
+                let bracketsRange: SimpleRange | undefined = findBracketsInsideSelection(state, selection, currentLine)
 
-                let selection = markdownSelectionInSlide(editorView.current, currentSlide)
-                let position: SelectionRange
-
-                if (selection.from === selection.to) {
-                    const currentLine = editorView.current.state.doc.lineAt(selection.from)
-                    selection = EditorSelection.range(currentLine.to, currentLine.to)
-                    let newAttributes = `{ ${className} }`
-
-                    const existingAttributes = extractLineAttributes(currentLine)
-                    if (existingAttributes) {
-                        const { originalAttributes, extractedAttributes } = existingAttributes
-                        const attributesStart = currentLine.to - originalAttributes.length
-                        selection = EditorSelection.range(attributesStart, currentLine.to)
-                        newAttributes = `{ ${extractedAttributes} ${className} }`
-                    }
-
-                    position = changeInRange(
-                        editorView.current,
-                        selection,
-                        (_, doc) => addSpaceIfNeeded(doc, selection.from, newAttributes, true, false).newValue
-                    )
-                } else {
-                    position = changeInRange(
-                        editorView.current,
-                        selection,
-                        (oldValue, doc) =>
-                            addSpaceIfNeeded(doc, selection.from, `[${oldValue}]{ ${className} }`, true, false).newValue
-                    )
+                if (contentSelected && !bracketsRange) {
+                    selection = changeInRange(view, selection, value => `[${value}]`)
+                    bracketsRange = selection
                 }
 
-                setCursorPosition(editorView.current, position.to)
+                if (bracketsRange) {
+                    // Attributes anywhere after brackets
+                    const attributesRange = findAttributes(state, false, {
+                        from: bracketsRange.from,
+                        to: currentLine.to,
+                    })
+                    // there are already attributes for this bracketed span
+                    if (attributesRange && bracketsRange.to + 1 === attributesRange.from) {
+                        const sameGroupRange = findValueOfArrayInsideRange(state, groupValues, attributesRange)
+                        if (sameGroupRange) {
+                            changeInRange(view, sameGroupRange, () => item.key)
+                        } else {
+                            const spaced = addSpaceIfNeeded(state.doc, attributesRange.to, item.key, true, true)
+                            insertAtPosition(view, spaced.newValue, attributesRange.to)
+                        }
+                    } else {
+                        insertAtPosition(view, `{ ${item.key} }`, bracketsRange.to)
+                    }
+                } else {
+                    const attributesRange = findAttributes(state, true, currentLine)
+                    if (attributesRange) {
+                        const sameGroupRange = findValueOfArrayInsideRange(state, groupValues, attributesRange)
+                        if (sameGroupRange) {
+                            changeInRange(view, sameGroupRange, () => item.key)
+                        } else {
+                            const spaced = addSpaceIfNeeded(state.doc, attributesRange.to, item.key, true, true)
+                            insertAtPosition(view, spaced.newValue, attributesRange.to)
+                        }
+                    } else {
+                        insertAtEndOfLine(view, `{ ${item.key} }`, currentLine)
+                    }
+                }
+
+                selectRange(editorView.current, selection)
             },
             onAddClass(item, group) {
                 if (!editorView.current) return
@@ -150,7 +167,7 @@ export function useCodeMirrorEditorRef(
                     let newCursorPosition: number
 
                     const line = rangeHasLineStartingWith('class:', state, currentSlide.frontMatter)
-                    const fromGroup = line
+                    const sameGroupRange = line
                         ? findValueOfArrayInsideRange(
                               state,
                               group.items.map(value => value.key),
@@ -158,8 +175,8 @@ export function useCodeMirrorEditorRef(
                           )
                         : undefined
 
-                    if (fromGroup) {
-                        newCursorPosition = changeInRange(editorView.current, fromGroup, () => className).to
+                    if (sameGroupRange) {
+                        newCursorPosition = changeInRange(editorView.current, sameGroupRange, () => className).to
                     } else if (line) {
                         const yamlMultiline =
                             isYAMLArray(line, state, currentSlide.frontMatter) ??

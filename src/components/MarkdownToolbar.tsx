@@ -249,7 +249,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="+"
                     placeholder="Search layouts..."
                     emptyText="No layout found."
-                    onSelect={item => item && editorRef?.onAddSlide(item.key, item.slots)}
+                    onSelect={item => editorRef?.onAddSlide(item.key, item.slots)}
                 />
             )}
             {editorRef && <ItemsHeadings editorRef={editorRef} />}
@@ -261,7 +261,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Text Styles"
                     placeholder="Search text styles..."
                     emptyText="No text style found."
-                    onSelect={item => item && editorRef?.onAddAttribute(item.key)}
+                    onSelect={editorRef?.onAddAttribute}
                 />
             )}
 
@@ -271,7 +271,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Animation"
                     placeholder="Search animations..."
                     emptyText="No animation found."
-                    onSelect={item => item && editorRef?.onAddAttribute(item.key)}
+                    onSelect={editorRef?.onAddAttribute}
                 />
             )}
 
@@ -281,7 +281,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Slide"
                     placeholder="Search slide properties..."
                     emptyText="No slide properties found."
-                    onSelect={item => item && editorRef?.onAddDataTag(item.key)}
+                    onSelect={item => editorRef?.onAddDataTag(item.key)}
                 />
             )}
             {toolbar?.slideStyles && (
@@ -290,7 +290,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Slide Styles"
                     placeholder="Search slide styles..."
                     emptyText="No slide styles found."
-                    onSelect={(item, group) => editorRef?.onAddClass(item, group)}
+                    onSelect={editorRef?.onAddClass}
                 />
             )}
             {editorRef && <ToolbarButton onClick={async () => await selectMedia(editorRef)}>Media</ToolbarButton>}
