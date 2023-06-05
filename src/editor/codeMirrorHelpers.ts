@@ -446,7 +446,7 @@ export function findAttributes(state: EditorState, endOfLine: boolean, range?: S
 export function findBracketsInsideSelection(state: EditorState, selection: SimpleRange, range: SimpleRange) {
     const curlyBracesQuery = '\\{[^{}]*\\}'
     const bracketsQuery = '\\[[^\\[\\]]*\\]'
-    const combinedQuery = `${'\\[[^\\[\\]]*\\]'}(${curlyBracesQuery})?`
+    const combinedQuery = `${bracketsQuery}(${curlyBracesQuery})?`
     const cursor = new RegExpCursor(state.doc, combinedQuery, undefined, range?.from, range?.to)
     let match = cursor.next().value
     while (!cursor.done) {

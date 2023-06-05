@@ -54,6 +54,11 @@
     hidden: true
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
     shownValues: [12, 20, 32, 40]
+  - name: Half Width
+    key: .w-half
+    hidden: true
+  - name: Full Width
+    key: .w-full
 - name: Height
   items: 
   - name: Height ${{value}}
@@ -61,6 +66,11 @@
     hidden: true
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
     shownValues: [12, 20, 32, 40]
+  - name: Half Height
+    key: .h-half
+    hidden: true
+  - name: Full Height
+    key: .h-full
 - name: Top Margin
   items:
   - key: .mt-${{value}}
