@@ -148,7 +148,7 @@ export function useCodeMirrorEditorRef(
                 } else {
                     newCursorPosition = insertLine(
                         editorView.current,
-                        `class: ${className}`,
+                        `class:\n - ${className}`,
                         currentSlide.frontMatter.to
                     )
                 }
