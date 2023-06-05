@@ -82,7 +82,6 @@
         "markdown-it-attrs": "^4.1.6",
         "markdown-it-bracketed-spans": "^1.0.1",
         "markdown-it-replace-link": "^1.2.0",
-        "marked": "^4.3.0",
         "pretty": "^2.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
