@@ -31,5 +31,10 @@ export function parseSlideConfig(json: unknown): SlideConfig {
 }
 
 export function mergeWithDefaults(config: SlideConfig, defaults?: SlideConfig): SlideConfig {
-    return { ...defaults, ...config, data: { ...defaults?.data, ...config.data } }
+    return {
+        ...defaults,
+        ...config,
+        class: config.class.length > 0 ? config.class : defaults?.class ?? [],
+        data: { ...defaults?.data, ...config.data },
+    }
 }

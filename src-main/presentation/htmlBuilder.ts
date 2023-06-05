@@ -143,7 +143,7 @@ export function buildHTMLSlide(
     // Wrap slide into the slideWrapper
     buildingFile = slideWrapper.replace(CONTENT_TOKEN, buildingFile)
 
-    const classes = [...(content.slideConfig.class ?? [])]
+    const classes = content.slideConfig.class
     const dataTags = content.slideConfig.data ?? {}
 
     let sectionOpenTag = `<section`
