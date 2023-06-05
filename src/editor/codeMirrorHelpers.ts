@@ -537,11 +537,13 @@ export function isYAMLMultiline(
  * Set the cursor of the editor to the position passed.
  * @param editorView The editor view to perform actions in.
  * @param position The position to which the cursor should be set.
+ * @param alwaysScroll If set to `true`, the editor always tries to scroll. Otherwise it just scrolls if
+ * the cursor is not visible.
  */
-export function setCursorPosition(editorView: EditorView, position: number) {
+export function setCursorPosition(editorView: EditorView, position: number, alwaysScroll = false) {
     editorView.dispatch({ selection: { anchor: position, head: position } })
     editorView.focus()
-    scrollToCursor(editorView)
+    scrollToCursor(editorView, { alwaysScroll })
 }
 
 /**
@@ -558,15 +560,13 @@ export function selectRange(editorView: EditorView, selection: SelectionRange) {
 /**
  * Scrolls the cursor to the center of the editor
  * @param editorView The editor view to perform actions in.
- * @param topPercent Percantage of the height where the cursor is scrolled.
+ * @param always If set to true, the editor is also scrolled if the content is already visible.
  */
-export function scrollToCursor(editorView: EditorView, topPercent = 0.25) {
-    const cursor = editorView.coordsAtPos(editorView.state.selection.main.head)
-    const scroller = editorView.scrollDOM.getBoundingClientRect()
-    if (cursor) {
-        const cursorMiddle = (cursor.top + cursor.bottom) / 2
-        const scrollerHeight = scroller.bottom - scroller.top
-        const scrollerMiddle = scroller.top + scrollerHeight * topPercent
-        if (Math.abs(cursorMiddle - scrollerMiddle) > 5) editorView.scrollDOM.scrollTop += cursorMiddle - scrollerMiddle
-    }
+export function scrollToCursor(editorView: EditorView, { alwaysScroll = false, marginTop = 150 }) {
+    const cursor = editorView.state.selection.main
+    const effects = EditorView.scrollIntoView(cursor.head, {
+        y: alwaysScroll ? 'start' : 'nearest',
+        yMargin: marginTop,
+    })
+    editorView.dispatch({ effects })
 }
