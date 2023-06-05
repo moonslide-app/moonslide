@@ -16,7 +16,7 @@ import { parse as yamlParse } from 'yaml'
 
 export type Toolbar = {
     layouts?: ToolbarLayoutEntry[]
-    textStyles?: ToolbarEntry[]
+    styles?: ToolbarEntry[]
     animation?: ToolbarEntry[]
     slide?: ToolbarEntry[]
     slideStyles?: ToolbarEntry[]
@@ -114,7 +114,7 @@ export const toolbarLayoutEntrySchema = z.object({
 
 export const toolbarFilePathsSchema = z.object({
     layouts: gracefulStringSchema,
-    textStyles: gracefulStringSchema,
+    styles: gracefulStringSchema,
     animation: gracefulStringSchema,
     slide: gracefulStringSchema,
     slideStyles: gracefulStringSchema,
@@ -130,12 +130,12 @@ export async function loadToolbarFromPaths(paths: ToolbarFilePaths, templateFold
 
     const folder = templateFolderPath
     const layouts = await loadAndParseFileContents('layouts', paths.layouts, folder, layoutsParse)
-    const textStyles = await loadAndParseFileContents('textStyles', paths.textStyles, folder, entriesParse)
+    const styles = await loadAndParseFileContents('styles', paths.styles, folder, entriesParse)
     const animation = await loadAndParseFileContents('animation', paths.animation, folder, entriesParse)
     const slide = await loadAndParseFileContents('slide', paths.slide, folder, entriesParse)
     const slideStyles = await loadAndParseFileContents('slideStyles', paths.slideStyles, folder, entriesParse)
 
-    return { layouts, textStyles, animation, slide, slideStyles }
+    return { layouts, styles, animation, slide, slideStyles }
 }
 
 async function loadAndParseFileContents<T>(

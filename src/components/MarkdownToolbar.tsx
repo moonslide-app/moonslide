@@ -255,12 +255,12 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
             {editorRef && <ItemsHeadings editorRef={editorRef} />}
             {editorRef && <ItemsFormat editorRef={editorRef} />}
 
-            {toolbar?.textStyles && (
+            {toolbar?.styles && (
                 <ItemsTemplateConfigurable
-                    layoutsConfig={toolbar.textStyles}
-                    buttonTitle="Text Styles"
-                    placeholder="Search text styles..."
-                    emptyText="No text style found."
+                    layoutsConfig={toolbar.styles}
+                    buttonTitle="Styles"
+                    placeholder="Search styles..."
+                    emptyText="No style found."
                     onSelect={editorRef?.onAddAttribute}
                 />
             )}
