@@ -1,7 +1,6 @@
 import { EditorSelection, SelectionRange } from '@codemirror/state'
 import { EditorView } from 'codemirror'
 import { Ref, RefObject, useImperativeHandle } from 'react'
-import { CodeMirrorEditorRef } from '../components/CodeMirrorEditor'
 import {
     ModifiedString,
     addSpaceIfNeeded,
@@ -12,6 +11,7 @@ import {
     findCurrentSlide,
     findLastSlide,
     findLastSlideUntil,
+    findValueOfArrayInsideRange,
     insertAtEndOfLine,
     insertAtPosition,
     insertLine,
@@ -24,6 +24,19 @@ import {
     setCursorPosition,
 } from './codeMirrorHelpers'
 import { useEditorStore } from '../store'
+import { ToolbarEntry, ToolbarItem } from '../../src-shared/entities/Toolbar'
+
+export type CodeMirrorEditorRef = {
+    onScrollToSlide(slideNumber: number): void
+    onAddSlide(layout?: string, slots?: number): void
+    onAddFormat(prefix: string, suffix?: string): void
+    onAddBlock(prefix: string): void
+    onAddHeading(prefix: string): void
+    onAddAttribute(attribute: string): void
+    onAddClass(item: ToolbarItem, group: ToolbarEntry): void
+    onAddDataTag(dataTag: string): void
+    onAddMedia(path: string): void
+}
 
 export function useCodeMirrorEditorRef(
     ref: Ref<CodeMirrorEditorRef> | undefined,
@@ -127,16 +140,24 @@ export function useCodeMirrorEditorRef(
 
                 setCursorPosition(editorView.current, position.to)
             },
-            onAddClass(className) {
+            onAddClass(item, group) {
                 if (!editorView.current) return
                 const state = editorView.current.state
                 const currentSlide = findCurrentSlide(state)
+                const className = item.key
 
                 if (currentSlide?.frontMatter) {
                     let newCursorPosition: number
 
-                    const line = rangeHasLineStartingWith('class:', editorView.current.state, currentSlide.frontMatter)
-                    if (line) {
+                    const fromGroup = findValueOfArrayInsideRange(
+                        state,
+                        group.items.map(value => value.key)
+                    )
+                    const line = rangeHasLineStartingWith('class:', state, currentSlide.frontMatter)
+
+                    if (fromGroup) {
+                        newCursorPosition = changeInRange(editorView.current, fromGroup, () => className).to
+                    } else if (line) {
                         const yamlMultiline =
                             isYAMLArray(line, state, currentSlide.frontMatter) ??
                             isYAMLMultiline(line, state, currentSlide.frontMatter)

@@ -10,9 +10,9 @@ import { EditorView, ViewPlugin, keymap, drawSelection } from '@codemirror/view'
 import { Ref, forwardRef, useEffect, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { parser } from '../parser/slidesParser'
-import { useCodeMirrorEditorRef } from '../editor/useCodeMirrorEditorRef'
-import { findCurrentSlide } from '../editor/codeMirrorHelpers'
-import { showActiveSlide } from '../editor/showActiveSlide'
+import { CodeMirrorEditorRef, useCodeMirrorEditorRef } from './CodeMirrorEditorRef'
+import { findCurrentSlide } from './codeMirrorHelpers'
+import { showActiveSlide } from './showActiveSlide'
 
 export type CodeMirrorEditorProps = {
     className?: string
@@ -73,18 +73,6 @@ const mixedParser = parser.configure({
 })
 
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
-
-export type CodeMirrorEditorRef = {
-    onScrollToSlide(slideNumber: number): void
-    onAddSlide(layout?: string, slots?: number): void
-    onAddFormat(prefix: string, suffix?: string): void
-    onAddBlock(prefix: string): void
-    onAddHeading(prefix: string): void
-    onAddAttribute(attribute: string): void
-    onAddClass(className: string): void
-    onAddDataTag(dataTag: string): void
-    onAddMedia(path: string): void
-}
 
 export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?: Ref<CodeMirrorEditorRef>) => {
     const editorView = useRef<EditorView | undefined>()

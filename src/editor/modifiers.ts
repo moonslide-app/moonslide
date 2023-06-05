@@ -1,5 +1,5 @@
 import { imageFilter } from '../store/FileFilters'
-import { CodeMirrorEditorRef } from '../components/CodeMirrorEditor'
+import { CodeMirrorEditorRef } from './CodeMirrorEditorRef'
 
 export function formatStrong(editor: CodeMirrorEditorRef) {
     editor.onAddFormat('**')

@@ -166,6 +166,26 @@ export function rangeHasLineStartingWith(start: string, state: EditorState, rang
     return undefined
 }
 
+export function findValueOfArrayInsideRange(
+    state: EditorState,
+    array: string[],
+    range?: SimpleRange
+): SimpleRange | undefined {
+    const regexQuery = array.join('|')
+    return findRegexQueryInsideRange(state, regexQuery, range)
+}
+
+export function findRegexQueryInsideRange(
+    state: EditorState,
+    regexQuery: string,
+    range?: SimpleRange
+): SimpleRange | undefined {
+    const cursor = new RegExpCursor(state.doc, regexQuery, undefined, range?.from, range?.to)
+    const match = cursor.next().value
+    if (match.from === -1 && match.to === -1) return undefined
+    else return match
+}
+
 /**
  * Uses `markdownSelectionInSlide` to determine the current selection and
  * then returns the line where the selection starts.
@@ -321,7 +341,7 @@ export function insertAtPosition(editorView: EditorView, value: string, from: nu
  */
 export function changeInRange(
     editorView: EditorView,
-    range: SelectionRange,
+    range: SimpleRange,
     newValue: (oldValue: string, doc: Text) => string
 ) {
     const currentText = editorView.state.doc.sliceString(range.from, range.to)

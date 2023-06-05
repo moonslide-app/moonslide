@@ -20,7 +20,6 @@ import {
     ToolbarItemSeparator,
     ToolbarItemValue,
 } from './ui/toolbar'
-import { CodeMirrorEditorRef } from './CodeMirrorEditor'
 import {
     blockBlockquote,
     blockH1,
@@ -40,6 +39,7 @@ import {
     selectMedia,
 } from '../editor/modifiers'
 import { HelpTooltip } from './HelpTooltip'
+import { CodeMirrorEditorRef } from '../editor/CodeMirrorEditorRef'
 
 function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
     const { editorRef } = props
@@ -188,13 +188,13 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
 
 function ItemsTemplateConfigurable<
     Item extends ToolbarItemType & ToolbarItemValue,
-    Layout extends { items: Item[] } & ToolbarEntry
+    Group extends { items: Item[] } & ToolbarEntry
 >(props: {
-    layoutsConfig: Layout[]
+    layoutsConfig: Group[]
     buttonTitle: string
     placeholder?: string
     emptyText?: string
-    onSelect?: (value: Item | undefined) => void
+    onSelect?: (value: Item, group: Group) => void
 }) {
     const { layoutsConfig, buttonTitle, placeholder, emptyText, onSelect } = props
 
@@ -219,7 +219,7 @@ function ItemsTemplateConfigurable<
                                         value={item}
                                         searchValues={[item.key, layout.name, item.name].filter(isNonNullable)}
                                         hidden={item.hidden}
-                                        onSelect={onSelect}
+                                        onSelect={() => onSelect?.(item, layout)}
                                     >
                                         <div className="flex-grow flex justify-between items-center space-x-2">
                                             <span>{buildItemLabel(item)}</span>
@@ -290,7 +290,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Slide Styles"
                     placeholder="Search slide styles..."
                     emptyText="No slide styles found."
-                    onSelect={item => item && editorRef?.onAddClass(item.key)}
+                    onSelect={(item, group) => editorRef?.onAddClass(item, group)}
                 />
             )}
             {editorRef && <ToolbarButton onClick={async () => await selectMedia(editorRef)}>Media</ToolbarButton>}

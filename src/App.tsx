@@ -1,4 +1,5 @@
-import { CodeMirrorEditor, CodeMirrorEditorRef } from './components/CodeMirrorEditor'
+import { CodeMirrorEditor } from './editor/CodeMirrorEditor'
+import { CodeMirrorEditorRef } from './editor/CodeMirrorEditorRef'
 import { PreviewSlides, PreviewSlidesRef } from './components/PreviewSlides'
 import { MenuCallbacks } from './components/MenuCallbacks'
 import { useEditorStore } from './store'
