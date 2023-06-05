@@ -36,20 +36,24 @@ export function wrapErrorIfThrows<T, U extends WrappedError>(action: () => T, wr
     }
 }
 
+function formatPath(path: (string | number)[]): string {
+    return path
+        .map((item, idx) => {
+            if (typeof item === 'number') return `[${item}]`
+            else if (idx > 0) return `.${item}`
+            else return item
+        })
+        .join('')
+}
+
 function extractUnderlyingErrorMessage(error: unknown): string | undefined {
     if (!error) return undefined
 
     if (error instanceof YAMLError) {
         return error.message
     } else if (error instanceof ZodError) {
-        const { fieldErrors, formErrors } = error.flatten()
-        const formattedFormErrors =
-            formErrors.length > 0 ? [`- The input is in the wrong format: ${formErrors.join(', ')}.`] : []
-        const formattedFieldErrors = Object.entries(fieldErrors).map(([key, value]) => {
-            return `- Property '${key}': ${value?.join(', ') ?? 'Unknown error'}.`
-        })
-
-        return [...formattedFormErrors, ...formattedFieldErrors].join('\n')
+        const message = 'Type-Errors occured at the following paths while parsing:\n'
+        return message + error.issues.map(issue => `- ${formatPath(issue.path)}: ${issue.message}`).join('\n')
     } else if (error instanceof Error) {
         return error.message
     } else {
