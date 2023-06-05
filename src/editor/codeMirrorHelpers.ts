@@ -166,20 +166,35 @@ export function rangeHasLineStartingWith(start: string, state: EditorState, rang
     return undefined
 }
 
+/**
+ * Tries to find a string inside the given range, which matches any of the prodvided values in `array`.
+ * @param state The editor state.
+ * @param array The array of values to search for.
+ * @param range The range which is searched.
+ * @returns The matched range or `undefined` if there is no match.
+ */
 export function findValueOfArrayInsideRange(
     state: EditorState,
     array: string[],
     range?: SimpleRange
 ): SimpleRange | undefined {
-    const regexQuery = array.join('|')
-    return findRegexQueryInsideRange(state, regexQuery, range)
+    const innerQuery = array.join('|')
+    // Makes sure there is a space before and after
+    const regexQuery = `(?:^|\\s)(${innerQuery})(?=$|\\s)`
+
+    const found = findRegexQueryInsideRange(state, regexQuery, range)
+    if (found) return findRegexQueryInsideRange(state, innerQuery, found)
+    else return undefined
 }
 
-export function findRegexQueryInsideRange(
-    state: EditorState,
-    regexQuery: string,
-    range?: SimpleRange
-): SimpleRange | undefined {
+/**
+ * Searches the provided regex pattern inside the given range.
+ * @param state The editor state.
+ * @param regexQuery The query to search.
+ * @param range The range to search in.
+ * @returns The matched range or `undefined` if there is no match.
+ */
+export function findRegexQueryInsideRange(state: EditorState, regexQuery: string, range?: SimpleRange) {
     const cursor = new RegExpCursor(state.doc, regexQuery, undefined, range?.from, range?.to)
     const match = cursor.next().value
     if (match.from === -1 && match.to === -1) return undefined

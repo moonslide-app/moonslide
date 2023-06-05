@@ -149,11 +149,14 @@ export function useCodeMirrorEditorRef(
                 if (currentSlide?.frontMatter) {
                     let newCursorPosition: number
 
-                    const fromGroup = findValueOfArrayInsideRange(
-                        state,
-                        group.items.map(value => value.key)
-                    )
                     const line = rangeHasLineStartingWith('class:', state, currentSlide.frontMatter)
+                    const fromGroup = line
+                        ? findValueOfArrayInsideRange(
+                              state,
+                              group.items.map(value => value.key),
+                              { from: line.from, to: currentSlide.frontMatter.to }
+                          )
+                        : undefined
 
                     if (fromGroup) {
                         newCursorPosition = changeInRange(editorView.current, fromGroup, () => className).to
