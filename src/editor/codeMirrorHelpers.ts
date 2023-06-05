@@ -423,7 +423,7 @@ export function addSpaceIfNeeded(
 export function findAttributes(state: EditorState, endOfLine: boolean, range?: SimpleRange): SimpleRange | undefined {
     // if end of line -> match attrs at end of line (space in front required or start of line)
     // if not end line -> just search brackets inside range
-    const originalQuery = endOfLine ? '(^|\\s)\\{[^{}]*\\}\\s*$' : '\\{[^{}]*\\}\\s*'
+    const originalQuery = endOfLine ? '(^|\\s)\\{[^{}]*\\}\\s*$' : '\\{[^{}]*\\}'
     const extractQuery = '(?<=\\{).*(?=\\})' // matches inner part of { .attr }
 
     const regexCursor = new RegExpCursor(state.doc, originalQuery, undefined, range?.from, range?.to)
@@ -444,8 +444,10 @@ export function findAttributes(state: EditorState, endOfLine: boolean, range?: S
  * @returns The first match or undefined.
  */
 export function findBracketsInsideSelection(state: EditorState, selection: SimpleRange, range: SimpleRange) {
-    const regexQuery = '\\[[^\\[\\]]*\\]'
-    const cursor = new RegExpCursor(state.doc, regexQuery, undefined, range?.from, range?.to)
+    const curlyBracesQuery = '\\{[^{}]*\\}'
+    const bracketsQuery = '\\[[^\\[\\]]*\\]'
+    const combinedQuery = `${'\\[[^\\[\\]]*\\]'}(${curlyBracesQuery})?`
+    const cursor = new RegExpCursor(state.doc, combinedQuery, undefined, range?.from, range?.to)
     let match = cursor.next().value
     while (!cursor.done) {
         const endOfSelectionIsInside = selection.to > match.from && selection.to < match.to
@@ -459,7 +461,9 @@ export function findBracketsInsideSelection(state: EditorState, selection: Simpl
         }
     }
     if (cursor.done) return undefined
-    else return match
+
+    const extractCursor = new RegExpCursor(state.doc, bracketsQuery, undefined, match.from, match.to)
+    return extractCursor.next().value
 }
 
 /**
