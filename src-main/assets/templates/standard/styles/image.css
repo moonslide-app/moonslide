@@ -1,7 +1,7 @@
 /* This class is added to all images. */
 .image {
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 50px;
+    min-height: 50px;
 }
 
 /* This class is added to inline images. */
@@ -14,32 +14,33 @@
     flex-grow: 1;
     background-repeat: no-repeat;
     background-position: center;
-}
-
-.image-cover {
-    background-size: cover;
-}
-
-.image-contain {
     background-size: contain;
 }
 
-.image-center {
+.reveal .image-cover {
+    background-size: cover;
+}
+
+.reveal .image-contain {
+    background-size: contain;
+}
+
+.reveal .image-center {
     background-position: center;
 }
 
-.image-top {
+.reveal .image-top {
     background-position-y: top;
 }
 
-.image-bottom {
+.reveal .image-bottom {
     background-position-y: bottom;
 }
 
-.image-left {
+.reveal .image-left {
     background-position-x: left;
 }
 
-.image-right {
+.reveal .image-right {
     background-position-x: right;
 }
