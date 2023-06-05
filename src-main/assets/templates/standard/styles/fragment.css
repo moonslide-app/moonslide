@@ -75,7 +75,7 @@
 }
 
 .fragment.hl-indigo.visible {
-    color: var(--color-inidgo);
+    color: var(--color-indigo);
 }
 
 .fragment.hl-violet.visible {
@@ -175,7 +175,7 @@
 }
 
 .fragment.hl-current-indigo.current-fragment {
-    color: var(--color-inidgo);
+    color: var(--color-indigo);
 }
 
 .fragment.hl-current-violet.current-fragment {
