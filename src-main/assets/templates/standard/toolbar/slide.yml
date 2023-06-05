@@ -3,6 +3,9 @@
     - name: 'Transition'
       key: 'transition'
       description: Possible values are `none`, `fade`, `slide`, `convex`, `concave` and `zoom`. Entrance and exit transitions can be specified by appending *-in* or *-out* e.g., `slide-in`.
+    - name: 'Background Transition'
+      key: 'background-transition'
+      description: Configures the transition of the background. Possible values are the same as `transition`.
     - name: 'Transition Speed'
       key: 'transition-speed'
       description: Possible values are `default`, `fast` and `slow`.
