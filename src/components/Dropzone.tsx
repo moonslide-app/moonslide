@@ -24,7 +24,13 @@ export function Dropzone(props?: DropzoneProps) {
     return (
         <div {...getRootProps()} className={`relative ${props?.className ?? ''}`}>
             {props?.children}
-            {isDragAccept && <div className="absolute inset-0 bg-red-500"></div>}
+            {isDragAccept && (
+                <div className="absolute inset-0 bg-gray-200/50 flex items-center justify-center">
+                    <p className="text-gray-700 font-light text-lg px-4 text-center">
+                        Drop images and videos to include them into the presentation.
+                    </p>
+                </div>
+            )}
         </div>
     )
 }
