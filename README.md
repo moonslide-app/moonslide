@@ -15,15 +15,25 @@ Moonslide is a markdown based presentation editor.
 -   **Templates & Themes:** Write custom templates and themes to configure the behaviour and looks of your presentations.
 -   **Desktop Program:** Install Moonslide on the operating system of your choice.
 
+## Installation 
+Download the latest release [here](https://github.com/reveal-editor/reveal-editor/releases).
+
 ## Philosophy
 There are two ways to use Moonslide. 
 1. Use it as a normal person: Enjoy the convenience of the standard template, which provides you with everything you need to create stunning Markdown presentations.
 2. Use it as a hacker: Create your own template and configure every aspect of your Reveal.js Presentation. You have control over basically everything! Use the standard template as a starting point.
 
-## Installation 
-Download the latest release [here](https://github.com/reveal-editor/reveal-editor/releases).
+## What is a Template?
+A template is a folder which contains all relevant assets to generate the Reveal.js presentation from the Markdown presentation. It consists rougly of the following parts:
+- The used Reveal.js distribution
+- The definition of the available themes.
+- The definition of the available layouts.
+- Additional stylesheets with helper classes. 
+- The configuration of the toolbar inside the app.
 
-## Getting Started
+Take a look at the standard template **TODO**. If you want to create your own template, take a look at the section **TODO**. 
+
+## Create your first Presentation
 Presentations are written in Markdown. For every slide there is a configuration block written in YAML inside the seperators `---` similar to Front Matter. The following example shows the definition of two simple slides.
 ```yaml
 ---
@@ -203,7 +213,7 @@ class:
 ```
 
 #### Reveal.js Data-Attributes
-You can specify every other keyword on the slide, and it will be directly passed to the HTML-Elemnt of the slide as a data-tag. In this way a lot of features of Reveal.js can be used. E.g., `transition: slide` will be transformed to `data-transition="slide"`.
+You can specify every other keyword on the slide, and it will be directly passed to the HTML-Elemnt of the slide as a data-tag. In this way a lot of features of Reveal.js can be used. E.g., `transition: slide` will be transformed to `data-transition="slide"`. These are some possible values, which are available in Reveal.js:
 
 ```yaml
 ---
@@ -226,8 +236,15 @@ auto-animate: true
 You can find more information under [Transition (Reveal.js)](https://revealjs.com/transitions/), [Backgrounds (Reveal.js)](https://revealjs.com/backgrounds/) and [Auto-Animate (Reveal.js)](https://revealjs.com/auto-animate/).
 
 ## Standard Template
-- All is visible in toolbar
+There is a standard template that comes with Moonslide. This section present the most important parts of the template. You will find basically everything described here inside the different items of the toolbar, when the standard template is used in the presentation.
+
 ### Themes
+There are two themes which you can choose from `black` and `white`. Every theme includes its own CSS stylesheets, which changes the apperance of the whole presentation.
+
+| `theme: black` | `theme:white` |
+|:--|:--|
+| ![](./docs/theme-black.png) | ![](./docs/theme-white.png) |
+
 ### Layouts
 ### Helper Classes
 
