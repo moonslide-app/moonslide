@@ -14,6 +14,7 @@ import { exportHtml } from '../export/exportHtml'
 import { parseAndCachePresentation } from '../store'
 import { wrapPromise } from '../../src-shared/errors/wrapPromise'
 import { exportStandardTemplate } from './assets'
+import { addMedia } from '../presentation/media'
 
 export function registerIpc() {
     ipcMain.handle('dialog:selectFile', (_, title, filters) => selectFile(title, filters))
@@ -24,6 +25,7 @@ export function registerIpc() {
     ipcMain.handle('file:exists', (_, filePath) => exists(filePath))
     ipcMain.handle('file:save', (_, filePath, content) => wrapPromise(saveFile(filePath, content)))
     ipcMain.handle('file:getContent', (_, filePath) => wrapPromise(getFileContent(filePath)))
+    ipcMain.handle('file:addMedia', (_, filePath, markdownPath) => wrapPromise(addMedia(filePath, markdownPath)))
     ipcMain.handle('presentation:parse', (_, parseRequest) => wrapPromise(parseAndCachePresentation(parseRequest)))
     ipcMain.handle('export:html', (_, exportRequest) => wrapPromise(exportHtml(exportRequest)))
     ipcMain.handle('export:pdf', (_, outputPath) => wrapPromise(exportPdf(outputPath)))
@@ -38,6 +40,7 @@ export function unregisterIpc() {
     ipcMain.removeHandler('dialog:saveChanges')
     ipcMain.removeHandler('file:save')
     ipcMain.removeHandler('file:getContent')
+    ipcMain.removeHandler('file:addMedia')
     ipcMain.removeHandler('presentation:parse')
     ipcMain.removeHandler('export:html')
     ipcMain.removeHandler('export:pdf')

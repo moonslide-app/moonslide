@@ -26,6 +26,9 @@ const files = {
     async saveFile(filePath: string, content: string): Promise<void> {
         return await unwrapPromise(ipcRenderer.invoke('file:save', filePath, content))
     },
+    async addMedia(filePath: string, markdownFilePath: string): Promise<string> {
+        return await unwrapPromise(ipcRenderer.invoke('file:addMedia', filePath, markdownFilePath))
+    },
 } as const
 
 export default files

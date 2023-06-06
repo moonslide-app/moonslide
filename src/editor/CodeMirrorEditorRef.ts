@@ -227,6 +227,7 @@ export function useCodeMirrorEditorRef(
             },
             onAddMedia(path) {
                 if (!editorView.current) return
+                const encodedPath = encodeURI(path)
 
                 const currentSlide = findCurrentSlide(editorView.current.state)
                 if (!currentSlide) return
@@ -236,7 +237,7 @@ export function useCodeMirrorEditorRef(
                 let imageTag: ModifiedString = { newValue: '', leadingOffset: 0, trailingOffset: 0 }
 
                 const selection = changeInRange(editorView.current, position, (_, doc) => {
-                    imageTag = addSpaceIfNeeded(doc, position.to, `![](${path})`, true, true)
+                    imageTag = addSpaceIfNeeded(doc, position.to, `![](${encodedPath})`, true, true)
                     return imageTag.newValue
                 })
                 const cursorPosition = selection.to + imageTag.leadingOffset + 2 - imageTag.newValue.length
