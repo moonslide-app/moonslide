@@ -44,7 +44,7 @@ layout: cols-2
 ## Markdown Syntax
 In the Markdown-Blocks of the presentations, standard Markdown formatting options are supported. The [markdown-it](https://github.com/markdown-it/markdown-it) parser is used to parse the content. Some markdown extensions are used to add the possibility to style indiviual components.
 
-### Horizontal Rule aka. Separators
+### Slide and Slot Separators
 The horizontal rule (`<hr>`) markers `---` and `***` have a special meaning when they are used at the start of a line. `---` marks the separation between a Markdown and a YAML block and splits the content up into indivdual slides. `***` seperates indiviual *slots* inside a slide. These are important when working with **TODO** layouts.
 
 ```yaml
@@ -134,6 +134,7 @@ Image: <img alt="house" src="./media/house.jpg" class="image image-inline" />
 
 #### Videos
 If the file extension is `.mp4`, `.mov` or `.vp9` it is parsed as a `<video>` tag. **TODO**
+
  ```html
 <!-- Include Video --->
 ![nature](./media/nature.mp4)
@@ -142,25 +143,88 @@ If the file extension is `.mp4`, `.mov` or `.vp9` it is parsed as a `<video>` ta
 
 ### Inline HTML
 Use inline HTML at any point in your presentation.
+
 ```html
 # My Markdown Heading
 <h2>My HTML Subheading</h2>
 ``` 
 
 ## Front Matter Configuration
-- Presentation Config
-	- template -> choose template, see standard template
-	- theme -> themes defined on standard template
-	- title 
-	- author
-	- defaults -> Slide Config
+### Presentation Configuration
+In the Front Matter block of the first slide, there are some attributes which configure the whole presentation.
 
-Attention file paths
+```yaml
+---
+# standard or ./path/to/your-template
+template: standard 
+# black or white (for standard template)
+theme: black
+# title and author of the presentation
+title: My First Presentation
+author: Markdown Enthusiast
+# Apply default values for all slides (-> Slide Configuraton)
+defaults: 
+	transition: zoom
+	layout: title-content
+---
+```
 
-- Slide Config
-	- layout: choose layout for slide -> Layouts
-	- class: Apply css-classes to your slide (provided by template)
-	- Reveal Attributes 
+### Slide Configuration
+There are configuration options which can be applied to every slide individually.
+
+#### Layout
+Every slide uses a layout to structure its contents in a certain way. Every layout has a number of *slots*, which are containers for your content. Use the slot-separator `***` to fill content into the next slot. Take a look at all layouts available in the standard template. **TODO**.
+
+```yaml
+---
+# This layout splits the content in to two columns.
+layout: cols-2
+---
+
+# Left Side 
+
+***
+
+# Right Side
+```
+
+#### Custom Classes 
+Custom classes can be added to every slide. These classes are usually defined inside the template. The standard template comes with a lot of useful classes to style your slides with. In some cases it may be more useful to only style a custom element using the Markdown-Attributes Syntax **TODO: Link**.
+
+```yaml
+---
+class:
+	- position-center  # Centers the content vertically
+	- text-center      # Centers the text horizontally
+	- text-red         # Changes the text color to red 
+---
+
+# My Customized Heading
+```
+
+#### Reveal.js Data-Attributes
+You can specify every other keyword on the slide, and it will be directly passed to the HTML-Elemnt of the slide as a data-tag. In this way a lot of features of Reveal.js can be used. E.g., `transition: slide` will be transformed to `data-transition="slide"`.
+
+```yaml
+---
+transition: slide
+background-transition: slide
+transition-speed: fast
+
+background-image: ./my-image.jpg 
+background-video: ./my-video.mp4
+background-opacity: 0.5
+background-size: contain
+background-position: center
+
+auto-animate: true
+---
+```
+
+> Note: Make sure to start local relative paths with `./` or `../`. The paths are automatically transformed and can not be recognized if just the filename is present (`my-image.jpg` does not work).
+
+You can find more information under [Transition (Reveal.js)](https://revealjs.com/transitions/), [Backgrounds (Reveal.js)](https://revealjs.com/backgrounds/) and [Auto-Animate (Reveal.js)](https://revealjs.com/auto-animate/).
+
 ## Standard Template
 - All is visible in toolbar
 ### Themes
