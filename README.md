@@ -45,9 +45,7 @@ layout: cols-2
 In the Markdown-Blocks of the presentations, standard Markdown formatting options are supported. The [markdown-it](https://github.com/markdown-it/markdown-it) parser is used to parse the content. Some markdown extensions are used to add the possibility to style indiviual components.
 
 ### Horizontal Rule aka. Separators
-The horizontal rule (`<hr>`) markers `---` and `***` have a special meaning when they are used at the start of a line.
-- `---` marks the separation between a Markdown and a YAML block and splits the content up into indivdual slides.
-- `***` seperates indiviual *slots* inside a slide. These are important when working with **TODO** layouts.
+The horizontal rule (`<hr>`) markers `---` and `***` have a special meaning when they are used at the start of a line. `---` marks the separation between a Markdown and a YAML block and splits the content up into indivdual slides. `***` seperates indiviual *slots* inside a slide. These are important when working with **TODO** layouts.
 
 ```yaml
 ---
@@ -85,8 +83,8 @@ It is possible to apply any attributes like classes, styles or data tags to a bl
 <h1 class="first-class second-class">Heading</h1>
 
 <!-- Add style and data attribute -->
-## Red Roses { style="background-red" data-rose="true" }
-<h2 style="background-red" data-rose="true">Red Roses</h2>
+## Red Roses { style="color: red;" data-rose="true" }
+<h2 style="color: red;" data-rose="true">Red Roses</h2>
 
 <!-- Inline Elements --> 
 The roses are **red**{ .text-red }.
