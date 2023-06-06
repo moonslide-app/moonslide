@@ -20,7 +20,6 @@ import {
     ToolbarItemSeparator,
     ToolbarItemValue,
 } from './ui/toolbar'
-import { CodeMirrorEditorRef } from './CodeMirrorEditor'
 import {
     blockBlockquote,
     blockH1,
@@ -39,6 +38,8 @@ import {
     formatStrong,
     selectMedia,
 } from '../editor/modifiers'
+import { HelpTooltip } from './HelpTooltip'
+import { CodeMirrorEditorRef } from '../editor/CodeMirrorEditorRef'
 
 function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
     const { editorRef } = props
@@ -187,13 +188,13 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
 
 function ItemsTemplateConfigurable<
     Item extends ToolbarItemType & ToolbarItemValue,
-    Layout extends { items: Item[] } & ToolbarEntry
+    Group extends { items: Item[] } & ToolbarEntry
 >(props: {
-    layoutsConfig: Layout[]
+    layoutsConfig: Group[]
     buttonTitle: string
     placeholder?: string
     emptyText?: string
-    onSelect?: (value: Item | undefined) => void
+    onSelect?: (value: Item, group: Group) => void
 }) {
     const { layoutsConfig, buttonTitle, placeholder, emptyText, onSelect } = props
 
@@ -205,15 +206,25 @@ function ItemsTemplateConfigurable<
                 <ToolbarItemsList>
                     {layoutsConfig.map((layout, idx, layouts) => (
                         <>
-                            <ToolbarItemGroup heading={layout.name}>
+                            <ToolbarItemGroup
+                                heading={
+                                    <div className="flex justify-between items-center space-x-2">
+                                        <span>{layout.name}</span>
+                                        {layout.description && <HelpTooltip helpText={layout.description} />}
+                                    </div>
+                                }
+                            >
                                 {layout.items.map(item => (
                                     <ToolbarItem
                                         value={item}
                                         searchValues={[item.key, layout.name, item.name].filter(isNonNullable)}
                                         hidden={item.hidden}
-                                        onSelect={onSelect}
+                                        onSelect={() => onSelect?.(item, layout)}
                                     >
-                                        {buildItemLabel(item)}
+                                        <div className="flex-grow flex justify-between items-center space-x-2">
+                                            <span>{buildItemLabel(item)}</span>
+                                            {item.description && <HelpTooltip helpText={item.description} />}
+                                        </div>
                                     </ToolbarItem>
                                 ))}
                             </ToolbarItemGroup>
@@ -238,19 +249,19 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="+"
                     placeholder="Search layouts..."
                     emptyText="No layout found."
-                    onSelect={item => item && editorRef?.onAddSlide(item.key, item.slots)}
+                    onSelect={item => editorRef?.onAddSlide(item.key, item.slots)}
                 />
             )}
             {editorRef && <ItemsHeadings editorRef={editorRef} />}
             {editorRef && <ItemsFormat editorRef={editorRef} />}
 
-            {toolbar?.textStyles && (
+            {toolbar?.styles && (
                 <ItemsTemplateConfigurable
-                    layoutsConfig={toolbar.textStyles}
-                    buttonTitle="Text Styles"
-                    placeholder="Search text styles..."
-                    emptyText="No text style found."
-                    onSelect={item => item && editorRef?.onAddAttribute(item.key)}
+                    layoutsConfig={toolbar.styles}
+                    buttonTitle="Styles"
+                    placeholder="Search styles..."
+                    emptyText="No style found."
+                    onSelect={editorRef?.onAddAttribute}
                 />
             )}
 
@@ -260,7 +271,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Animation"
                     placeholder="Search animations..."
                     emptyText="No animation found."
-                    onSelect={item => item && editorRef?.onAddAttribute(item.key)}
+                    onSelect={editorRef?.onAddAttribute}
                 />
             )}
 
@@ -270,7 +281,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Slide"
                     placeholder="Search slide properties..."
                     emptyText="No slide properties found."
-                    onSelect={item => item && editorRef?.onAddDataTag(item.key)}
+                    onSelect={item => editorRef?.onAddDataTag(item.key)}
                 />
             )}
             {toolbar?.slideStyles && (
@@ -279,7 +290,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     buttonTitle="Slide Styles"
                     placeholder="Search slide styles..."
                     emptyText="No slide styles found."
-                    onSelect={item => item && editorRef?.onAddClass(item.key)}
+                    onSelect={editorRef?.onAddClass}
                 />
             )}
             {editorRef && <ToolbarButton onClick={async () => await selectMedia(editorRef)}>Media</ToolbarButton>}

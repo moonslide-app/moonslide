@@ -2,16 +2,24 @@
   items: 
     - name: 'Transition'
       key: 'transition'
+      description: Possible values are `none`, `fade`, `slide`, `convex`, `concave` and `zoom`. Entrance and exit transitions can be specified by appending *-in* or *-out* e.g., `slide-in`.
+    - name: 'Background Transition'
+      key: 'background-transition'
+      description: Configures the transition of the background. Possible values are the same as `transition`.
     - name: 'Transition Speed'
       key: 'transition-speed'
+      description: Possible values are `default`, `fast` and `slow`.
 - name: Background
   items:
     - name: 'Opacity'
       key: 'background-opacity'
+      description: Sets the opacity of the background. Values are in the range from 0 to 1.
     - name: Image
       key: 'background-image'
+      description: Specify a local path or an url to an image which will be used as the background.
     - name: Size
       key: 'background-size'
+      description: Specifies the size of the background. Possible values are `contain`, `cover` or a relative or absolute size. See [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/background-size).
     - name: 'Position'
       key: 'background-position'
     - name: Video

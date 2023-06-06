@@ -73,7 +73,7 @@ layouts:
 # which lists all items to show in this section
 toolbar:
   layouts: ./toolbar/layouts.yml
-  textStyles: ./toolbar/textStyles.yml
+  styles: ./toolbar/styles.yml
   animation: ./toolbar/animation.yml
   slide: ./toolbar/slide.yml
   slideStyles: ./toolbar/slideStyles.yml

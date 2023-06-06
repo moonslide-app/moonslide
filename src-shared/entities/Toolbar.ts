@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { addUUID, gracefulStringSchema, nullishToOptional } from './zodUtils'
+import { addUUID, limit, gracefulStringSchema, nullishToOptional } from './zodUtils'
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs-extra'
 import {
@@ -16,7 +16,7 @@ import { parse as yamlParse } from 'yaml'
 
 export type Toolbar = {
     layouts?: ToolbarLayoutEntry[]
-    textStyles?: ToolbarEntry[]
+    styles?: ToolbarEntry[]
     animation?: ToolbarEntry[]
     slide?: ToolbarEntry[]
     slideStyles?: ToolbarEntry[]
@@ -28,6 +28,7 @@ export type ToolbarItem = {
     id: string
     key: string
     name?: string
+    description?: string
     hidden?: boolean
 }
 
@@ -43,8 +44,9 @@ export type ToolbarLayoutEntry = z.infer<typeof toolbarLayoutEntrySchema>
  */
 
 const baseSchema = z.object({
-    name: z.string().nullish().transform(nullishToOptional),
     key: z.string(),
+    name: gracefulStringSchema,
+    description: gracefulStringSchema,
     hidden: z.boolean().nullish().transform(nullishToOptional),
 })
 
@@ -67,14 +69,15 @@ const toolbarItemsSchema = baseSchema
     .and(templateSchema)
     .or(baseSchema)
     .array()
-    .transform(arr => {
-        const output: ToolbarItem[] = arr
+    .transform(limit)
+    .transform(array =>
+        array
             .flatMap(template => {
                 if (!('values' in template)) return template
-
-                return template.values.map(value => ({
+                return limit(template.values).map(value => ({
                     name: template.name?.replace(VALUE_PLACEHODER, transformName(value)),
                     key: template.key.replace(VALUE_PLACEHODER, transformKey(value)),
+                    description: template.description?.replace(VALUE_PLACEHODER, transformKey(value)),
                     hidden: template.shownValues?.includes(value)
                         ? false
                         : template.hiddenValues?.includes(value)
@@ -83,8 +86,7 @@ const toolbarItemsSchema = baseSchema
                 }))
             })
             .map(addUUID)
-        return output
-    })
+    )
 
 const toolbarLayoutsItemsSchema = baseSchema
     .extend({
@@ -92,6 +94,7 @@ const toolbarLayoutsItemsSchema = baseSchema
     })
     .transform(addUUID)
     .array()
+    .transform(limit)
 
 /*
  * ---------- Other Schemas ----------
@@ -99,17 +102,19 @@ const toolbarLayoutsItemsSchema = baseSchema
 
 export const toolbarEntrySchema = z.object({
     name: z.string(),
+    description: gracefulStringSchema,
     items: toolbarItemsSchema,
 })
 
 export const toolbarLayoutEntrySchema = z.object({
     name: z.string(),
+    description: gracefulStringSchema,
     items: toolbarLayoutsItemsSchema,
 })
 
 export const toolbarFilePathsSchema = z.object({
     layouts: gracefulStringSchema,
-    textStyles: gracefulStringSchema,
+    styles: gracefulStringSchema,
     animation: gracefulStringSchema,
     slide: gracefulStringSchema,
     slideStyles: gracefulStringSchema,
@@ -120,17 +125,17 @@ export const toolbarFilePathsSchema = z.object({
  */
 
 export async function loadToolbarFromPaths(paths: ToolbarFilePaths, templateFolderPath: string): Promise<Toolbar> {
-    const entriesParse = toolbarEntrySchema.array().nullish().transform(nullishToOptional).parse
-    const layoutsParse = toolbarLayoutEntrySchema.array().nullish().transform(nullishToOptional).parse
+    const entriesParse = toolbarEntrySchema.array().transform(limit).nullish().transform(nullishToOptional).parse
+    const layoutsParse = toolbarLayoutEntrySchema.array().transform(limit).nullish().transform(nullishToOptional).parse
 
     const folder = templateFolderPath
     const layouts = await loadAndParseFileContents('layouts', paths.layouts, folder, layoutsParse)
-    const textStyles = await loadAndParseFileContents('textStyles', paths.textStyles, folder, entriesParse)
+    const styles = await loadAndParseFileContents('styles', paths.styles, folder, entriesParse)
     const animation = await loadAndParseFileContents('animation', paths.animation, folder, entriesParse)
     const slide = await loadAndParseFileContents('slide', paths.slide, folder, entriesParse)
     const slideStyles = await loadAndParseFileContents('slideStyles', paths.slideStyles, folder, entriesParse)
 
-    return { layouts, textStyles, animation, slide, slideStyles }
+    return { layouts, styles, animation, slide, slideStyles }
 }
 
 async function loadAndParseFileContents<T>(

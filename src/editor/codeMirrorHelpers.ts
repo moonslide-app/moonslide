@@ -167,6 +167,42 @@ export function rangeHasLineStartingWith(start: string, state: EditorState, rang
 }
 
 /**
+ * Tries to find a string inside the given range, which matches any of the prodvided values in `array`.
+ * @param state The editor state.
+ * @param array The array of values to search for.
+ * @param range The range which is searched.
+ * @returns The matched range or `undefined` if there is no match.
+ */
+export function findValueOfArrayInsideRange(
+    state: EditorState,
+    array: string[],
+    range?: SimpleRange
+): SimpleRange | undefined {
+    const innerQuery = array.join('|')
+    // Makes sure there is a space before and after
+    const regexQuery = `(?:^|\\s)(${innerQuery})(?=$|\\s)`
+
+    const found = findRegexQueryInsideRange(state, regexQuery, range)
+    // only extract word without whitespaces
+    if (found) return findRegexQueryInsideRange(state, innerQuery, found)
+    else return undefined
+}
+
+/**
+ * Searches the provided regex pattern inside the given range.
+ * @param state The editor state.
+ * @param regexQuery The query to search.
+ * @param range The range to search in.
+ * @returns The matched range or `undefined` if there is no match.
+ */
+export function findRegexQueryInsideRange(state: EditorState, regexQuery: string, range?: SimpleRange) {
+    const cursor = new RegExpCursor(state.doc, regexQuery, undefined, range?.from, range?.to)
+    const match = cursor.next().value
+    if (match.from === -1 && match.to === -1) return undefined
+    else return match
+}
+
+/**
  * Uses `markdownSelectionInSlide` to determine the current selection and
  * then returns the line where the selection starts.
  * @param editorView The editor view to perform actions in.
@@ -321,7 +357,7 @@ export function insertAtPosition(editorView: EditorView, value: string, from: nu
  */
 export function changeInRange(
     editorView: EditorView,
-    range: SelectionRange,
+    range: SimpleRange,
     newValue: (oldValue: string, doc: Text) => string
 ) {
     const currentText = editorView.state.doc.sliceString(range.from, range.to)
@@ -384,21 +420,50 @@ export function addSpaceIfNeeded(
  * @returns The original attributes + extracted attributes or
  * `undefined` if no attrs are found.
  */
-export function extractLineAttributes(
-    line: Line
-): { originalAttributes: string; extractedAttributes: string } | undefined {
-    const originalQuery = '(?<=^|\\s){[^{}]*}\\s*$' // matches { .attr } at end of line, if at start of line or has a preceding space
-    const extractQuery = '(?<={).*(?=})' // matches inner part of { .attr }
+export function findAttributes(state: EditorState, endOfLine: boolean, range?: SimpleRange): SimpleRange | undefined {
+    // if end of line -> match attrs at end of line (space in front required or start of line)
+    // if not end line -> just search brackets inside range
+    const originalQuery = endOfLine ? '(^|\\s)\\{[^{}]*\\}\\s*$' : '\\{[^{}]*\\}'
+    const extractQuery = '(?<=\\{).*(?=\\})' // matches inner part of { .attr }
 
-    const originalMatch = line.text.match(originalQuery)
-    if (!originalMatch) return undefined
-    const originalAttributes = originalMatch[0]
+    const regexCursor = new RegExpCursor(state.doc, originalQuery, undefined, range?.from, range?.to)
+    const match = regexCursor.next().value
+    if (match.from === -1 && match.to === -1) return undefined
 
-    const extractedMatch = originalAttributes.match(extractQuery)
-    if (!extractedMatch) return undefined
-    const extractedAttributes = extractedMatch[0].trim()
+    const extractCursor = new RegExpCursor(state.doc, extractQuery, undefined, match.from, match.to)
+    const extract = extractCursor.next().value
+    if (extract.from === -1 && extract.to === -1) return undefined
+    return extract
+}
 
-    return { originalAttributes, extractedAttributes }
+/**
+ * Tries to find brackets [] (for a bracketed-span) which is inside a selection.
+ * @param state The state of the editor.
+ * @param selection The current selection.
+ * @param range The range where to search.
+ * @returns The first match or undefined.
+ */
+export function findBracketsInsideSelection(state: EditorState, selection: SimpleRange, range: SimpleRange) {
+    const curlyBracesQuery = '\\{[^{}]*\\}'
+    const bracketsQuery = '\\[[^\\[\\]]*\\]'
+    const combinedQuery = `${bracketsQuery}(${curlyBracesQuery})?`
+    const cursor = new RegExpCursor(state.doc, combinedQuery, undefined, range?.from, range?.to)
+    let match = cursor.next().value
+    while (!cursor.done) {
+        const endOfSelectionIsInside = selection.to > match.from && selection.to < match.to
+        const startOfSelectionIsInside = selection.from > match.from && selection.from < match.to
+        const selectionContainsBrackets = selection.from <= match.from && selection.to >= match.to
+        const validMatch = endOfSelectionIsInside || startOfSelectionIsInside || selectionContainsBrackets
+
+        if (validMatch) break
+        else {
+            match = cursor.next().value
+        }
+    }
+    if (cursor.done) return undefined
+
+    const extractCursor = new RegExpCursor(state.doc, bracketsQuery, undefined, match.from, match.to)
+    return extractCursor.next().value
 }
 
 /**
@@ -502,36 +567,38 @@ export function isYAMLMultiline(
  * Set the cursor of the editor to the position passed.
  * @param editorView The editor view to perform actions in.
  * @param position The position to which the cursor should be set.
+ * @param alwaysScroll If set to `true`, the editor always tries to scroll. Otherwise it just scrolls if
+ * the cursor is not visible.
  */
-export function setCursorPosition(editorView: EditorView, position: number) {
+export function setCursorPosition(editorView: EditorView, position: number, alwaysScroll = false) {
     editorView.dispatch({ selection: { anchor: position, head: position } })
     editorView.focus()
-    scrollToCursor(editorView)
+    scrollToCursor(editorView, { alwaysScroll })
 }
 
 /**
  * Select the range passed in the editor.
  * @param editorView The editor to perform actions in.
  * @param selection The selection that should be selected.
+ * @param alwaysScroll If set to `true`, the editor always tries to scroll. Otherwise it just scrolls if
+ * the cursor is not visible.
  */
-export function selectRange(editorView: EditorView, selection: SelectionRange) {
-    editorView.dispatch({
-        selection,
-    })
+export function selectRange(editorView: EditorView, selection: SelectionRange, alwaysScroll = false) {
+    editorView.dispatch({ selection })
+    editorView.focus()
+    scrollToCursor(editorView, { alwaysScroll })
 }
 
 /**
  * Scrolls the cursor to the center of the editor
  * @param editorView The editor view to perform actions in.
- * @param topPercent Percantage of the height where the cursor is scrolled.
+ * @param always If set to true, the editor is also scrolled if the content is already visible.
  */
-export function scrollToCursor(editorView: EditorView, topPercent = 0.25) {
-    const cursor = editorView.coordsAtPos(editorView.state.selection.main.head)
-    const scroller = editorView.scrollDOM.getBoundingClientRect()
-    if (cursor) {
-        const cursorMiddle = (cursor.top + cursor.bottom) / 2
-        const scrollerHeight = scroller.bottom - scroller.top
-        const scrollerMiddle = scroller.top + scrollerHeight * topPercent
-        if (Math.abs(cursorMiddle - scrollerMiddle) > 5) editorView.scrollDOM.scrollTop += cursorMiddle - scrollerMiddle
-    }
+export function scrollToCursor(editorView: EditorView, { alwaysScroll = false, marginTop = 150 }) {
+    const cursor = editorView.state.selection.main
+    const effects = EditorView.scrollIntoView(cursor.head, {
+        y: alwaysScroll ? 'start' : 'nearest',
+        yMargin: marginTop,
+    })
+    editorView.dispatch({ effects })
 }

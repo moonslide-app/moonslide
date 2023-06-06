@@ -2,7 +2,9 @@
   items: 
   - name: Enable Animation
     key: .fragment
+    description: In order to use any other animation feature, the class `fragment` **must** be applied. It comes with a standard fade-in animation. 
 - name: Entrance Animation
+  description: Elements start invisible and enter with the specified animation.
   items: 
   - name: Fade Up
     key: .fade-up
@@ -13,6 +15,7 @@
   - name: Fade Right
     key: .fade-right
 - name: Emphasis Animation
+  description: The Emphasis Animation changes the appearance of an element.
   items: 
   - name: Scale Up
     key: .grow
@@ -23,13 +26,15 @@
   - name: Strike Through
     key: .strike
 - name: Color Animation
+  description: The Color Animation changes the color of an element.
   items:
   - name: Highlight ${{value}}
     key: .custom .hl-${{value}}
     hidden: true
     values: [white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
     shownValues: [red, yellow, green, blue]
-- name: Color Animation Current
+- name: Current Color Animation 
+  description: The Current Color Animation changes the color of an element. The color is reset as soon as the next animation is played.
   items:
   - name: Highlight Current ${{value}} 
     key: .custom .hl-current-${{value}}
@@ -37,14 +42,17 @@
     values: [white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
     shownValues: [red, yellow, green, blue]
 - name: Exit Animation
+  description: Elements start visible and disappear with the specified animation.
   items: 
   - name: Fade Out
     key: .fade-out
 - name: Entry + Exit Animation
+  description: The animation consists of a entrance and an exit part which are both triggered seperatly.
   items: 
   - name: Fade In Then Out
     key: .fade-in-then-out
 - name: Animation Order
+  description: The order of the animation can be set on the elements by giving them a `fragment-index`.
   items: 
   - name: ${{value}}. Animation
     key: data-fragment-index="${{value}}"
