@@ -278,7 +278,7 @@ The standard template offers a range of utility CSS-classes. They are available 
 ## Create your own Template
 You can create your own template and use it in your presentation by specifying the path to your template folder in the Front Matter Configuration of the first slide.
 
-```
+```yaml
 ---
 template: ./path/to/your-template-folder
 ---
@@ -287,11 +287,11 @@ template: ./path/to/your-template-folder
 Start off by selecting `Menu / File / Create Template`. This will copy the standard template to your desired location. This is important, because you probably don't want to start from scratch.
 
 ### The `config.yml` File
-At the top-level of your template-directory, there has to be a `config.yml` file. It is the heart of the template and references all other files, which have to be included. 
+At the top-level of your template-directory, there has to be a `config.yml` file. It is the heart of the template and references all other needed files. 
 
 > Be aware, that all files referenced in `config.yml` have to be inside the template folder.
 
-Take a look at parts of the standard templates `config.yml` file. Some entries are explained in more detail below.
+Take a look at the standard templates `config.yml` file. Some entries are explained in more detail below.
 
 ```yaml
 # Entry point script which must call `RevealEditor.configure()`.
@@ -347,10 +347,40 @@ toolbar:
   slideStyles: ./toolbar/slideStyles.yml
 ```
 
-- All files inside template folder
+### Entry Script (`entry`)
+The specified entry script **must** initialize Reveal.js. Otherwise the presentations using your template will not be displayed. In a normal Reveal.js presentation, we would have to call [`Reveal.initialize()`](https://revealjs.com/initialization/). When using MoonSlide, you have to call `MoonSlide.initialize()` instead, so we can override some options for the live previews. The function calls are forwarded to the `Reveal` object, so the API is exactly the same as it is in Reveal.js. Here is an example entry script.
 
+```js
+Moonslide.initialize({ 
+  controls: true,
+  progress: true,
+  history: true,
+  plugins: [RevealHighlight, RevealMath]
+})
+```
 
-- Menu: Create own template -> don't start from scratch
-- Explain config.yml
-- Toolbar
-- block vs. inline images
+Take a look at all [configuration options](https://revealjs.com/initialization/).
+
+### Slide Customization (`slide`)
+If you want to define a wrapper for all slides, e.g., to a header or footer to your presentation, you can provide you custom `slide.html` file. The contents of the file will be wrapped around every slide from the presentation individually. There has to be the token `@@content@@` inside the HTML-file, where the slides will be injected. Have a look at the `slide.html` file of the standard template, which can be used as a starting point to add a header or a footer.
+
+```html
+<div class="slide-wrapper">
+    <!-- <div>Insert header here</div> -->
+    @@content@@
+    <!-- <div>Insert footer here</div> -->
+</div>
+```
+
+### Define Layouts (`layouts`)
+To define your own layout, just create a HTML-file with your layout and reference it inside `config.yml`. Put the token `@@slot@@` for every slot there is inside the layout. Take a look at the `cols-3.html` file, which defines the layout `cols-3` (with 3 slots).
+
+```html
+<div class="layout cols cols-3">
+    <div class="slot">@@slot@@</div>
+    <div class="slot">@@slot@@</div>
+    <div class="slot">@@slot@@</div>
+</div>
+```
+
+### Customize Toolbar (`toolbar`)
