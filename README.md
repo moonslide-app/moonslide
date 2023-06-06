@@ -246,6 +246,22 @@ There are two themes which you can choose from `black` and `white`. Every theme 
 | ![](./docs/theme-black.png) | ![](./docs/theme-white.png) |
 
 ### Layouts
+The standard template offers 18 layouts grouped into four categories: 
+
+- **`Base`**: The `base` layout is the default and consits of just one slot which fills the whole slide.
+- **`Cols`**: Groups the content into vertical columns. Available layouts are `cols-2`, `cols-3` and `cols-4`.
+- **`Grid`**: Groups the content into a grid with various amount of items. Available layouts are `grid-3`, `grid-3-right`, `grid-4`, `grid-5`, `grid-6`, `grid-7`, `grid-8` and `grid-9`. 
+- **`Title`**: Groups the content into a title and a sublayout. Available layouts are `title-content`, `title-cols-2`, `title-cols-3`, `title-grid-3`, `title-grid-3-right` and `title-grid-4`.
+
+Take a look at an example of every category:
+
+|:--|:--|
+| `layout: base` | ![](./docs/layout-base.png) |
+| `layout: cols-3` | ![](./docs/layout-cols-3.png) |
+| `layout: grid-3` | ![](./docs/layout-grid-3.png) |
+| `layout: title-cols-2` | ![](./docs/layout-title-cols-2.png) |
+
+
 ### Helper Classes
 
 ## Create your own Template
