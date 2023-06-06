@@ -6,7 +6,6 @@ export async function exportPdf(outputPath: string): Promise<string> {
 
     console.log(`Loading export window with output path: ${outputPath}`)
     pdfWindow.loadURL('reveal://preview/?print-pdf')
-    pdfWindow.webContents.insertCSS('html.print-pdf .reveal .slides .pdf-page:last-child { page-break-after: avoid; }')
 
     try {
         await pdfWindow.webContents.executeJavaScript('new Promise(resolve => { Reveal.on("pdf-ready", resolve) })')
