@@ -63,7 +63,10 @@ function App() {
                             />
                             <Dropzone
                                 className="flex-grow overflow-hidden"
-                                acceptedExtensions={[...acceptedFileTypes.images, ...acceptedFileTypes.videos]}
+                                accept={{
+                                    'image/*': acceptedFileTypes.images,
+                                    'video/*': acceptedFileTypes.videos,
+                                }}
                                 onFileDropped={addMedia}
                             >
                                 <CodeMirrorEditor
