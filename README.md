@@ -55,7 +55,9 @@ layout: cols-2
 ---
 
 ## Slide 1 - Slot 1
+
 ***
+
 ## Slide 1 - Slot 2
 
 ---
@@ -63,9 +65,13 @@ layout: cols-3
 ---
 
 ## Slide 2 - Slot 1 
+
 ***
+
 ## Slide 2 - Slot 2
+
 ***
+
 ## Slide 2 - Slot 3
 ```
 
