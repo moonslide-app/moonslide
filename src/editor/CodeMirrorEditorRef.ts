@@ -226,22 +226,26 @@ export function useCodeMirrorEditorRef(
                 }
             },
             onAddMedia(path) {
-                if (!editorView.current) return
+                const view = editorView.current
+                const state = view?.state
+                const currentSlide = view && findCurrentSlide(view.state)
+                if (!view || !state || !currentSlide) return
+
                 const encodedPath = encodeURI(path)
+                const position = state.selection.main.head
+                const line = state.doc.lineAt(position)
 
-                const currentSlide = findCurrentSlide(editorView.current.state)
-                if (!currentSlide) return
+                if (position <= currentSlide.frontMatter.to) {
+                    if (line.text.trim().endsWith(':')) {
+                        insertAtEndOfLine(view, encodedPath, line)
+                    } else {
+                        insertAtEndOfLine(view, `\n${encodedPath}`, line)
+                    }
+                } else {
+                    insertAtEndOfLine(view, `\n![](${encodedPath})`, line)
+                }
 
-                const currentMarkdown = markdownSelectionInSlide(editorView.current, currentSlide)
-                const position = EditorSelection.range(currentMarkdown.to, currentMarkdown.to)
-                let imageTag: ModifiedString = { newValue: '', leadingOffset: 0, trailingOffset: 0 }
-
-                const selection = changeInRange(editorView.current, position, (_, doc) => {
-                    imageTag = addSpaceIfNeeded(doc, position.to, `![](${encodedPath})`, true, true)
-                    return imageTag.newValue
-                })
-                const cursorPosition = selection.to + imageTag.leadingOffset + 2 - imageTag.newValue.length
-                setCursorPosition(editorView.current, cursorPosition)
+                setCursorPosition(editorView.current, position)
             },
         }),
         [toolbarConfig]
