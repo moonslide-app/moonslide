@@ -1,8 +1,6 @@
-import { EditorSelection } from '@codemirror/state'
 import { EditorView } from 'codemirror'
 import { Ref, RefObject, useImperativeHandle } from 'react'
 import {
-    ModifiedString,
     SimpleRange,
     addSpaceIfNeeded,
     changeInRange,
