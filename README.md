@@ -255,6 +255,7 @@ The standard template offers 18 layouts grouped into four categories:
 
 Take a look at an example of every category:
 
+| Layout | Image |
 |:--|:--|
 | `layout: base` | ![](./docs/layout-base.png) |
 | `layout: cols-3` | ![](./docs/layout-cols-3.png) |
