@@ -1,3 +1,4 @@
+import { doNotThrow } from '../../src-shared/entities/utils'
 import { imageFilter } from '../store/FileFilters'
 import { CodeMirrorEditorRef } from './CodeMirrorEditorRef'
 
@@ -66,6 +67,9 @@ export function blockBlockquote(editor: CodeMirrorEditorRef) {
 }
 
 export async function selectMedia(editor: CodeMirrorEditorRef) {
-    const filePath = await window.ipc.files.selectFile('Open Presentation', [imageFilter])
-    editor.onAddMedia(filePath)
+    const [success, filePath] = await doNotThrow(() => window.ipc.files.selectFile('Open Presentation', [imageFilter]))
+
+    if (success && filePath) {
+        editor.onAddMedia(filePath)
+    }
 }
