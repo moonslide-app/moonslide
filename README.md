@@ -164,8 +164,8 @@ title: My First Presentation
 author: Markdown Enthusiast
 # Apply default values for all slides (-> Slide Configuraton)
 defaults: 
-	transition: zoom
-	layout: title-content
+  transition: zoom
+  layout: title-content
 ---
 ```
 
@@ -194,9 +194,9 @@ Custom classes can be added to every slide. These classes are usually defined in
 ```yaml
 ---
 class:
-	- position-center  # Centers the content vertically
-	- text-center      # Centers the text horizontally
-	- text-red         # Changes the text color to red 
+  - position-center  # Centers the content vertically
+  - text-center      # Centers the text horizontally
+  - text-red         # Changes the text color to red 
 ---
 
 # My Customized Heading
