@@ -28,7 +28,7 @@ A template is a folder which contains all relevant assets to generate the Reveal
 - The used Reveal.js distribution
 - The definition of the available themes.
 - The definition of the available layouts.
-- Additional stylesheets with helper classes. 
+- Additional stylesheets with utility classes. 
 - The configuration of the toolbar inside the app.
 
 Take a look at the standard template **TODO**. If you want to create your own template, take a look at the section **TODO**. 
@@ -263,9 +263,93 @@ Take a look at an example of every category:
 | `layout: title-cols-2` | ![](./docs/layout-title-cols-2.png) |
 
 
-### Helper Classes
+### Utility  Classes
+The standard template offers a range of utility CSS-classes. They are available in the toolbar properties `Style`, `Animation` and `Slide Styles`. Here is a list of the some utitliy classes (not nearly complete):
+
+- **Vertical Position (`position-`)**: `top`, `center`, `bottom`
+- **Text-Alignment (`text-`)**: `left`, `center`, `right`
+- **Font-Size (`text-`)**: `xs`, `sm`, `base`, `lg`, `xl`, ...
+- **Font-Color (`text-`)**: `main`, `white`, `black`, `red`,  `green`, `blue`, ...
+- **Image (image-)**: `cover`, `contain`, `center`, ...
+- **Width (w-)**: `full`, `half`, `0`, `1`, `2`, `3`, `4`, ...
+- **Height (h-)**: `full`, `half`, `0`, `1`, `2`, `3`, `4`, ...
+- **Margin (m-)**: `0`, `0.5`, `1`, `1.5`, `2`, `2.5`, `3`, ...
 
 ## Create your own Template
+You can create your own template and use it in your presentation by specifying the path to your template folder in the Front Matter Configuration of the first slide.
+
+```
+---
+template: ./path/to/your-template-folder
+---
+```
+
+Start off by selecting `Menu / File / Create Template`. This will copy the standard template to your desired location. This is important, because you probably don't want to start from scratch.
+
+### The `config.yml` File
+At the top-level of your template-directory, there has to be a `config.yml` file. It is the heart of the template and references all other files, which have to be included. 
+
+> Be aware, that all files referenced in `config.yml` have to be inside the template folder.
+
+Take a look at parts of the standard templates `config.yml` file. Some entries are explained in more detail below.
+
+```yaml
+# Entry point script which must call `RevealEditor.configure()`.
+entry: ./index.js
+# Entry point script and stylesheet(s) of the reveal.js distribution.
+reveal:
+  entry: ./reveal_js/dist/reveal.js
+  stylesheets: ./reveal_js/dist/reveal.css
+# Additional stylesheets which are loaded after reveal and theme stylesheets.
+stylesheets: ./styles/index.css
+# Additional scripts which are loaded after the reveal entry script, but before the entry script
+# This property is suitable to specify additional (reveal.js) plugins.
+scripts:
+  - ./reveal_js/plugin/highlight/highlight.js
+  - ./reveal_js/plugin/math/math.js
+  - ./reveal_js/plugin/search/search.js
+  - ./reveal_js/plugin/zoom/zoom.js
+# HTML file which allows to define a wrapper around all slides. 
+# Must contain a `@@content@@` token where the slide content will be placed.
+slide: ./slide.html
+# Definition of themes which add additional stylesheets.
+themes:
+  - name: black
+    default: true
+    stylesheets:
+      - ./reveal_js/dist/theme/black.css
+      - ./styles/colors/black.css
+      - ./styles/code/stackoverflow-dark.css
+  - name: white
+    stylesheets:
+      - ./reveal_js/dist/theme/white.css
+      - ./styles/colors/white.css
+      - ./styles/code/stackoverflow-light.css
+# Definition of layouts which are used to build the slides.
+# Every layout must contain at least one `@@slot@@` token where the content is placed.
+layouts:
+  - name: base
+    default: true
+    path: ./layouts/base.html
+  - name: cols-3
+    path: ./layouts/cols-3.html
+  - name: grid-3
+    path: ./layouts/grid-3-left.html
+  - name: title-cols-2
+    path: ./layouts/title-cols-2.html
+# For every section of the toolbar a separate file can be specified 
+# which lists all items to show in this section
+toolbar:
+  layouts: ./toolbar/layouts.yml
+  styles: ./toolbar/styles.yml
+  animation: ./toolbar/animation.yml
+  slide: ./toolbar/slide.yml
+  slideStyles: ./toolbar/slideStyles.yml
+```
+
+- All files inside template folder
+
+
 - Menu: Create own template -> don't start from scratch
 - Explain config.yml
 - Toolbar
