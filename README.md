@@ -32,7 +32,7 @@ transition: zoom
 ---
 
 # First Slide
-This is the first slide.
+## This is the first slide.
 
 ---
 layout: cols-2
@@ -49,24 +49,24 @@ The horizontal rule (`<hr>`) markers `---` and `***` have a special meaning when
 - `---` marks the separation between a Markdown and a YAML block and splits the content up into indivdual slides.
 - `***` seperates indiviual *slots* inside a slide. These are important when working with **TODO** layouts.
 
-```
+```yaml
 ---
 layout: cols-2
 ---
 
-Slide 1 - Slot 1
+## Slide 1 - Slot 1
 ***
-Slide 1 - Slot 2
+## Slide 1 - Slot 2
 
 ---
 layout: cols-3
 ---
 
-Slide 2 - Slot 1 
+## Slide 2 - Slot 1 
 ***
-Slide 2 - Slot 2
+## Slide 2 - Slot 2
 ***
-Slide 2 - Slot 3
+## Slide 2 - Slot 3
 ```
 
 
