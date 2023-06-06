@@ -32,7 +32,7 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
 
     const parsedSlides: Slide[] = await Promise.all(
         slidesConfig.map(async (slideConfig, i) => {
-            const markdown = slidesMarkdown[i] || ''
+            const markdown = `\n${slidesMarkdown[i] || ''}\n`
             const parseResults = markdown
                 .split(SLOT_SEPERATOR)
                 .map(slot => slot.trim())

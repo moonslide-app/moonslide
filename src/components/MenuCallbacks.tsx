@@ -1,3 +1,4 @@
+import { doNotThrow } from '../../src-shared/entities/utils'
 import { useEditorStore } from '../store'
 import { htmlFilter, markdownFilter } from '../store/FileFilters'
 import { openPreviewWindow } from './PreviewWindow'
@@ -32,16 +33,28 @@ export function MenuCallbacks() {
     })
 
     async function newPresentation() {
-        const filePath = await window.ipc.files.selectOutputFile('New Presentation', [markdownFilter])
-        await saveOrDiscardChanges()
-        await window.ipc.files.saveFile(filePath, '')
-        changeEditingFile(filePath)
+        const [success, filePath] = await doNotThrow(async () => {
+            const filePath = await window.ipc.files.selectOutputFile('New Presentation', [markdownFilter])
+            await saveOrDiscardChanges()
+            return filePath
+        })
+
+        if (success && filePath) {
+            await window.ipc.files.saveFile(filePath, '---\n---')
+            await changeEditingFile(filePath)
+        }
     }
 
     async function open() {
-        const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
-        await saveOrDiscardChanges()
-        changeEditingFile(filePath)
+        const [success, filePath] = await doNotThrow(async () => {
+            const filePath = await window.ipc.files.selectFile('Open Presentation', [markdownFilter])
+            await saveOrDiscardChanges()
+            return filePath
+        })
+
+        if (success && filePath) {
+            await changeEditingFile(filePath)
+        }
     }
 
     async function save() {
@@ -49,47 +62,65 @@ export function MenuCallbacks() {
     }
 
     async function saveAs() {
-        const filePath = await window.ipc.files.selectOutputFile('Save Presentation', [markdownFilter])
-        await window.ipc.files.saveFile(filePath, getContent())
-        await changeEditingFile(filePath)
+        const [success, filePath] = await doNotThrow(() =>
+            window.ipc.files.selectOutputFile('Save Presentation', [markdownFilter])
+        )
+
+        if (success && filePath) {
+            await window.ipc.files.saveFile(filePath, getContent())
+            await changeEditingFile(filePath)
+        }
     }
 
     async function exportPdf() {
-        const filePath = await window.ipc.files.selectOutputFile('Export Presentation', [
-            { name: 'PDF', extensions: ['pdf'] },
-        ])
-        await window.ipc.presentation.exportPdf(filePath)
-        toast({
-            title: 'PDF Export successful',
-            description: `The presentation was exported to '${filePath}'.`,
-        })
+        const [success, filePath] = await doNotThrow(() =>
+            window.ipc.files.selectOutputFile('Export Presentation', [{ name: 'PDF', extensions: ['pdf'] }])
+        )
+        if (success && filePath) {
+            await window.ipc.presentation.exportPdf(filePath)
+            toast({
+                title: 'PDF Export successful',
+                description: `The presentation was exported to '${filePath}'.`,
+            })
+        }
     }
 
     async function exportPresentationBundle() {
-        const folderPath = await window.ipc.files.selectOutputFolder('Export Presentation Bundle')
-        await exportHTMLPresentation(folderPath, true)
-        toast({
-            title: 'HTML Bundle Export successful',
-            description: `The presentation was exported to '${folderPath}'.`,
-        })
+        const [success, folderPath] = await doNotThrow(() =>
+            window.ipc.files.selectOutputFolder('Export Presentation Bundle')
+        )
+        if (success && folderPath) {
+            await exportHTMLPresentation(folderPath, true)
+            toast({
+                title: 'HTML Bundle Export successful',
+                description: `The presentation was exported to '${folderPath}'.`,
+            })
+        }
     }
 
     async function exportPresentationOnly() {
-        const filePath = await window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter])
-        await exportHTMLPresentation(filePath, false)
-        toast({
-            title: 'HTML Presentation Export successful',
-            description: `The presentation was exported to '${filePath}'.`,
-        })
+        const [success, filePath] = await doNotThrow(() =>
+            window.ipc.files.selectOutputFile('Export Presentation Only', [htmlFilter])
+        )
+        if (success && filePath) {
+            await exportHTMLPresentation(filePath, false)
+            toast({
+                title: 'HTML Presentation Export successful',
+                description: `The presentation was exported to '${filePath}'.`,
+            })
+        }
     }
 
     async function createTemplate() {
-        const folderPath = await window.ipc.files.selectOutputFolder('Export Template')
-        await window.ipc.presentation.exportTemplate(folderPath)
-        toast({
-            title: 'Standard Template Export successful',
-            description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
-        })
+        const [success, folderPath] = await doNotThrow(() => window.ipc.files.selectOutputFolder('Export Template'))
+
+        if (success && folderPath) {
+            await window.ipc.presentation.exportTemplate(folderPath)
+            toast({
+                title: 'Standard Template Export successful',
+                description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
+            })
+        }
     }
 
     async function reloadPreviews() {

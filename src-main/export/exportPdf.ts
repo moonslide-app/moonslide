@@ -2,14 +2,10 @@ import { BrowserWindow } from 'electron'
 import fs from 'fs/promises'
 
 export async function exportPdf(outputPath: string): Promise<string> {
-    const pdfWindow = new BrowserWindow({
-        show: false,
-    })
+    const pdfWindow = new BrowserWindow({ show: false })
 
     console.log(`Loading export window with output path: ${outputPath}`)
-    pdfWindow.loadURL('reveal://export/?print-pdf')
-
-    pdfWindow.webContents.insertCSS('html.print-pdf .reveal .slides .pdf-page:last-child { page-break-after: avoid; }')
+    pdfWindow.loadURL('reveal://preview/?print-pdf')
 
     try {
         await pdfWindow.webContents.executeJavaScript('new Promise(resolve => { Reveal.on("pdf-ready", resolve) })')

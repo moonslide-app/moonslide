@@ -1,0 +1,4 @@
+/* Prevent adding empty page after last slide */
+html.print-pdf .reveal .slides .pdf-page:last-child {
+    page-break-after: avoid;
+}
