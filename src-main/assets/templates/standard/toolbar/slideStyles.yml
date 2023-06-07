@@ -1,5 +1,5 @@
 - name: Vertical Position
-  description: Adjust the vertical position of items inside their slots. This only works if the items have some space to move. Generally works better for layouts with a small amount of slots.
+  description: Adjusts the vertical position of items inside their slots. This only works if the items have some space to move. Generally works better for layouts with a small amount of slots.
   items:
   - name: Top of Parent
     key: position-top
