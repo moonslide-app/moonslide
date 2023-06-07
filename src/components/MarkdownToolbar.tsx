@@ -41,6 +41,59 @@ import {
 import { HelpTooltip } from './HelpTooltip'
 import { CodeMirrorEditorRef } from '../editor/CodeMirrorEditorRef'
 
+function ItemsPresentation(props: { editorRef: CodeMirrorEditorRef }) {
+    const items: ToolbarEntry[] = [
+        {
+            name: 'Presentation',
+            items: [
+                {
+                    id: 'presentation:template',
+                    name: 'Template',
+                    key: 'template',
+                    description:
+                        'You can either use the default template `standard` or specify a path to your custom template folder. See [Create your own Template](https://github.com/reveal-editor/reveal-editor/tree/feature/improve-readme#create-your-own-template-).',
+                },
+                {
+                    id: 'presentation:theme',
+                    name: 'Theme',
+                    key: 'theme',
+                    description:
+                        'The theme changes the appereance of your presentation. There are two themes on the standard template: `black` and `white`.',
+                },
+                {
+                    id: 'presentation:title',
+                    name: 'Title',
+                    key: 'title',
+                    description: 'Specify the document title of the HTML-Presentation.',
+                },
+                {
+                    id: 'presentation:author',
+                    name: 'Author',
+                    key: 'author',
+                    description: 'Specify the author `meta`-tag of the HTML-Presentation.',
+                },
+                {
+                    id: 'presentation:defaults',
+                    name: 'Defaults',
+                    key: 'defaults',
+                    description:
+                        'Provide default values for the slides. A default value is used, if the same key does not exist on the slide.',
+                },
+            ],
+        },
+    ]
+
+    return (
+        <ItemsTemplateConfigurable
+            buttonTitle="Presentation"
+            layoutsConfig={items}
+            placeholder="Search presentation properties..."
+            emptyText="No presentation properties found."
+            onSelect={item => props.editorRef.onAddDataTag(item.key, true)}
+        />
+    )
+}
+
 function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
     const { editorRef } = props
     return (
@@ -252,6 +305,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     onSelect={item => editorRef?.onAddSlide(item.key, item.slots)}
                 />
             )}
+            {editorRef && <ItemsPresentation editorRef={editorRef} />}
             {editorRef && <ItemsHeadings editorRef={editorRef} />}
             {editorRef && <ItemsFormat editorRef={editorRef} />}
 
