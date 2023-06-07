@@ -135,5 +135,5 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
         return () => view?.destroy()
     }, [editingFile.openedAt])
 
-    return <div ref={editorDomNode} className={`flex-grow overflow-hidden ${props?.className ?? ''}`}></div>
+    return <div ref={editorDomNode} className={`${props?.className ?? ''}`}></div>
 })

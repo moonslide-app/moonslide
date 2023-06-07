@@ -38,23 +38,20 @@ function App() {
             <PreviewWindow ref={previewWindowRef} />
             <p className="text-sm font-medium">Editing File: {editingFile.path}</p>
             <div className="flex-grow">
-                <Allotment separator={false}>
-                    <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
-                        <div className="flex flex-col h-full">
-                            <MarkdownToolbar
-                                templateConfig={templateConfig}
-                                editorRef={codeEditorRef.current ?? undefined}
+                <div className="flex flex-col h-full">
+                    <MarkdownToolbar templateConfig={templateConfig} editorRef={codeEditorRef.current ?? undefined} />
+                    <Allotment separator={false} className="flex-grow">
+                        <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
+                            <CodeMirrorEditor ref={codeEditorRef} onUpdateCurrentSlide={showSlide} className="h-full" />
+                        </Allotment.Pane>
+                        <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
+                            <PreviewSlides
+                                ref={previewSlidesRef}
+                                clickOnSlide={num => codeEditorRef.current?.onScrollToSlide(num)}
                             />
-                            <CodeMirrorEditor ref={codeEditorRef} onUpdateCurrentSlide={showSlide} />
-                        </div>
-                    </Allotment.Pane>
-                    <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
-                        <PreviewSlides
-                            ref={previewSlidesRef}
-                            clickOnSlide={num => codeEditorRef.current?.onScrollToSlide(num)}
-                        />
-                    </Allotment.Pane>
-                </Allotment>
+                        </Allotment.Pane>
+                    </Allotment>
+                </div>
             </div>
             <ErrorAlert />
         </div>
