@@ -261,6 +261,5 @@ export {
     ToolbarItem,
     ToolbarItemGroup,
     ToolbarItemSeparator,
-    ToolbarItemShortcut,
     ToolbarShortcut,
 }
