@@ -1,3 +1,5 @@
+var MOONSLIDE_ENV = 'preview-fullscreen'
+
 const overrideConfig = { hash: true }
 
 const RealReveal = Reveal

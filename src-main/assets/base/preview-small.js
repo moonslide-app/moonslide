@@ -1,3 +1,5 @@
+var MOONSLIDE_ENV = 'preview-small'
+
 const overrideConfig = {
     hash: false,
     controls: false,
