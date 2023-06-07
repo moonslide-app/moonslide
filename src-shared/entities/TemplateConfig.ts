@@ -2,7 +2,7 @@ import { gracefulStringSchema, nullishToArray, nullishToOptional, stringOrArrayS
 import { parse as yamlParse } from 'yaml'
 import { z } from 'zod'
 import { Toolbar, loadToolbarFromPaths, toolbarFilePathsSchema } from './Toolbar'
-import { TemplateConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
+import { InvalidThemeError, TemplateConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
 
 const templateConfigSchema = z.object({
     entry: z.string(),
@@ -70,7 +70,11 @@ export function mapTemplateConfigPaths(config: TemplateConfig, mapPath: (path: s
 }
 
 export function getThemeMatching(config: TemplateConfig, match: string | undefined) {
-    const firstMatch = config.themes?.filter(theme => theme.name === match)[0]
-    const firstDefault = config.themes?.filter(theme => theme.default)[0]
-    return firstMatch ?? firstDefault
+    if (!match) return config.themes.filter(theme => theme.default).at(0)
+
+    const firstMatch = config.themes.filter(theme => theme.name === match).at(0)
+    if (firstMatch === undefined) {
+        const themeNames = config.themes.map(theme => theme.name)
+        throw new InvalidThemeError(match, themeNames)
+    } else return firstMatch
 }

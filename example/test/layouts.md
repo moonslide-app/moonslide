@@ -1,23 +1,70 @@
 ---
 template: ../../src-main/assets/templates/standard
+title: Layouts
 theme: white
-class: text-3xl 
+defaults:
+  class: text-3xl 
+layout: base
+---
+<style>
+.slot-box {
+  flex-grow: 1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: white; 
+  font-weight:600; 
+  padding: 20px;"
+}
+</style>
+
+<div class="slot-box" style="background-color: var(--color-indigo)">
+  Slot 1
+</div>
+---
+layout: cols-3
+---
+
+<div class="slot-box" style="background-color: var(--color-indigo)">
+  Slot 1
+</div>
+***
+<div class="slot-box" style="background-color: var(--color-purple)">
+  Slot 2
+</div>
+***
+<div class="slot-box" style="background-color: var(--color-pink)">
+  Slot 3
+</div>
+
+---
+layout: grid-3
+---
+
+<div class="slot-box" style="background-color: var(--color-indigo)">
+  Slot 1
+</div>
+***
+<div class="slot-box" style="background-color: var(--color-purple)">
+  Slot 2
+</div>
+***
+<div class="slot-box" style="background-color: var(--color-pink)">
+  Slot 3
+</div>
+
+---
 layout: title-cols-2
 ---
 
-<div style="background-color: var(--color-indigo); flex-grow: 1; display: flex; align-items: center; justify-content: center; color: white; font-weight:600; padding: 10px; 0"   >
-  Inhalt 1
+<div class="slot-box" style="background-color: var(--color-indigo)">
+  Slot 1
 </div>
-
 ***
-
-<div style="background-color: var(--color-purple); flex-grow: 1; display: flex; align-items: center; justify-content: center; color: white; font-weight:600; padding: 10px; 0"  >
-  Inhalt 2
+<div class="slot-box" style="background-color: var(--color-purple)">
+  Slot 2
 </div>
-
 ***
-
-<div style="background-color: var(--color-pink); flex-grow: 1; display: flex; align-items: center; justify-content: center; color: white; font-weight:600; padding: 10px; 0"  >
-  Inhalt 3
+<div class="slot-box" style="background-color: var(--color-pink)">
+  Slot 3
 </div>
-

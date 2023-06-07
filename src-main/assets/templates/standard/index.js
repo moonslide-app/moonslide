@@ -10,7 +10,7 @@ RevealEditor.initialize({
     width: 1280,
     height: 720,
     // Add desired plugins (the scripts must be included in config.yml)
-    plugins: [RevealHighlight, RevealMath, RevealZoom, RevealSearch],
+    plugins: [RevealHighlight, RevealMath, RevealZoom, RevealSearch, RevealNotes],
     // Changing those properties is not compatible with the layout system used
     // in this template, thus it's not recommended to change them
     center: false,

@@ -1,35 +1,43 @@
 - name: Transition
+  description: Configure the slides transition. For more information see [Transitions (Reveal.js)](https://revealjs.com/transitions/). 
   items: 
     - name: 'Transition'
       key: 'transition'
       description: Possible values are `none`, `fade`, `slide`, `convex`, `concave` and `zoom`. Entrance and exit transitions can be specified by appending *-in* or *-out* e.g., `slide-in`.
     - name: 'Background Transition'
       key: 'background-transition'
-      description: Configures the transition of the background. Possible values are the same as `transition`.
+      description: Configures the transition of the background. Possible values are the same as for the property `transition`.
     - name: 'Transition Speed'
       key: 'transition-speed'
-      description: Possible values are `default`, `fast` and `slow`.
+      description: Adjusts the speed of the transition. Possible values are `default`, `fast` and `slow`.
 - name: Background
+  description: Configure the slides background. For more information see [Backgrounds (Reveal.js)](https://revealjs.com/backgrounds/). 
   items:
     - name: 'Opacity'
       key: 'background-opacity'
       description: Sets the opacity of the background. Values are in the range from 0 to 1.
     - name: Image
       key: 'background-image'
-      description: Specify a local path or an url to an image which will be used as the background.
+      description: Specify a local path or an url to an image which will be used as the background of the slide. *Make sure to always start relative paths with `./` or `../`.*
     - name: Size
       key: 'background-size'
-      description: Specifies the size of the background. Possible values are `contain`, `cover` or a relative or absolute size. See [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/background-size).
+      description: Adjusts the size of the background. Possible values are `contain`, `cover` or a relative or absolute value. See [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/background-size).
     - name: 'Position'
       key: 'background-position'
+      description: Adjusts the position of the background. Possible values are `center`, `top`, `bottom`, `left`, `right` or a relative or absolute value. See [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/background-position).
     - name: Video
       key: 'background-video'
+      description: Specify a local path or an url to a video which will be used as the background of the slide. *Make sure to always start relative paths with `./` or `../`.*
     - name: 'Video Muted'
       key: 'background-video-muted'
+      description: Set to `true`, if the `background-video` should be muted.
     - name: 'Video Loop'
       key: 'background-video-loop'
+      description: Set to `true`, if the `background-video` should be looped.
 - name: Auto Animate
+  description: Configure automatic animation on the slide. For more information see [Auto-Animate (Reveal.js)](https://revealjs.com/auto-animate/).
   items: 
     - name: 'Auto Animate'
       key: 'auto-animate'
+      description: If set to `true` on two consecutive slides, it will try to animate the changes between them automatically.  
       
