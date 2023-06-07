@@ -112,6 +112,8 @@ The roses are **red**{ .text-red }.
 <p>The roses are <strong class="text-red">red</strong>.</p>
 ```
 
+You find attributes provided by your template inside the toolbar menu `Styles`. 
+
 ### Bracketed Spans
 If an arbitrary text should be wrapped inside a span in order to style it, a bracketed span can be used. For this the extension [markdown-it-bracketed-spans](https://github.com/mb21/markdown-it-bracketed-spans) is used. Here are some examples how it works:
 
@@ -184,7 +186,17 @@ background-image: ./media/house.jpg
 > Make sure to start relative paths with `./` or `../` inside a Front Matter Block. 
 
 ## Animation
+Animation on Slides can be enabled by applying CSS classes to elements. Most features are based on Reveal.js [Fragments](https://revealjs.com/fragments/). The standard template also contains some additional useful classes. Take a look at the toolbar menu `Animation` to get an overview over the offered functionality. 
 
+```yaml
+---
+---
+
+# First Heading { .fragment }
+## Second Heading { .fragment .fade-left }
+### Third Heading { .fragment .strike }
+
+```
 
 ## Front Matter Configuration
 ### Presentation Configuration
@@ -214,7 +226,7 @@ The `defaults` are merged with the configuration of every individual slide. Ever
 There are configuration options which can be applied to every slide individually.
 
 #### Layout
-Every slide uses a layout to structure its contents in a certain way. Every layout has a number of *slots*, which are containers for your content. Use the slot separator `***` to fill content into the next slot. Take a look at the available [layouts](#layouts) of the standard template.
+Every slide uses a layout to structure its contents in a certain way. Every layout has a number of *slots*, which are containers for your content. Use the slot separator `***` to fill content into the next slot. Take a look at the available [layouts](#layouts) of the standard template. You also find the available layouts of the used template inside the toolbar menu `+`, where you can directly insert a new slide, with the chosen layout.
 
 ```yaml
 ---
@@ -230,7 +242,7 @@ layout: cols-2
 ```
 
 #### Custom Classes 
-Custom classes can be added to every slide. These classes are usually defined inside the template. The standard template comes with a lot of useful classes to style your slides with. In some cases it may be more useful to only style a custom element using the Markdown [attributes syntax](#attributes).
+Custom classes can be added to every slide. These classes are usually defined inside the template. The standard template comes with a lot of useful classes to style your slides with. You can find the available styles inside the toolbar menu `Slide Styles`. In some cases it may be more useful to only style a custom element using the Markdown [attributes syntax](#attributes). 
 
 ```yaml
 ---
@@ -244,7 +256,7 @@ class:
 ```
 
 #### Reveal.js Data-Attributes
-You can specify every other keyword on the slide, and it will be directly passed to the HTML-Elemnt of the slide as a data-tag. In this way a lot of Reveal.js features can be used. These are some possible values, which are available in Reveal.js:
+You can specify every other keyword on the slide, and it will be directly passed to the HTML-Elemnt of the slide as a data-tag. In this way a lot of Reveal.js features can be used. These are some possible values, which are available in Reveal.js. You can also find them inside the toolbar menu `Slide`.
 
 ```yaml
 ---
