@@ -208,7 +208,7 @@ Animation on slides can be enabled by applying CSS classes to elements. Most fea
 
 ## Front Matter Configuration 🛠️
 ### Presentation Configuration
-In the Front Matter block of the first slide, there are some attributes which configure the whole presentation.
+In the Front Matter block of the first slide, there are some attributes which configure the whole presentation. You can also find these attributes inside the the toolbar menu `Presentation`.
 
 ```yaml
 ---
