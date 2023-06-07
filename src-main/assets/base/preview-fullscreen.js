@@ -1,11 +1,15 @@
-var RevealEditor = {
-    ...Reveal,
+var MOONSLIDE_ENV = 'preview-fullscreen'
+
+const overrideConfig = { hash: true }
+
+const RealReveal = Reveal
+var Reveal = {
+    ...RealReveal,
     initialize(config, ...args) {
-        const newConfig = {
-            ...config,
-            hash: true,
-        }
-        Reveal.initialize(newConfig, ...args)
+        RealReveal.initialize({ ...config, ...overrideConfig }, ...args)
+    },
+    configure(config, ...args) {
+        RealReveal.configure({ ...config, ...overrideConfig }, ...args)
     },
 }
 

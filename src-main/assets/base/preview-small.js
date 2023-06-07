@@ -1,24 +1,30 @@
-var RevealEditor = {
-    ...Reveal,
+var MOONSLIDE_ENV = 'preview-small'
+
+const overrideConfig = {
+    hash: false,
+    controls: false,
+    progress: false,
+    history: false,
+    keyboard: false,
+    overview: false,
+    touch: false,
+    shuffle: false,
+    fragments: false,
+    autoAnimate: false,
+    autoSlide: false,
+    transition: 'none',
+    slideNumber: false,
+    autoPlayMedia: false,
+}
+
+const RealReveal = Reveal
+var Reveal = {
+    ...RealReveal,
     initialize(config, ...args) {
-        const newConfig = {
-            ...config,
-            hash: false,
-            controls: false,
-            progress: false,
-            history: false,
-            keyboard: false,
-            overview: false,
-            touch: false,
-            shuffle: false,
-            fragments: false,
-            autoAnimate: false,
-            autoSlide: false,
-            transition: 'none',
-            slideNumber: false,
-            autoPlayMedia: false,
-        }
-        Reveal.initialize(newConfig, ...args)
+        RealReveal.initialize({ ...config, ...overrideConfig }, ...args)
+    },
+    configure(config, ...args) {
+        RealReveal.configure({ ...config, ...overrideConfig }, ...args)
     },
 }
 
