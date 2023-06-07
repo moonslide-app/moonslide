@@ -400,10 +400,10 @@ toolbar:
 ```
 
 ### Entry Script (`entry`)
-The specified entry script **must** initialize Reveal.js. Otherwise the presentations using your template will not be displayed. In a normal Reveal.js presentation, we would have to call [`Reveal.initialize()`](https://revealjs.com/initialization/). When using MoonSlide, you have to call `MoonSlide.initialize()` instead, so we can override some options for the live previews. The function calls are forwarded to the `Reveal` object, so the API is exactly the same as it is in Reveal.js. Here is an example entry script.
+The specified entry script **must** initialize Reveal.js. Otherwise the presentations using your template will not be displayed. This means there has to be at least the call `Reveal.initialize()` inside your enetry script. Here is an example entry script:
 
 ```js
-Moonslide.initialize({ 
+Reveal.initialize({ 
   controls: true,
   progress: true,
   history: true,
