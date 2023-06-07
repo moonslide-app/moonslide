@@ -208,7 +208,7 @@ Animation on slides can be enabled by applying CSS classes to elements. Most fea
 
 ## Front Matter Configuration 🛠️
 ### Presentation Configuration
-In the Front Matter block of the first slide, there are some attributes which configure the whole presentation.
+In the Front Matter block of the first slide, there are some attributes which configure the whole presentation. You can also find these attributes inside the the toolbar menu `Presentation`.
 
 ```yaml
 ---
@@ -400,10 +400,10 @@ toolbar:
 ```
 
 ### Entry Script (`entry`)
-The specified entry script **must** initialize Reveal.js. Otherwise the presentations using your template will not be displayed. In a normal Reveal.js presentation, we would have to call [`Reveal.initialize()`](https://revealjs.com/initialization/). When using MoonSlide, you have to call `MoonSlide.initialize()` instead, so we can override some options for the live previews. The function calls are forwarded to the `Reveal` object, so the API is exactly the same as it is in Reveal.js. Here is an example entry script.
+The specified entry script **must** initialize Reveal.js. Otherwise the presentations using your template will not be displayed. This means there has to be at least the call `Reveal.initialize()` inside your entry script.
 
 ```js
-Moonslide.initialize({ 
+Reveal.initialize({ 
   controls: true,
   progress: true,
   history: true,
@@ -412,6 +412,21 @@ Moonslide.initialize({
 ```
 
 Take a look at all [configuration options](https://revealjs.com/initialization/) of Reveal.js.
+
+#### Different Environments
+Your presentation will be presented in different environments: as small slide previews, as a full-screen preview and in an exported HTML file. If you need to change the behaviour of your presentation based on the environment, e.g., to deactivate some features inside the small slide previews, you can check the environment variable `MOONSLIDE_ENV`. The possible values are `preview-small`, `preview-fullscreen` and `export`. 
+
+```js
+if (MOONSLIDE_ENV === 'preview-small') {
+	console.log('We are inside a small preview slide.')
+} else if (MOONSLIDE_ENV === 'preview-fullscreen') {
+	console.log('We are inside a fullscreen preview.')
+} else if (MOONSLIDE_ENV === 'export') {
+	console.log('We are inside an exported HTML presentation.')
+}
+```
+
+> Note that Moonslide automatically disables some features on the small slide previews, like slide numbers, media auto play, etc.
 
 ### Slide Customization (`slide`)
 If you want to define a wrapper for all slides, e.g., to add a header or a footer to your presentations, you can provide a custom `slide.html` file. The contents of the file will be wrapped around every slide of the presentation individually. There has to be the token `@@content@@` inside the HTML-file, where the slides will be injected. Have a look at the `slide.html` file of the standard template, which can be used as a starting point to add a header or a footer.
