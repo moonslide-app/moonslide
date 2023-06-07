@@ -19,15 +19,15 @@ Moonslide is a markdown based presentation editor.
 Take a look at some [demos](./demo) and download the [latest release](https://github.com/reveal-editor/reveal-editor/releases).
 
 ## Table of Contents 🔦
-- **[How it works 🔎](#how-it-works)**
-- **[What is a Template? 🤔](#what-is-a-template)**
-- **[Create your first Presentation 👩🏻‍🏫](#create-your-first-presentation)**
-- **[Markdown Syntax 📝](#markdown-syntax)**
-- **[Images and Videos 🌅](#images-and-videos)**
-- **[Animation 💫](#animation)**
-- **[Front Matter Configuration 🛠️](#front-matter-configuration)**
-- **[Standard Template 🎨](#standard-template)**
-- **[Create your own Template 🚧](#create-your-own-template)**
+- **[How it works 🔎](#how-it-works-)**
+- **[What is a Template? 🤔](#what-is-a-template-)**
+- **[Create your first Presentation 👩🏻‍🏫](#create-your-first-presentation-)**
+- **[Markdown Syntax 📝](#markdown-syntax-)**
+- **[Images and Videos 🌅](#images-and-videos-)**
+- **[Animation 💫](#animation-)**
+- **[Front Matter Configuration 🛠️](#front-matter-configuration-)**
+- **[Standard Template 🎨](#standard-template-)**
+- **[Create your own Template 🚧](#create-your-own-template-)**
 
 ## How it works 🔎
 Moonslide is based on the presentation framework [Reveal.js](https://revealjs.com/). You write your presentation in Markdown and Moonslide automatically generates a Reveal.js HTML presentation. Most features of Reveal.js are also supported in MoonSlide so it makes sense to have a look at the [Demo of Reveal.js](https://revealjs.com/) or to read their documentation. The [built-in plugins](https://revealjs.com/plugins/#built-in-plugins) of Reveal.js are also supported and included in the standard template.
@@ -50,7 +50,7 @@ A template is a folder which contains all relevant assets to generate the Reveal
 
 The template can decide to present its functionality inside the different menus of the toolbar. In this way the features are easily accessible for all users. 
 
-Take a look at the [standard template](#standard-template). If you want to create your own template, take a look at [this section](#create-your-own-template).
+Take a look at the [standard template](#standard-template-). If you want to create your own template, take a look at [this section](#create-your-own-template-).
 
 ## Create your first Presentation 👩🏻‍🏫
 Presentations are written in Markdown. For every slide there is a configuration block written in YAML inside the separators `---` similar to Front Matter. The following example shows the definition of two simple slides.
