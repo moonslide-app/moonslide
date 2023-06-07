@@ -1,5 +1,4 @@
 const overrideConfig = {
-    ...config,
     hash: false,
     controls: false,
     progress: false,
@@ -16,13 +15,14 @@ const overrideConfig = {
     autoPlayMedia: false,
 }
 
-var RevealEditor = {
-    ...Reveal,
+const RealReveal = Reveal
+var Reveal = {
+    ...RealReveal,
     initialize(config, ...args) {
-        Reveal.initialize({ ...config, ...overrideConfig }, ...args)
+        RealReveal.initialize({ ...config, ...overrideConfig }, ...args)
     },
     configure(config, ...args) {
-        Reveal.configure({ ...config, ...overrideConfig }, ...args)
+        RealReveal.configure({ ...config, ...overrideConfig }, ...args)
     },
 }
 
