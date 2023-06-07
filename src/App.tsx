@@ -14,6 +14,7 @@ import { Toaster } from './components/ui/toaster'
 import { GlobalErrors } from './components/GlobalErrors'
 import { Dropzone } from './components/Dropzone'
 import { acceptedFileTypes } from '../src-shared/constants/fileTypes'
+import { StatusBar } from './components/StatusBar'
 
 function App() {
     const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
@@ -41,28 +42,26 @@ function App() {
     return (
         <div className="flex flex-col h-screen m-auto">
             <Toaster />
-
             <GlobalErrors />
             <MenuCallbacks />
             <PreviewWindow ref={previewWindowRef} />
-            <p className="text-sm font-medium">Editing File: {editingFile.path}</p>
             <div className="flex-grow">
-                <Allotment separator={false}>
-                    <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
-                        <div className="flex flex-col h-full">
-                            <MarkdownToolbar
-                                templateConfig={templateConfig}
-                                editorRef={
-                                    codeEditorRef.current
-                                        ? {
-                                              ...codeEditorRef.current,
-                                              onAddMedia: addMedia,
-                                          }
-                                        : undefined
-                                }
-                            />
+                <div className="flex flex-col h-full">
+                    <MarkdownToolbar
+                        templateConfig={templateConfig}
+                        editorRef={
+                            codeEditorRef.current
+                                ? {
+                                      ...codeEditorRef.current,
+                                      onAddMedia: addMedia,
+                                  }
+                                : undefined
+                        }
+                    />
+                    <Allotment separator={false} className="flex-grow">
+                        <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
                             <Dropzone
-                                className="flex-grow overflow-hidden"
+                                className="h-full"
                                 accept={{
                                     'image/*': acceptedFileTypes.images,
                                     'video/*': acceptedFileTypes.videos,
@@ -75,17 +74,18 @@ function App() {
                                     onUpdateCurrentSlide={showSlide}
                                 />
                             </Dropzone>
-                        </div>
-                    </Allotment.Pane>
-                    <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
-                        <PreviewSlides
-                            ref={previewSlidesRef}
-                            clickOnSlide={num => codeEditorRef.current?.onScrollToSlide(num)}
-                        />
-                    </Allotment.Pane>
-                </Allotment>
+                        </Allotment.Pane>
+                        <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
+                            <PreviewSlides
+                                ref={previewSlidesRef}
+                                clickOnSlide={num => codeEditorRef.current?.onScrollToSlide(num)}
+                            />
+                        </Allotment.Pane>
+                    </Allotment>
+                </div>
             </div>
             <ErrorAlert />
+            <StatusBar leadingText={editingFile.path} />
         </div>
     )
 }
