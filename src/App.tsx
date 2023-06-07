@@ -12,10 +12,13 @@ import { MarkdownToolbar } from './components/MarkdownToolbar'
 import { useRef } from 'react'
 import { Toaster } from './components/ui/toaster'
 import { GlobalErrors } from './components/GlobalErrors'
+import { Dropzone } from './components/Dropzone'
+import { acceptedFileTypes } from '../src-shared/constants/fileTypes'
 
 function App() {
     const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
     const templateConfig = useEditorStore(state => state.parsedPresentation?.templateConfig)
+    const getMediaPath = useEditorStore(state => state.getMediaPath)
 
     useEffectOnce(() => {
         reloadAllPreviews()
@@ -30,9 +33,15 @@ function App() {
         previewWindowRef.current?.showSlide(slideNumber)
     }
 
+    async function addMedia(path: string) {
+        const mediaPath = await getMediaPath(path)
+        codeEditorRef.current?.onAddMedia(mediaPath)
+    }
+
     return (
         <div className="flex flex-col h-screen m-auto">
             <Toaster />
+
             <GlobalErrors />
             <MenuCallbacks />
             <PreviewWindow ref={previewWindowRef} />
@@ -43,9 +52,29 @@ function App() {
                         <div className="flex flex-col h-full">
                             <MarkdownToolbar
                                 templateConfig={templateConfig}
-                                editorRef={codeEditorRef.current ?? undefined}
+                                editorRef={
+                                    codeEditorRef.current
+                                        ? {
+                                              ...codeEditorRef.current,
+                                              onAddMedia: addMedia,
+                                          }
+                                        : undefined
+                                }
                             />
-                            <CodeMirrorEditor ref={codeEditorRef} onUpdateCurrentSlide={showSlide} />
+                            <Dropzone
+                                className="flex-grow overflow-hidden"
+                                accept={{
+                                    'image/*': acceptedFileTypes.images,
+                                    'video/*': acceptedFileTypes.videos,
+                                }}
+                                onFileDropped={addMedia}
+                            >
+                                <CodeMirrorEditor
+                                    ref={codeEditorRef}
+                                    className="h-full"
+                                    onUpdateCurrentSlide={showSlide}
+                                />
+                            </Dropzone>
                         </div>
                     </Allotment.Pane>
                     <Allotment.Pane minSize={300} className="border-l-[1px]" snap>

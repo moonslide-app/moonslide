@@ -85,6 +85,11 @@ export type EditorStore = {
      * @param standalone If `true` the whole template folder is copied with the presentation.
      */
     exportHTMLPresentation(outputPath: string, standalone?: boolean): Promise<void>
+    /**
+     * Makes an ipc call to decide if the media should be copied.
+     * Returns the path which should be used to reference the media.
+     */
+    getMediaPath(path: string): Promise<string>
 }
 
 let parseTimeout: number | undefined = undefined
@@ -180,6 +185,11 @@ export const useEditorStore = create<EditorStore>()(
                 } else {
                     throw new Error('Can not export presentation before it is saved into a file.')
                 }
+            },
+            async getMediaPath(path) {
+                const markdownPath = get().editingFile.path
+                if (!markdownPath) return path
+                else return window.ipc.files.addMedia(path, markdownPath)
             },
         }),
         { name: 'editor-store' }
