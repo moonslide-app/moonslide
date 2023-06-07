@@ -413,6 +413,21 @@ Reveal.initialize({
 
 Take a look at all [configuration options](https://revealjs.com/initialization/) of Reveal.js.
 
+#### Different Environments
+Your presentation will be presented in different environments: as small slide previews, as a full-screen preview and in an exported HTML file. If you need to change the behaviour of your presentation based on the environment, e.g., to deactivate some features inside the small slide previews, you can check the environment variable `MOONSLIDE_ENV`. The possible values are `preview-small`, `preview-fullscreen` and `export`. 
+
+```js
+if (MOONSLIDE_ENV === 'preview-small') {
+	console.log('We are inside a small preview slide.')
+} else if (MOONSLIDE_ENV === 'preview-fullscreen') {
+	console.log('We are inside a fullscreen preview.')
+} else if (MOONSLIDE_ENV === 'export') {
+	console.log('WE are inside an exported HTML presentation.')
+}
+```
+
+> Note that Moonslide automatically disables some features on the small slide previews, like slide numbers, media auto play, etc.
+
 ### Slide Customization (`slide`)
 If you want to define a wrapper for all slides, e.g., to add a header or a footer to your presentations, you can provide a custom `slide.html` file. The contents of the file will be wrapped around every slide of the presentation individually. There has to be the token `@@content@@` inside the HTML-file, where the slides will be injected. Have a look at the `slide.html` file of the standard template, which can be used as a starting point to add a header or a footer.
 
