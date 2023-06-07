@@ -19,6 +19,7 @@ import {
     ToolbarButton,
     ToolbarItemSeparator,
     ToolbarItemValue,
+    ToolbarShortcut,
 } from './ui/toolbar'
 import {
     blockBlockquote,
@@ -40,9 +41,79 @@ import {
 } from '../editor/modifiers'
 import { HelpTooltip } from './HelpTooltip'
 import { CodeMirrorEditorRef } from '../editor/CodeMirrorEditorRef'
+import { useEventListener } from 'usehooks-ts'
+
+function ItemsPresentation(props: { editorRef: CodeMirrorEditorRef }) {
+    const items: ToolbarEntry[] = [
+        {
+            name: 'Presentation',
+            items: [
+                {
+                    id: 'presentation:template',
+                    name: 'Template',
+                    key: 'template',
+                    description:
+                        'You can either use the default template `standard` or specify a path to your custom template folder. See [Create your own Template](https://github.com/reveal-editor/reveal-editor/tree/feature/improve-readme#create-your-own-template-).',
+                },
+                {
+                    id: 'presentation:theme',
+                    name: 'Theme',
+                    key: 'theme',
+                    description:
+                        'The theme changes the appereance of your presentation. There are two themes on the standard template: `black` and `white`.',
+                },
+                {
+                    id: 'presentation:title',
+                    name: 'Title',
+                    key: 'title',
+                    description: 'Specify the document title of the HTML-Presentation.',
+                },
+                {
+                    id: 'presentation:author',
+                    name: 'Author',
+                    key: 'author',
+                    description: 'Specify the author `meta`-tag of the HTML-Presentation.',
+                },
+                {
+                    id: 'presentation:defaults',
+                    name: 'Defaults',
+                    key: 'defaults',
+                    description:
+                        'Provide default values for the slides. A default value is used, if the same key does not exist on the slide.',
+                },
+            ],
+        },
+    ]
+
+    return (
+        <ItemsTemplateConfigurable
+            buttonTitle="Presentation"
+            layoutsConfig={items}
+            placeholder="Search presentation properties..."
+            emptyText="No presentation properties found."
+            onSelect={item => props.editorRef.onAddDataTag(item.key, true)}
+        />
+    )
+}
 
 function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
     const { editorRef } = props
+
+    useEventListener('keydown', event => {
+        const commandKeyPressed = window.ipc.os.isMac ? event.metaKey : event.ctrlKey
+        if (!commandKeyPressed) return
+
+        if (event.key === '1') {
+            blockH1(editorRef)
+        } else if (event.key === '2') {
+            blockH2(editorRef)
+        } else if (event.key === '3') {
+            blockH3(editorRef)
+        } else if (event.key === '4') {
+            blockH4(editorRef)
+        }
+    })
+
     return (
         <ToolbarItems>
             <ToolbarItemsButton>Headings</ToolbarItemsButton>
@@ -56,6 +127,7 @@ function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => blockH1(editorRef)}
                         >
                             <strong># Title</strong>
+                            <ToolbarShortcut cmdCtrl letter="1" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'block:h2' }}
@@ -63,6 +135,7 @@ function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => blockH2(editorRef)}
                         >
                             <strong>## Subtitle</strong>
+                            <ToolbarShortcut cmdCtrl letter="2" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'block:h3' }}
@@ -70,6 +143,7 @@ function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => blockH3(editorRef)}
                         >
                             <strong>### Heading</strong>
+                            <ToolbarShortcut cmdCtrl letter="3" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'block:h4' }}
@@ -77,6 +151,7 @@ function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => blockH4(editorRef)}
                         >
                             <strong>#### Subheading</strong>
+                            <ToolbarShortcut cmdCtrl letter="4" />
                         </ToolbarItem>
                     </ToolbarItemGroup>
                 </ToolbarItemsList>
@@ -88,6 +163,33 @@ function ItemsHeadings(props: { editorRef: CodeMirrorEditorRef }) {
 
 function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
     const { editorRef } = props
+
+    useEventListener('keydown', event => {
+        const commandKeyPressed = window.ipc.os.isMac ? event.metaKey : event.ctrlKey
+        if (!commandKeyPressed) return
+
+        if (event.key === 'b') {
+            formatStrong(editorRef)
+        } else if (event.key === 'i') {
+            formatEmphasize(editorRef)
+        } else if (event.key === 'k') {
+            formatLink(editorRef)
+        } else if (event.key === 'u') {
+            formatStrikethrough(editorRef)
+        } else if (event.key === '$') {
+            if (event.shiftKey) formatMathBlock(editorRef)
+            else formatMathInline(editorRef)
+        } else if (event.key === 'j') {
+            if (event.shiftKey) formatCodeBlock(editorRef)
+            else formatCodeInline(editorRef)
+        } else if (event.key === 'l') {
+            if (event.shiftKey) blockOl(editorRef)
+            else blockUl(editorRef)
+        } else if (event.key === '<') {
+            blockBlockquote(editorRef)
+        }
+    })
+
     return (
         <ToolbarItems>
             <ToolbarItemsButton>Format</ToolbarItemsButton>
@@ -101,6 +203,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatStrong(editorRef)}
                         >
                             <strong>**Strong**</strong>
+                            <ToolbarShortcut cmdCtrl letter="B" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'format:emphasize' }}
@@ -108,6 +211,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatEmphasize(editorRef)}
                         >
                             <em>*Emphasize*</em>
+                            <ToolbarShortcut cmdCtrl letter="I" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'format:strikethrough' }}
@@ -115,6 +219,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatStrikethrough(editorRef)}
                         >
                             <s>~~Strikethrough</s>
+                            <ToolbarShortcut cmdCtrl letter="U" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'format:link' }}
@@ -122,6 +227,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatLink(editorRef)}
                         >
                             [Link](https://...)
+                            <ToolbarShortcut cmdCtrl letter="K" />
                         </ToolbarItem>
                     </ToolbarItemGroup>
                     <ToolbarItemSeparator />
@@ -132,6 +238,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatCodeInline(editorRef)}
                         >
                             `Code`
+                            <ToolbarShortcut cmdCtrl letter="J" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'format:code-block' }}
@@ -139,6 +246,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatCodeBlock(editorRef)}
                         >
                             ```Code Block```
+                            <ToolbarShortcut cmdCtrl shift letter="J" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'format:math-inline' }}
@@ -146,6 +254,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatMathInline(editorRef)}
                         >
                             $Math$
+                            <ToolbarShortcut cmdCtrl letter="$" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'format:math-block' }}
@@ -153,6 +262,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatMathBlock(editorRef)}
                         >
                             $$Math Block$$
+                            <ToolbarShortcut cmdCtrl shift letter="$" />
                         </ToolbarItem>
                     </ToolbarItemGroup>
                     <ToolbarItemSeparator />
@@ -163,6 +273,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => blockOl(editorRef)}
                         >
                             1. Ordered List
+                            <ToolbarShortcut cmdCtrl shift letter="L" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'block:ul' }}
@@ -170,6 +281,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => blockUl(editorRef)}
                         >
                             - Unordered List
+                            <ToolbarShortcut cmdCtrl letter="L" />
                         </ToolbarItem>
                         <ToolbarItem
                             value={{ id: 'block:blockquote' }}
@@ -177,6 +289,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => blockBlockquote(editorRef)}
                         >
                             &gt; Blockquote
+                            <ToolbarShortcut cmdCtrl letter="<" />
                         </ToolbarItem>
                     </ToolbarItemGroup>
                 </ToolbarItemsList>
@@ -252,6 +365,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
                     onSelect={item => editorRef?.onAddSlide(item.key, item.slots)}
                 />
             )}
+            {editorRef && <ItemsPresentation editorRef={editorRef} />}
             {editorRef && <ItemsHeadings editorRef={editorRef} />}
             {editorRef && <ItemsFormat editorRef={editorRef} />}
 

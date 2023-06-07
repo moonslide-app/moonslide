@@ -35,7 +35,7 @@ export type CodeMirrorEditorRef = {
     onAddHeading(prefix: string): void
     onAddAttribute(item: ToolbarItem, group: ToolbarEntry): void
     onAddClass(item: ToolbarItem, group: ToolbarEntry): void
-    onAddDataTag(dataTag: string): void
+    onAddDataTag(dataTag: string, firstSlide?: boolean): void
     onAddMedia(path: string): void
 }
 
@@ -200,10 +200,12 @@ export function useCodeMirrorEditorRef(
                     setCursorPosition(editorView.current, newCursorPosition)
                 }
             },
-            onAddDataTag(dataTag) {
+            onAddDataTag(dataTag, firstSlide) {
                 if (!editorView.current) return
                 const state = editorView.current.state
-                const currentSlide = findCurrentSlide(state)
+                const currentSlide = firstSlide
+                    ? findLastSlideUntil(state, { slideNumber: 0 })
+                    : findCurrentSlide(state)
 
                 if (currentSlide?.frontMatter) {
                     const line = rangeHasLineStartingWith(
