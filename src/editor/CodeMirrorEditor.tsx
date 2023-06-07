@@ -50,6 +50,9 @@ const myTheme = EditorView.baseTheme({
     '.active-slide': {
         backgroundColor: '#f5f3ff',
     },
+    '.cm-content': {
+        padding: '1rem',
+    },
     '.cm-scroller': { overflow: 'auto', height: '100%' },
 })
 
