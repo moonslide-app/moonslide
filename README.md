@@ -310,7 +310,7 @@ Take a look at an example of every category:
 
 
 ### Utility  Classes
-The standard template offers a range of utility CSS-classes. They are available in the toolbar properties `Style`, `Animation` and `Slide Styles`. Here is a list of the some utitliy classes (not nearly complete):
+The standard template offers a range of utility CSS-classes. They are available in the toolbar menus `Style`, `Animation` and `Slide Styles`. Here is a list of the some utitliy classes (not nearly complete):
 
 - **Vertical Position (`position-`)**: `top`, `center`, `bottom`
 - **Text-Alignment (`text-`)**: `left`, `center`, `right`
