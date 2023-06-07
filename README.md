@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="./docs/moonslide-screenshot.png" style="width: 100%;" />
+  <img src="./docs/moonslide-screenshot.png" style="max-width: 100%;" />
 </p>
 
 ---
