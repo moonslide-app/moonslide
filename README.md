@@ -6,35 +6,35 @@ Moonslide is a markdown based presentation editor.
 
 [![Run CI](https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml)
 
-## Features 
--   **Markdown-based:** Write your presentation in Markdown with useful syntax extentions.
--   **Reveal.js under the hood:** Uses the power of Reveal.js to create stunning HTML presentations.
--   **Export Possibilities:** Export your presentation to HTML and PDF.
--   **Code Editor:** Write your presentation directly in the code editor of the program.
--   **Live Previews:** Your presentation is previewed at hot-reloaded as you write it.
--   **Templates & Themes:** Write custom templates and themes to configure the behaviour and looks of your presentations.
--   **Desktop Program:** Install Moonslide on the operating system of your choice.
+## Features 🎛
+-   **📝 Markdown-based:** Write your presentation in Markdown with useful syntax extentions.
+-   **🚀 Reveal.js under the hood:** Uses the power of [Reveal.js](https://revealjs.com/) to create stunning HTML presentations.
+-   **🚪 Export Possibilities:** Export your presentation to HTML and PDF.
+-   **⌨️ Code Editor:** Write your presentation directly in the code editor of the program.
+-   **🎇 Live Previews:** Your presentation is previewed at hot-reloaded as you write it.
+-   **🎨 Templates & Themes:** Write custom templates and themes to configure the behaviour and looks of your presentations.
+-   **💻 Desktop Program:** Install Moonslide on the operating system of your choice.
 
-## Demos & Installation
+## Demos & Installation 🤝🏼
 Take a look at some [demos](./demo) and download the [latest release](https://github.com/reveal-editor/reveal-editor/releases).
 
-## Table of Contents
-- **[Philosophy](#philosophy)**
-- **[What is a Template?](#what-is-a-template)**
-- **[Create your first Presentation](#create-your-first-presentation)**
-- **[Markdown Syntax](#markdown-syntax)**
-- **[Images and Videos](#images-and-videos)**
-- **[Animation](#animation)**
-- **[Front Matter Configuration](#front-matter-configuration)**
-- **[Standard Template](#standard-template)**
-- **[Create your own Template](#create-your-own-template)**
+## Table of Contents 🔦
+- **[Philosophy ⚖️](#philosophy)**
+- **[What is a Template? 🤔](#what-is-a-template)**
+- **[Create your first Presentation 👩🏻‍🏫](#create-your-first-presentation)**
+- **[Markdown Syntax 📝](#markdown-syntax)**
+- **[Images and Videos 🌅](#images-and-videos)**
+- **[Animation 💫](#animation)**
+- **[Front Matter Configuration 🛠️](#front-matter-configuration)**
+- **[Standard Template 🎨](#standard-template)**
+- **[Create your own Template 🚧](#create-your-own-template)**
 
-## Philosophy
+## Philosophy ⚖️
 There are two ways to use Moonslide. 
 1. Use it as a normal person: Enjoy the convenience of the standard template, which provides you with everything you need to create stunning Markdown presentations.
 2. Use it as a hacker: Create your own template and configure every aspect of your Reveal.js Presentation. You have control over basically everything! Use the standard template as a starting point.
 
-## What is a Template?
+## What is a Template? 🤔
 A template is a folder which contains all relevant assets to generate the Reveal.js presentation from the Markdown presentation. It consists rougly of the following parts:
 - The used Reveal.js distribution
 - The definition of the available themes.
@@ -44,7 +44,7 @@ A template is a folder which contains all relevant assets to generate the Reveal
 
 Take a look at the [standard template](#standard-template). If you want to create your own template, take a look at the section  [Create your own Template](#create-your-own-template).
 
-## Create your first Presentation
+## Create your first Presentation 👩🏻‍🏫
 Presentations are written in Markdown. For every slide there is a configuration block written in YAML inside the separators `---` similar to Front Matter. The following example shows the definition of two simple slides.
 ```yaml
 ---
@@ -62,7 +62,7 @@ layout: cols-2
 # Second Slide
 ```
 
-## Markdown Syntax
+## Markdown Syntax 📝
 In the Markdown-Blocks of the presentations, standard Markdown formatting options are supported. The [markdown-it](https://github.com/markdown-it/markdown-it) parser is used to parse the content. Some markdown extensions are used to add the possibility to style indiviual components.
 
 ### Slide and Slot Separators
@@ -135,7 +135,7 @@ Use inline HTML at any point in your presentation.
 <h2>My HTML Subheading</h2>
 ``` 
 
-## Images and Videos 
+## Images and Videos 🌅
 Include images using the standard markdown syntax. 
 
 ```html
@@ -185,7 +185,7 @@ background-image: ./media/house.jpg
 
 > Make sure to start relative paths with `./` or `../` inside a Front Matter Block. 
 
-## Animation
+## Animation 💫
 Animation on Slides can be enabled by applying CSS classes to elements. Most features are based on Reveal.js [Fragments](https://revealjs.com/fragments/). The standard template also contains some additional useful classes. Take a look at the toolbar menu `Animation` to get an overview over the offered functionality. 
 
 ```yaml
@@ -198,7 +198,7 @@ Animation on Slides can be enabled by applying CSS classes to elements. Most fea
 
 ```
 
-## Front Matter Configuration
+## Front Matter Configuration 🛠️
 ### Presentation Configuration
 In the Front Matter block of the first slide, there are some attributes which configure the whole presentation.
 
@@ -281,7 +281,7 @@ auto-animate: true
 
 You can find more information under [Transition (Reveal.js)](https://revealjs.com/transitions/), [Backgrounds (Reveal.js)](https://revealjs.com/backgrounds/) and [Auto-Animate (Reveal.js)](https://revealjs.com/auto-animate/).
 
-## Standard Template
+## Standard Template 🎨
 There is a standard template that comes with Moonslide. This section presents the most important parts of the template. You will find basically everything described here inside the different items of the toolbar, when the standard template is used in the presentation.
 
 ### Themes
@@ -321,7 +321,7 @@ The standard template offers a range of utility CSS-classes. They are available 
 - **Height (h-)**: `full`, `half`, `0`, `1`, `2`, `3`, `4`, ...
 - **Margin (m-)**: `0`, `0.5`, `1`, `1.5`, `2`, `2.5`, `3`, ...
 
-## Create your own Template
+## Create your own Template 🚧
 You can create your own template and use it in your presentation by specifying the path to your template folder in the Front Matter Configuration of the first slide.
 
 ```yaml
