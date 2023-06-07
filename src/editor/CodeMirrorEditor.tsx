@@ -48,7 +48,7 @@ const myTheme = EditorView.baseTheme({
         zIndex: '-4 !important',
     },
     '.active-slide': {
-        backgroundColor: '#f5f3ff',
+        backgroundColor: 'hsla(250, 100%, 80%, 0.075)',
     },
     '.cm-content': {
         padding: '1rem',
