@@ -400,7 +400,7 @@ toolbar:
 ```
 
 ### Entry Script (`entry`)
-The specified entry script **must** initialize Reveal.js. Otherwise the presentations using your template will not be displayed. This means there has to be at least the call `Reveal.initialize()` inside your enetry script. Here is an example entry script:
+The specified entry script **must** initialize Reveal.js. Otherwise the presentations using your template will not be displayed. This means there has to be at least the call `Reveal.initialize()` inside your entry script.
 
 ```js
 Reveal.initialize({ 
@@ -422,7 +422,7 @@ if (MOONSLIDE_ENV === 'preview-small') {
 } else if (MOONSLIDE_ENV === 'preview-fullscreen') {
 	console.log('We are inside a fullscreen preview.')
 } else if (MOONSLIDE_ENV === 'export') {
-	console.log('WE are inside an exported HTML presentation.')
+	console.log('We are inside an exported HTML presentation.')
 }
 ```
 
