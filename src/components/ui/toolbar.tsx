@@ -223,10 +223,29 @@ const ToolbarItem: ToolbarItemForwarded = React.forwardRef<
 
 ToolbarItem.displayName = CommandPrimitive.Item.displayName
 
-const ToolbarItemShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
-    return <span className={cn('ml-auto text-xs tracking-widest text-muted-foreground', className)} {...props} />
+export type ToolbarShortcutProps = React.HTMLAttributes<HTMLSpanElement> & {
+    shift?: boolean
+    /**
+     * Command on mac, control on windows
+     */
+    cmdCtrl?: boolean
+    alt?: boolean
+    letter?: string
 }
-ToolbarItemShortcut.displayName = 'ToolbarItemShortcut'
+
+const ToolbarShortcut = ({ className, children, shift, cmdCtrl, alt, letter, ...props }: ToolbarShortcutProps) => {
+    function getCommandName() {
+        if (window.ipc.os.isMac) return `${shift ? '⇧' : ''}${alt ? '⌥' : ''}${cmdCtrl ? '⌘' : ''}${letter ?? ''}`
+        else return `${shift ? 'Shift+' : ''}${alt ? 'Alt+' : ''}${cmdCtrl ? 'Ctrl+' : ''}${letter ?? ''}`
+    }
+
+    return (
+        <span className={cn('ml-auto text-xs tracking-widest text-muted-foreground', className)} {...props}>
+            {children ?? getCommandName()}
+        </span>
+    )
+}
+ToolbarShortcut.displayName = 'ToolbarShortcut'
 
 export type { ToolbarItemValue }
 
@@ -243,4 +262,5 @@ export {
     ToolbarItemGroup,
     ToolbarItemSeparator,
     ToolbarItemShortcut,
+    ToolbarShortcut,
 }
