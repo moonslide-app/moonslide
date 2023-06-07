@@ -15,24 +15,38 @@ export function showActiveSlide(): Extension {
 
             const { doc } = view.state
 
+            const from = currentSlide.fullSlide.from
+            const to = Math.min(doc.length, currentSlide.fullSlide.to)
+
+            const startsAtFirstLine = doc.lineAt(from).number === 1
+            const endsAtLastLine = doc.lineAt(to).number === doc.lines
+
             const content = view.contentDOM
             const contentRect = content.getBoundingClientRect()
-
             const contentStyle = getComputedStyle(content)
-            const topOffset = content.offsetTop + parseFloat(contentStyle.paddingTop)
+            const topPadding = parseFloat(contentStyle.paddingTop)
+            const bottomPadding = parseFloat(contentStyle.paddingBottom)
+            const topOffset = content.offsetTop + topPadding
 
-            const startBlock = view.lineBlockAt(currentSlide.fullSlide.from)
-            const endBlock = view.lineBlockAt(Math.min(doc.length, currentSlide.fullSlide.to))
+            const startBlock = view.lineBlockAt(from)
+            const endBlock = view.lineBlockAt(to)
 
-            return [
-                new RectangleMarker(
-                    'active-slide',
-                    contentRect.left,
-                    topOffset + startBlock.top,
-                    contentRect.right - contentRect.left,
-                    endBlock.bottom - startBlock.top
-                ),
-            ]
+            const leftPosition = contentRect.left
+            const width = contentRect.right - contentRect.left
+
+            let topPosition = topOffset + startBlock.top
+            let height = endBlock.bottom - startBlock.top
+
+            if (startsAtFirstLine) {
+                topPosition -= topPadding
+                height += topPadding
+            }
+
+            if (endsAtLastLine) {
+                height += bottomPadding
+            }
+
+            return [new RectangleMarker('active-slide', leftPosition, topPosition, width, height)]
         },
     })
 }
