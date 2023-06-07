@@ -227,7 +227,7 @@ function ItemsFormat(props: { editorRef: CodeMirrorEditorRef }) {
                             onSelect={() => formatLink(editorRef)}
                         >
                             [Link](https://...)
-                            <ToolbarShortcut cmdCtrl letter="k" />
+                            <ToolbarShortcut cmdCtrl letter="K" />
                         </ToolbarItem>
                     </ToolbarItemGroup>
                     <ToolbarItemSeparator />
