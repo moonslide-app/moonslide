@@ -1,4 +1,5 @@
 - name: Vertical Position
+  description: Adjust the vertical position of items inside their slots. This only works if the items have some space to move. Generally works better for layouts with a small amount of slots.
   items:
   - name: Top of Parent
     key: position-top
@@ -7,6 +8,7 @@
   - name: Bottom of Parent
     key: position-bottom
 - name: Text Alignment
+  description: Adjusts the horizontal alignment of the text.
   items: 
   - name: Text Left
     key: text-left
@@ -15,6 +17,7 @@
   - name: Text Right
     key: text-right
 - name: Background Color
+  description: Adjusts the color of the background.
   items: 
   - name: ${{value}}
     key: bg-${{value}}
@@ -22,6 +25,7 @@
     values: [white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
     shownValues: [white, black, red, green, blue]
 - name: Font Size
+  description: Adjusts the font size of the text.
   items: 
   - name: Extra Small
     key: text-xs
@@ -39,6 +43,7 @@
     values: [2xl, 3xl, 4xl, 5xl, 6xl, 7xl, 8xl, 9xl]
     shownValues: [2xl]
 - name: Font Color
+  description: Adjusts the font color of the text.
   items: 
   - name: ${{value}}
     key: text-${{value}}
@@ -46,6 +51,7 @@
     values: [main, white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
     shownValues: [main, white, black, red, green, blue]
 - name: Vertical Spacing
+  description: Adjusts the vertical spacing between items inside slots.
   items:
   - key: space-y-${{value}}
     name: Vertical Spacing ${{value}}
