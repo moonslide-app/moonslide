@@ -13,7 +13,8 @@ scripts:
   - ./reveal_js/plugin/math/math.js
   - ./reveal_js/plugin/search/search.js
   - ./reveal_js/plugin/zoom/zoom.js
-# HTML file which allows to define a wrapper around all slides. 
+  - ./reveal_js/plugin/notes/notes.js
+# HTML file which allows to define a wrapper around all slides.
 # Must contain a `@@content@@` token where the slide content will be placed.
 slide: ./slide.html
 # Definition of themes which add additional stylesheets.
@@ -69,7 +70,7 @@ layouts:
     path: ./layouts/title-grid-3-right.html
   - name: title-grid-4
     path: ./layouts/title-grid-4.html
-# For every section of the toolbar a separate file can be specified 
+# For every section of the toolbar a separate file can be specified
 # which lists all items to show in this section
 toolbar:
   layouts: ./toolbar/layouts.yml
