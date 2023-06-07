@@ -17,11 +17,11 @@ import { exportStandardTemplate } from './assets'
 import { addMedia } from '../presentation/media'
 
 export function registerIpc() {
-    ipcMain.handle('dialog:selectFile', (_, title, filters) => selectFile(title, filters))
-    ipcMain.handle('dialog:selectFolder', (_, title) => selectFolder(title))
-    ipcMain.handle('dialog:selectOutputFile', (_, title, filters) => selectOutputFile(title, filters))
-    ipcMain.handle('dialog:selectOutputFolder', (_, title) => selectOutputFolder(title))
-    ipcMain.handle('dialog:saveChanges', saveChangesDialog)
+    ipcMain.handle('dialog:selectFile', (_, title, filters) => wrapPromise(selectFile(title, filters)))
+    ipcMain.handle('dialog:selectFolder', (_, title) => wrapPromise(selectFolder(title)))
+    ipcMain.handle('dialog:selectOutputFile', (_, title, filters) => wrapPromise(selectOutputFile(title, filters)))
+    ipcMain.handle('dialog:selectOutputFolder', (_, title) => wrapPromise(selectOutputFolder(title)))
+    ipcMain.handle('dialog:saveChanges', () => wrapPromise(saveChangesDialog()))
     ipcMain.handle('file:exists', (_, filePath) => exists(filePath))
     ipcMain.handle('file:save', (_, filePath, content) => wrapPromise(saveFile(filePath, content)))
     ipcMain.handle('file:getContent', (_, filePath) => wrapPromise(getFileContent(filePath)))

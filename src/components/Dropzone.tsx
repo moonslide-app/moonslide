@@ -1,9 +1,10 @@
 import { ReactNode, useCallback } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { Accept, useDropzone } from 'react-dropzone'
 
 export type DropzoneProps = {
     className?: string
     children?: ReactNode
+    accept?: Accept
     onFileDropped?: (filePath: string) => void
 }
 
@@ -17,7 +18,7 @@ export function Dropzone(props?: DropzoneProps) {
         onDrop,
         noClick: true,
         noKeyboard: true,
-        accept: { 'image/*': [], 'video/*': [] },
+        accept: props?.accept,
         multiple: false,
     })
 

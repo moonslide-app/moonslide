@@ -13,6 +13,7 @@ import { useRef } from 'react'
 import { Toaster } from './components/ui/toaster'
 import { GlobalErrors } from './components/GlobalErrors'
 import { Dropzone } from './components/Dropzone'
+import { acceptedFileTypes } from '../src-shared/constants/fileTypes'
 
 function App() {
     const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
@@ -60,7 +61,14 @@ function App() {
                                         : undefined
                                 }
                             />
-                            <Dropzone className="flex-grow overflow-hidden" onFileDropped={addMedia}>
+                            <Dropzone
+                                className="flex-grow overflow-hidden"
+                                accept={{
+                                    'image/*': acceptedFileTypes.images,
+                                    'video/*': acceptedFileTypes.videos,
+                                }}
+                                onFileDropped={addMedia}
+                            >
                                 <CodeMirrorEditor
                                     ref={codeEditorRef}
                                     className="h-full"
