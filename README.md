@@ -6,6 +6,9 @@ Moonslide is a markdown based presentation editor.
 
 [![Run CI](https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml)
 
+[Link to Markdown Syntax](#markdown-syntax)
+[Link to Demos](#demos)
+
 ## Features ⚽️
 -   **Markdown-based:** Write your presentation in Markdown with useful syntax extentions.
 -   **Reveal.js under the hood:** Uses the power of Reveal.js to create stunning HTML presentations.
@@ -14,6 +17,9 @@ Moonslide is a markdown based presentation editor.
 -   **Live Previews:** Your presentation is previewed at hot-reloaded as you write it.
 -   **Templates & Themes:** Write custom templates and themes to configure the behaviour and looks of your presentations.
 -   **Desktop Program:** Install Moonslide on the operating system of your choice.
+
+## Demos
+Take a look at the [demos](./demos).
 
 ## Installation 
 Download the latest release [here](https://github.com/reveal-editor/reveal-editor/releases).
@@ -51,7 +57,7 @@ layout: cols-2
 # Second Slide
 ```
 
-## Markdown Syntax
+# Markdown Syntax
 In the Markdown-Blocks of the presentations, standard Markdown formatting options are supported. The [markdown-it](https://github.com/markdown-it/markdown-it) parser is used to parse the content. Some markdown extensions are used to add the possibility to style indiviual components.
 
 ### Slide and Slot Separators
