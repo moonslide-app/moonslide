@@ -19,7 +19,7 @@ Moonslide is a markdown based presentation editor.
 Take a look at some [demos](./demo) and download the [latest release](https://github.com/reveal-editor/reveal-editor/releases).
 
 ## Table of Contents 🔦
-- **[Philosophy ⚖️](#philosophy)**
+- **[How it works 🔎](#how-it-works)**
 - **[What is a Template? 🤔](#what-is-a-template)**
 - **[Create your first Presentation 👩🏻‍🏫](#create-your-first-presentation)**
 - **[Markdown Syntax 📝](#markdown-syntax)**
@@ -29,10 +29,16 @@ Take a look at some [demos](./demo) and download the [latest release](https://gi
 - **[Standard Template 🎨](#standard-template)**
 - **[Create your own Template 🚧](#create-your-own-template)**
 
-## Philosophy ⚖️
+## How it works 🔎
+Moonslide is based on the presentation framework [Reveal.js](https://revealjs.com/). You write your presentation in Markdown and Moonslide automatically generates a Reveal.js HTML presentation. Most features of Reveal.js are also supported in MoonSlide so it makes sense to have a look at the [Demo of Reveal.js](https://revealjs.com/) or to read their documentation. The [built-in plugins](https://revealjs.com/plugins/#built-in-plugins) of Reveal.js are also supported and included in the standard template.
+
+### Usage
 There are two ways to use Moonslide. 
 1. **Use it as a normal person**: Enjoy the convenience of the standard template, which provides you with everything you need to create stunning Markdown presentations.
 2. **Use it as a hacker**: Create your own template and configure every aspect of your Reveal.js Presentation. You have control over basically everything! Use the standard template as a starting point.
+
+### Export Possiblilites
+You can export your presentations as a Reveal.js HTML presentation or as a PDF.
 
 ## What is a Template? 🤔
 A template is a folder which contains all relevant assets to generate the Reveal.js presentation from a Markdown file. It consists rougly of the following parts:
