@@ -10,7 +10,12 @@ import { findAndLoadTemplate } from '../presentation/template'
 import { buildHTMLSlide, buildHTMLPresentation, concatSlidesHtml } from '../presentation/htmlBuilder'
 import { parseMarkdown } from './markdown'
 import { LocalImage, isLikelyPath, transformImagePath } from './imagePath'
-import { MissingStartSeparatorError, YamlConfigError, wrapErrorIfThrows } from '../../src-shared/errors/WrappedError'
+import {
+    InvalidLayoutError,
+    MissingStartSeparatorError,
+    YamlConfigError,
+    wrapErrorIfThrows,
+} from '../../src-shared/errors/WrappedError'
 
 export const FIRST_SLIDE_SEPERATOR = '---'
 const SLIDE_SEPARATOR = '\n---'
@@ -24,7 +29,13 @@ export async function parse(request: ParseRequest): Promise<Presentation> {
 
     const layouts = await template.getLayouts()
     function getLayout(name: string | undefined) {
-        return layouts.layoutsHtml[name ?? ''] ?? layouts.defaultLayoutHtml
+        if (!name) return layouts.defaultLayoutHtml
+
+        if (name in layouts.layoutsHtml) {
+            return layouts.layoutsHtml[name]
+        } else {
+            throw new InvalidLayoutError(name, layouts.availableLayouts)
+        }
     }
 
     const slideWrapperHtml = await template.getSlideHtml()
