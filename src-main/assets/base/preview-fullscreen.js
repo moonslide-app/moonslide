@@ -1,11 +1,12 @@
+const overrideConfig = { hash: true }
+
 var RevealEditor = {
     ...Reveal,
     initialize(config, ...args) {
-        const newConfig = {
-            ...config,
-            hash: true,
-        }
-        Reveal.initialize(newConfig, ...args)
+        Reveal.initialize({ ...config, ...overrideConfig }, ...args)
+    },
+    configure(config, ...args) {
+        Reveal.configure({ ...config, ...overrideConfig }, ...args)
     },
 }
 

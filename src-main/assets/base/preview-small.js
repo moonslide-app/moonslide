@@ -1,24 +1,28 @@
+const overrideConfig = {
+    ...config,
+    hash: false,
+    controls: false,
+    progress: false,
+    history: false,
+    keyboard: false,
+    overview: false,
+    touch: false,
+    shuffle: false,
+    fragments: false,
+    autoAnimate: false,
+    autoSlide: false,
+    transition: 'none',
+    slideNumber: false,
+    autoPlayMedia: false,
+}
+
 var RevealEditor = {
     ...Reveal,
     initialize(config, ...args) {
-        const newConfig = {
-            ...config,
-            hash: false,
-            controls: false,
-            progress: false,
-            history: false,
-            keyboard: false,
-            overview: false,
-            touch: false,
-            shuffle: false,
-            fragments: false,
-            autoAnimate: false,
-            autoSlide: false,
-            transition: 'none',
-            slideNumber: false,
-            autoPlayMedia: false,
-        }
-        Reveal.initialize(newConfig, ...args)
+        Reveal.initialize({ ...config, ...overrideConfig }, ...args)
+    },
+    configure(config, ...args) {
+        Reveal.configure({ ...config, ...overrideConfig }, ...args)
     },
 }
 
