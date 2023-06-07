@@ -13,8 +13,18 @@ export type SimpleRange = {
 
 export type SlideSelection = {
     index: number
+    /**
+     * Represents the content between the ƒront matter separator lines.
+     */
     frontMatter: SelectionRange
+    /**
+     * Represents the markdown content.
+     * If there are a lot of empty lines, only two empty lines are counted as the markdown content
+     */
     markdown: SelectionRange
+    /**
+     * Represents the whole slide from the first separator (---) until the next slide or the end of the document.
+     */
     fullSlide: SelectionRange
 }
 
@@ -83,11 +93,11 @@ export function findLastSlideUntil(
     if (!currentFrontMatter) return undefined
     if (currentIndex === -1) return undefined
 
-    const endOfDocument = lastNonEmptyLine(state, currentFrontMatter.to, 2)
-    const currentMarkdownEnd = nextFrontMatter ? nextFrontMatter.from - 1 : endOfDocument.to
+    const markdownEnd = lastNonEmptyLine(state, currentFrontMatter.to, 2)
+    const currentMarkdownEnd = nextFrontMatter ? nextFrontMatter.from - 1 : markdownEnd.to
 
     const currentMarkdown = {
-        from: Math.min(currentFrontMatter.to + 1, endOfDocument.to),
+        from: Math.min(currentFrontMatter.to + 1, markdownEnd.to),
         to: currentMarkdownEnd,
     }
 
@@ -99,9 +109,11 @@ export function findLastSlideUntil(
         to: state.doc.line(frontMatterSecondLastLine).to,
     }
 
+    const endOfSlide = nextFrontMatter ? nextFrontMatter.from - 1 : state.doc.length
+
     const fullSlide: SimpleRange = {
         from: currentFrontMatter.from,
-        to: currentMarkdown.to,
+        to: endOfSlide,
     }
 
     return {
