@@ -16,7 +16,7 @@ Moonslide is a markdown based presentation editor.
 -   **Desktop Program:** Install Moonslide on the operating system of your choice.
 
 ## Demos & Installation
-Take a look at some [demos](./demo) and download the [latest release](./releases).
+Take a look at some [demos](./demo) and download the [latest release](https://github.com/reveal-editor/reveal-editor/releases).
 
 ## Philosophy
 There are two ways to use Moonslide. 
@@ -31,10 +31,10 @@ A template is a folder which contains all relevant assets to generate the Reveal
 - Additional stylesheets with utility classes. 
 - The configuration of the toolbar inside the app.
 
-Take a look at the standard template **TODO**. If you want to create your own template, take a look at the section **TODO**. 
+Take a look at the [standard template](#standard-template). If you want to create your own template, take a look at the section  [Create your own Template](#create-your-own-template).
 
 ## Create your first Presentation
-Presentations are written in Markdown. For every slide there is a configuration block written in YAML inside the seperators `---` similar to Front Matter. The following example shows the definition of two simple slides.
+Presentations are written in Markdown. For every slide there is a configuration block written in YAML inside the separators `---` similar to Front Matter. The following example shows the definition of two simple slides.
 ```yaml
 ---
 layout: base
@@ -51,7 +51,7 @@ layout: cols-2
 # Second Slide
 ```
 
-# Markdown Syntax
+## Markdown Syntax
 In the Markdown-Blocks of the presentations, standard Markdown formatting options are supported. The [markdown-it](https://github.com/markdown-it/markdown-it) parser is used to parse the content. Some markdown extensions are used to add the possibility to style indiviual components.
 
 ### Slide and Slot Separators
@@ -114,7 +114,15 @@ If an arbitrary text should be wrapped inside a span in order to style it, a bra
 <h1 class="text-red">Heading [Red]</h1>
 ```
 
-### Media 
+### Inline HTML
+Use inline HTML at any point in your presentation.
+
+```html
+# My Markdown Heading
+<h2>My HTML Subheading</h2>
+``` 
+
+## Images and Videos 
 Include images using the standard markdown syntax. 
 
 ```html
@@ -125,7 +133,7 @@ Include images using the standard markdown syntax.
 ![house](https://www.images.com/house)
 ``` 
 
-#### Block Level vs. Inline Images
+### Block Level vs. Inline Images
 If an image is the only item inside a pargraph it is transformed to a background-image of a `div`, so it fills out the container.  The CSS classes `image` and `image-block` are applied, which can be customized inside the template.
 
 ```html
@@ -142,22 +150,30 @@ Image: ![house](./media/house.jpg)
 Image: <img alt="house" src="./media/house.jpg" class="image image-inline" />
 ``` 
 
-#### Videos
-If the file extension is `.mp4`, `.mov` or `.vp9` it is parsed as a `<video>` tag. **TODO**
+### Background Images
+If an image should fill the whole screen, you can add it inside the Front Matter Configuration under the keyword `background-image`. See [Reveal.js Data-Attributes](#reveal.js-data-attributes) for more options.
 
- ```html
-<!-- Include Video --->
-![nature](./media/nature.mp4)
-<video src="./media/nature.mp4" />
-``` 
+```yaml
+---
+background-image: ./media/house.jpg
+---
+```
 
-### Inline HTML
-Use inline HTML at any point in your presentation.
+> Make sure to start relative paths with `./` or `../` inside a Front Matter Block. 
 
-```html
-# My Markdown Heading
-<h2>My HTML Subheading</h2>
-``` 
+### Videos
+Videos can only be included as background videos using the Front Matter keyword `background-video`.
+
+```yaml
+---
+background-image: ./media/house.jpg
+---
+```
+
+> Make sure to start relative paths with `./` or `../` inside a Front Matter Block. 
+
+## Animation
+
 
 ## Front Matter Configuration
 ### Presentation Configuration
@@ -179,11 +195,15 @@ defaults:
 ---
 ```
 
+> Take a look at the available [themes](#themes) of the standard template. 
+
+The `defaults` are merged with the configuration of every individual slide. Every keyword which is defined on the slide directly will override the default value.
+
 ### Slide Configuration
 There are configuration options which can be applied to every slide individually.
 
 #### Layout
-Every slide uses a layout to structure its contents in a certain way. Every layout has a number of *slots*, which are containers for your content. Use the slot-separator `***` to fill content into the next slot. Take a look at all layouts available in the standard template. **TODO**.
+Every slide uses a layout to structure its contents in a certain way. Every layout has a number of *slots*, which are containers for your content. Use the slot separator `***` to fill content into the next slot. Take a look at the available [layouts](#layouts) of the standard template.
 
 ```yaml
 ---
@@ -199,7 +219,7 @@ layout: cols-2
 ```
 
 #### Custom Classes 
-Custom classes can be added to every slide. These classes are usually defined inside the template. The standard template comes with a lot of useful classes to style your slides with. In some cases it may be more useful to only style a custom element using the Markdown-Attributes Syntax **TODO: Link**.
+Custom classes can be added to every slide. These classes are usually defined inside the template. The standard template comes with a lot of useful classes to style your slides with. In some cases it may be more useful to only style a custom element using the Markdown [attributes syntax](#attributes).
 
 ```yaml
 ---
@@ -213,33 +233,36 @@ class:
 ```
 
 #### Reveal.js Data-Attributes
-You can specify every other keyword on the slide, and it will be directly passed to the HTML-Elemnt of the slide as a data-tag. In this way a lot of features of Reveal.js can be used. E.g., `transition: slide` will be transformed to `data-transition="slide"`. These are some possible values, which are available in Reveal.js:
+You can specify every other keyword on the slide, and it will be directly passed to the HTML-Elemnt of the slide as a data-tag. In this way a lot of Reveal.js features can be used. These are some possible values, which are available in Reveal.js:
 
 ```yaml
 ---
+# Transition
 transition: slide
 background-transition: slide
 transition-speed: fast
 
+# Background
 background-image: ./my-image.jpg 
 background-video: ./my-video.mp4
 background-opacity: 0.5
 background-size: contain
 background-position: center
 
+# Animation
 auto-animate: true
 ---
 ```
 
-> Note: Make sure to start local relative paths with `./` or `../`. The paths are automatically transformed and can not be recognized if just the filename is present (`my-image.jpg` does not work).
+> Make sure to start relative paths with `./` or `../` inside a Front Matter Block. Otherwise they are not correctly recognized.
 
 You can find more information under [Transition (Reveal.js)](https://revealjs.com/transitions/), [Backgrounds (Reveal.js)](https://revealjs.com/backgrounds/) and [Auto-Animate (Reveal.js)](https://revealjs.com/auto-animate/).
 
 ## Standard Template
-There is a standard template that comes with Moonslide. This section present the most important parts of the template. You will find basically everything described here inside the different items of the toolbar, when the standard template is used in the presentation.
+There is a standard template that comes with Moonslide. This section presents the most important parts of the template. You will find basically everything described here inside the different items of the toolbar, when the standard template is used in the presentation.
 
 ### Themes
-There are two themes which you can choose from `black` and `white`. Every theme includes its own CSS stylesheets, which changes the apperance of the whole presentation.
+There are two themes which you can choose from: `black` and `white`. Every theme includes its own CSS stylesheets which change the apperance of the whole presentation.
 
 | `theme: black` | `theme:white` |
 |:--|:--|
@@ -255,12 +278,12 @@ The standard template offers 18 layouts grouped into four categories:
 
 Take a look at an example of every category:
 
-| Layout | Image |
+| | |
 |:--|:--|
-| `layout: base` | ![](./docs/layout-base.png) |
-| `layout: cols-3` | ![](./docs/layout-cols-3.png) |
-| `layout: grid-3` | ![](./docs/layout-grid-3.png) |
-| `layout: title-cols-2` | ![](./docs/layout-title-cols-2.png) |
+| `layout: base` | `layout: cols-3` |
+| ![](./docs/layout-base.png) | ![](./docs/layout-cols-3.png) |
+| `layout: grid-3` | `layout: title-cols-2` |
+| ![](./docs/layout-grid-3.png) | ![](./docs/layout-title-cols-2.png) |
 
 
 ### Utility  Classes
@@ -384,3 +407,67 @@ To define your own layout, just create a HTML-file with your layout and referenc
 ```
 
 ### Customize Toolbar (`toolbar`)
+The toolbar is useful to show the user what your template offers. **The toolbar does not configure the behaviour of the presentation in any way.** It just gives the user an easy way to interact with your template. The user can always use any attributes they like, even if they are not specified inside the toolbar.
+
+#### Toolbar Menus
+
+There are five customizable menus inside the toolbar:
+- `layouts` lists all the layouts available inside your template. Don't confuse it with the top-level `layouts` property of `config.yml`. In this section you only display, which values are displayed inside the toolbar.
+- `styles` lists all styles, which can be applied to individual Markdown elements. When clicking them inside the toolbar, they will be inserted inside curly braces `{ .your-class }`. See Markdown [attribute syntax](#attributes).
+- `animation` works the same way as `styles` and contains attributes concered with animation. 
+- `slide` lists the (Reveal.js Data-Attributes)[#reveal.js-data-attributes] which you support in your template. These will be included into the Front Matter configuration block and automatically transformed to data-attributes by the application.
+- `slideStyles` lists classes, which can be applied to the whole slide. When selected they are inserted into the value of `class` inside the Front Matter Configuration. See [Custom Slide Classes](#custom-classes).
+
+#### Configuration Files
+
+The toolbar items are configured inside separate YAML files. The items are arranged into groups. Have a look at a small part of `styles.yml` from the standard template.
+
+```yaml
+- name: Text Alignment
+  # Optional description
+  description: Changes the horizontal alignment of a text. 
+  items: 
+    # The displayed name inside the toolbar.
+  - name: Text Left
+    # This it the text which is inserted.
+    key: .text-left
+    # Optional description
+    description: ...
+    # If set to `true` the item is only shown when the submenu is searched.
+    hidden: true
+  - name: Text Center
+    key: .text-center
+  - name: Text Right
+    key: .text-right
+```
+
+> In this examples all keys start with a `.`. This is only the case because the values are inserted into Markdown using the [attribute syntax](#attributes). Inside `slide.yml` where the values are inserted into Front Matter you would use the class names without `.`.
+
+If you have utility classes with a lot of values, you can use the following syntax: 
+
+```yaml
+- name: Width
+  items: 
+    # Generated name with value.
+  - name: Width ${{value}}
+	  # Generated key with value.
+    key: .w-${{value}}
+    # Sets the default values of all generated items.
+    hidden: true
+    # Specify all values to generate (string or number).
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, ..., 80, 96]
+    # Sets `hidden` to `false` for the specified values.
+    shownValues: [12, 20, 32, 40]
+    # Sets `hidden` to `true` for the specified values.
+    # (Makes no sense when hidden: true)
+    hidddenValues: []
+  - name: Half Width
+    key: .w-half
+    hidden: true
+  - name: Full Width
+    key: .w-full
+```
+
+> This will produce keys `.w-0`, `.w-1`, `.w-2`, ... with their corresponding names `Width 0`, `Width 1`, `Width 2`. All values are hidden except the four values specified inside `shownValues`.
+
+The `values` can be strings or numbers. Strings are capitalized when inserted into the `${{value}}` placeholder of the `name`. As seen in the example, this syntax can be mixed with the normal definition of items like `.w-half` and `.w-full`.
