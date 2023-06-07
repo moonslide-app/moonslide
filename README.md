@@ -31,18 +31,20 @@ Take a look at some [demos](./demo) and download the [latest release](https://gi
 
 ## Philosophy ⚖️
 There are two ways to use Moonslide. 
-1. Use it as a normal person: Enjoy the convenience of the standard template, which provides you with everything you need to create stunning Markdown presentations.
-2. Use it as a hacker: Create your own template and configure every aspect of your Reveal.js Presentation. You have control over basically everything! Use the standard template as a starting point.
+1. **Use it as a normal person**: Enjoy the convenience of the standard template, which provides you with everything you need to create stunning Markdown presentations.
+2. **Use it as a hacker**: Create your own template and configure every aspect of your Reveal.js Presentation. You have control over basically everything! Use the standard template as a starting point.
 
 ## What is a Template? 🤔
-A template is a folder which contains all relevant assets to generate the Reveal.js presentation from the Markdown presentation. It consists rougly of the following parts:
+A template is a folder which contains all relevant assets to generate the Reveal.js presentation from a Markdown file. It consists rougly of the following parts:
 - The used Reveal.js distribution
-- The definition of the available themes.
-- The definition of the available layouts.
-- Additional stylesheets with utility classes. 
-- The configuration of the toolbar inside the app.
+- The definition of the available [themes](#themes).
+- The definition of the available [layouts](#layouts).
+- Additional stylesheets with [utility classes](#utility-classes). 
+- The configuration of the applications toolbar.
 
-Take a look at the [standard template](#standard-template). If you want to create your own template, take a look at the section  [Create your own Template](#create-your-own-template).
+The template can decide to present its functionality inside the different menus of the toolbar. In this way the features are easily accessible for all users. 
+
+Take a look at the [standard template](#standard-template). If you want to create your own template, take a look at [this section](#create-your-own-template).
 
 ## Create your first Presentation 👩🏻‍🏫
 Presentations are written in Markdown. For every slide there is a configuration block written in YAML inside the separators `---` similar to Front Matter. The following example shows the definition of two simple slides.
@@ -63,10 +65,10 @@ layout: cols-2
 ```
 
 ## Markdown Syntax 📝
-In the Markdown-Blocks of the presentations, standard Markdown formatting options are supported. The [markdown-it](https://github.com/markdown-it/markdown-it) parser is used to parse the content. Some markdown extensions are used to add the possibility to style indiviual components.
+In the Markdown-Blocks of the presentations, standard Markdown formatting options are supported. We use the [markdown-it](https://github.com/markdown-it/markdown-it) parser to parse the content. Additionally, two markdown extensions are used to add the possibility to style indiviual elements.
 
 ### Slide and Slot Separators
-The horizontal rule (`<hr>`) markers `---` and `***` have a special meaning when they are used at the start of a line. `---` marks the separation between a Markdown and a YAML block and splits the content up into indivdual slides. `***` seperates indiviual *slots* inside a slide. These are important when working with **TODO** layouts.
+The horizontal rule (`<hr>`) markers `---` and `***` have a special meaning when they are used at the start of a line. `---` marks the separation between a Markdown and a YAML block and splits the content up into indivdual slides. `***` seperates indiviual *slots* inside a slide. These are important when working with [layouts](#layout).
 
 ```yaml
 ---
@@ -115,7 +117,7 @@ The roses are **red**{ .text-red }.
 You find attributes provided by your template inside the toolbar menu `Styles`. 
 
 ### Bracketed Spans
-If an arbitrary text should be wrapped inside a span in order to style it, a bracketed span can be used. For this the extension [markdown-it-bracketed-spans](https://github.com/mb21/markdown-it-bracketed-spans) is used. Here are some examples how it works:
+If an arbitrary text should be wrapped inside a span in order to style it, a bracketed span can be used. For this the extension [markdown-it-bracketed-spans](https://github.com/mb21/markdown-it-bracketed-spans) is used. Here is an example how it works:
 
 ```html
 <!-- Add class to part of heading -->
@@ -160,11 +162,11 @@ If there are other elements in the same paragraph, it is transformed to a normal
  ```html
 <!-- Inline Image --->
 Image: ![house](./media/house.jpg)
-Image: <img alt="house" src="./media/house.jpg" class="image image-inline" />
+<p> Image: <img alt="house" src="./media/house.jpg" class="image image-inline" /> </p>
 ``` 
 
 ### Background Images
-If an image should fill the whole screen, you can add it inside the Front Matter Configuration under the keyword `background-image`. See [Reveal.js Data-Attributes](#reveal.js-data-attributes) for more options.
+If an image should fill the whole screen, you can add it inside the Front Matter Configuration under the keyword `background-image`. See [Reveal.js Data-Attributes](#revealjs-data-attributes) for more options.
 
 ```yaml
 ---
@@ -175,18 +177,18 @@ background-image: ./media/house.jpg
 > Make sure to start relative paths with `./` or `../` inside a Front Matter Block. 
 
 ### Videos
-Videos can only be included as background videos using the Front Matter keyword `background-video`.
+Videos can be included using the Front Matter keyword `background-video`.
 
 ```yaml
 ---
-background-image: ./media/house.jpg
+background-video: ./media/nature.mp4
 ---
 ```
 
 > Make sure to start relative paths with `./` or `../` inside a Front Matter Block. 
 
 ## Animation 💫
-Animation on Slides can be enabled by applying CSS classes to elements. Most features are based on Reveal.js [Fragments](https://revealjs.com/fragments/). The standard template also contains some additional useful classes. Take a look at the toolbar menu `Animation` to get an overview over the offered functionality. 
+Animation on slides can be enabled by applying CSS classes to elements. Most features are based on Reveal.js [Fragments](https://revealjs.com/fragments/). The standard template also contains some additional useful classes. Take a look at the toolbar menu `Animation` to get an overview over the offered functionality. 
 
 ```yaml
 ---
@@ -218,19 +220,17 @@ defaults:
 ---
 ```
 
-> Take a look at the available [themes](#themes) of the standard template. 
-
-The `defaults` are merged with the configuration of every individual slide. Every keyword which is defined on the slide directly will override the default value.
+> The `defaults` are merged with the configuration of every individual slide. Every keyword which is defined on the slide directly will override the default value.
 
 ### Slide Configuration
 There are configuration options which can be applied to every slide individually.
 
 #### Layout
-Every slide uses a layout to structure its contents in a certain way. Every layout has a number of *slots*, which are containers for your content. Use the slot separator `***` to fill content into the next slot. Take a look at the available [layouts](#layouts) of the standard template. You also find the available layouts of the used template inside the toolbar menu `+`, where you can directly insert a new slide, with the chosen layout.
+Every slide uses a layout to structure its contents in a certain way. Every layout has a number of *slots*, which are containers for your content. Use the slot separator `***` to fill content into the next slot. Take a look at the available [layouts](#layouts) of the standard template. You also find the available layouts inside the toolbar menu `+`, where you can directly insert a new slide with the chosen layout.
 
 ```yaml
 ---
-# This layout splits the content in to two columns.
+# This layout splits the content into two columns.
 layout: cols-2
 ---
 
@@ -294,7 +294,7 @@ There are two themes which you can choose from: `black` and `white`. Every theme
 ### Layouts
 The standard template offers 18 layouts grouped into four categories: 
 
-- **`Base`**: The `base` layout is the default and consits of just one slot which fills the whole slide.
+- **`Base`**: The default `base` layout consists of just one slot which fills the whole slide.
 - **`Cols`**: Groups the content into vertical columns. Available layouts are `cols-2`, `cols-3` and `cols-4`.
 - **`Grid`**: Groups the content into a grid with various amount of items. Available layouts are `grid-3`, `grid-3-right`, `grid-4`, `grid-5`, `grid-6`, `grid-7`, `grid-8` and `grid-9`. 
 - **`Title`**: Groups the content into a title and a sublayout. Available layouts are `title-content`, `title-cols-2`, `title-cols-3`, `title-grid-3`, `title-grid-3-right` and `title-grid-4`.
@@ -405,10 +405,10 @@ Moonslide.initialize({
 })
 ```
 
-Take a look at all [configuration options](https://revealjs.com/initialization/).
+Take a look at all [configuration options](https://revealjs.com/initialization/) of Reveal.js.
 
 ### Slide Customization (`slide`)
-If you want to define a wrapper for all slides, e.g., to a header or footer to your presentation, you can provide you custom `slide.html` file. The contents of the file will be wrapped around every slide from the presentation individually. There has to be the token `@@content@@` inside the HTML-file, where the slides will be injected. Have a look at the `slide.html` file of the standard template, which can be used as a starting point to add a header or a footer.
+If you want to define a wrapper for all slides, e.g., to add a header or a footer to your presentations, you can provide a custom `slide.html` file. The contents of the file will be wrapped around every slide of the presentation individually. There has to be the token `@@content@@` inside the HTML-file, where the slides will be injected. Have a look at the `slide.html` file of the standard template, which can be used as a starting point to add a header or a footer.
 
 ```html
 <div class="slide-wrapper">
@@ -429,17 +429,17 @@ To define your own layout, just create a HTML-file with your layout and referenc
 </div>
 ```
 
-### Customize Toolbar (`toolbar`)
+###  Toolbar Customization (`toolbar`)
 The toolbar is useful to show the user what your template offers. **The toolbar does not configure the behaviour of the presentation in any way.** It just gives the user an easy way to interact with your template. The user can always use any attributes they like, even if they are not specified inside the toolbar.
 
 #### Toolbar Menus
 
 There are five customizable menus inside the toolbar:
-- `layouts` lists all the layouts available inside your template. Don't confuse it with the top-level `layouts` property of `config.yml`. In this section you only display, which values are displayed inside the toolbar.
-- `styles` lists all styles, which can be applied to individual Markdown elements. When clicking them inside the toolbar, they will be inserted inside curly braces `{ .your-class }`. See Markdown [attribute syntax](#attributes).
-- `animation` works the same way as `styles` and contains attributes concered with animation. 
-- `slide` lists the (Reveal.js Data-Attributes)[#reveal.js-data-attributes] which you support in your template. These will be included into the Front Matter configuration block and automatically transformed to data-attributes by the application.
-- `slideStyles` lists classes, which can be applied to the whole slide. When selected they are inserted into the value of `class` inside the Front Matter Configuration. See [Custom Slide Classes](#custom-classes).
+- **`layouts`**: Lists all the layouts available inside your template. Don't confuse it with the top-level `layouts` property of `config.yml`. In this section you only choose, which values are displayed inside the toolbar.
+- **`styles`**: Lists all styles, which can be applied to individual Markdown elements. When clicking them inside the toolbar, they will be inserted inside curly braces `{ .your-class }`. See Markdown [attribute syntax](#attributes).
+- **`animation`**: Works the same way as `styles` and contains attributes concered with animation. 
+- **`slide`**: Lists the [Reveal.js Data-Attributes](#revealjs-data-attributes) you support in your template. These can be included into the Front Matter configuration block and will automatically be transformed to data-attributes by the application.
+- **`slideStyles`**: Lists classes, which can be applied to the whole slide. When selected they are inserted into the value of `class` inside the Front Matter Configuration. See [Custom Slide Classes](#custom-classes).
 
 #### Configuration Files
 
@@ -464,7 +464,7 @@ The toolbar items are configured inside separate YAML files. The items are arran
     key: .text-right
 ```
 
-> In this examples all keys start with a `.`. This is only the case because the values are inserted into Markdown using the [attribute syntax](#attributes). Inside `slide.yml` where the values are inserted into Front Matter you would use the class names without `.`.
+> In this examples all keys start with a `.`. This is only the case because the values are inserted into Markdown using the [attribute syntax](#attributes). Inside `slideStyles.yml` where the values are inserted into Front Matter you would use the class names without `.`.
 
 If you have utility classes with a lot of values, you can use the following syntax: 
 
