@@ -6,7 +6,7 @@ Moonslide is a markdown based presentation editor.
 
 [![Run CI](https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml)
 
-## Features ⚽️
+## Features 
 -   **Markdown-based:** Write your presentation in Markdown with useful syntax extentions.
 -   **Reveal.js under the hood:** Uses the power of Reveal.js to create stunning HTML presentations.
 -   **Export Possibilities:** Export your presentation to HTML and PDF.
@@ -17,6 +17,17 @@ Moonslide is a markdown based presentation editor.
 
 ## Demos & Installation
 Take a look at some [demos](./demo) and download the [latest release](https://github.com/reveal-editor/reveal-editor/releases).
+
+## Table of Contents
+- **[Philosophy](#philosophy)**
+- **[What is a Template?](#what-is-a-template)**
+- **[Create your first Presentation](#create-your-first-presentation)**
+- **[Markdown Syntax](#markdown-syntax)**
+- **[Images and Videos](#images-and-videos)**
+- **[Animation](#animation)**
+- **[Front Matter Configuration](#front-matter-configuration)**
+- **[Standard Template](#standard-template)**
+- **[Create your own Template](#create-your-own-template)**
 
 ## Philosophy
 There are two ways to use Moonslide. 
@@ -450,7 +461,7 @@ If you have utility classes with a lot of values, you can use the following synt
   items: 
     # Generated name with value.
   - name: Width ${{value}}
-	  # Generated key with value.
+    # Generated key with value.
     key: .w-${{value}}
     # Sets the default values of all generated items.
     hidden: true
