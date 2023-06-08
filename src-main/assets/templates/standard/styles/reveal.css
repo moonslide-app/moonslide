@@ -28,3 +28,7 @@ Configurable Variables of Reveal
     /* --r-selection-background-color: VALUE; */
     /* --r-selection-color: VALUE; */
 }
+
+.reveal table {
+    margin: 0;
+}
