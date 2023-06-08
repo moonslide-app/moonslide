@@ -34,6 +34,20 @@
         --ring: 215 20.2% 65.1%;
 
         --radius: 0.5rem;
+
+        --highlight-50: 260 74% 94%;
+        --highlight-100: 260 75% 89%;
+        --highlight-200: 260 76% 77%;
+        --highlight-300: 260 77% 66%;
+        --highlight-400: 260 77% 55%;
+        --highlight-500: 260 77% 44%;
+        --highlight-600: 260 77% 39%;
+        --highlight-700: 260 77% 34%;
+        --highlight-800: 260 77% 29%;
+        --highlight-900: 260 77% 25%;
+        --highlight-950: 260 77% 22%;
+
+        --highlight: var(--accent-500);
     }
 
     .dark {
@@ -55,11 +69,11 @@
         --primary: 210 40% 98%;
         --primary-foreground: 222.2 47.4% 1.2%;
 
-        --secondary: 222.2 47.4% 11.2%;
-        --secondary-foreground: 210 40% 98%;
-
         --accent: 216 34% 17%;
         --accent-foreground: 210 40% 98%;
+
+        --secondary: 222.2 47.4% 11.2%;
+        --secondary-foreground: 210 40% 98%;
 
         --destructive: 0 63% 31%;
         --destructive-foreground: 210 40% 98%;
@@ -67,6 +81,20 @@
         --ring: 216 34% 17%;
 
         --radius: 0.5rem;
+
+        --highlight-50: 260 75% 97%;
+        --highlight-100: 260 78% 93%;
+        --highlight-200: 260 78% 86%;
+        --highlight-300: 260 77% 80%;
+        --highlight-400: 260 77% 73%;
+        --highlight-500: 260 77% 66%;
+        --highlight-600: 260 77% 57%;
+        --highlight-700: 260 77% 48%;
+        --highlight-800: 260 77% 38%;
+        --highlight-900: 260 77% 29%;
+        --highlight-950: 260 77% 25%;
+
+        --highlight: var(--accent-500);
     }
 }
 
@@ -78,4 +106,15 @@
         @apply bg-background text-foreground;
         font-feature-settings: 'rlig' 1, 'calt' 1;
     }
+}
+
+@layer utilities {
+    .window-draggable {
+        -webkit-app-region: drag;
+    }
+}
+
+.window-controls-container {
+    height: 100%;
+    width: 70px;
 }

@@ -20,22 +20,22 @@ export type CodeMirrorEditorProps = {
 }
 
 const myHighlightStyle = HighlightStyle.define([
-    { tag: tags.keyword, class: 'text-violet-700 font-bold' },
+    { tag: tags.keyword, class: 'text-highlight-500 font-bold' },
     { tag: tags.heading1, class: 'font-bold text-2xl' },
     { tag: tags.heading2, class: 'font-bold text-xl' },
     { tag: tags.heading3, class: 'font-bold text-lg' },
     { tag: tags.heading4, class: 'font-bold' },
     { tag: tags.heading5, class: 'font-bold' },
     { tag: tags.heading6, class: 'font-bold' },
-    { tag: tags.url, class: 'text-violet-300' },
-    { tag: tags.contentSeparator, class: 'font-bold text-violet-400' },
+    { tag: tags.url, class: 'text-highlight-300' },
+    { tag: tags.contentSeparator, class: 'font-bold text-highlight-400' },
     { tag: tags.emphasis, class: 'italic' },
     { tag: tags.strong, class: 'font-bold' },
     { tag: tags.strikethrough, class: 'line-through' },
     { tag: tags.monospace, class: 'text-slate-500' },
-    { tag: tags.angleBracket, class: 'text-violet-300' },
-    { tag: tags.tagName, class: 'text-violet-700 font-bold' },
-    { tag: tags.attributeName, class: 'text-violet-500' },
+    { tag: tags.angleBracket, class: 'text-highlight-300' },
+    { tag: tags.tagName, class: 'text-highlight-700 font-bold' },
+    { tag: tags.attributeName, class: 'text-highlight-500' },
     { tag: tags.attributeValue, class: 'text-rose-500' },
 ])
 
@@ -51,9 +51,12 @@ const myTheme = EditorView.baseTheme({
         backgroundColor: 'hsla(250, 100%, 80%, 0.075)',
     },
     '.cm-content': {
-        padding: '1rem',
+        padding: '1rem 0',
     },
-    '.cm-scroller': { overflow: 'auto', height: '100%' },
+    '.cm-line': {
+        padding: '0 1rem',
+    },
+    '.cm-scroller': { overflow: 'auto', height: '100%', backgroundColor: 'hsl(var(--background))' },
 })
 
 const markdownParser = mdParser.configure([

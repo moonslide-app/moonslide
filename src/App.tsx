@@ -15,6 +15,7 @@ import { GlobalErrors } from './components/GlobalErrors'
 import { Dropzone } from './components/Dropzone'
 import { acceptedFileTypes } from '../src-shared/constants/fileTypes'
 import { StatusBar } from './components/StatusBar'
+import { TitleBar } from './components/TitleBar'
 
 function App() {
     const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
@@ -45,37 +46,40 @@ function App() {
             <GlobalErrors />
             <MenuCallbacks />
             <PreviewWindow ref={previewWindowRef} />
+            <TitleBar />
             <div className="flex-grow">
                 <div className="flex flex-col h-full">
-                    <MarkdownToolbar
-                        templateConfig={templateConfig}
-                        editorRef={
-                            codeEditorRef.current
-                                ? {
-                                      ...codeEditorRef.current,
-                                      onAddMedia: addMedia,
-                                  }
-                                : undefined
-                        }
-                    />
                     <Allotment separator={false} className="flex-grow">
-                        <Allotment.Pane minSize={300} className="border-r-[1px]" snap>
-                            <Dropzone
-                                className="h-full"
-                                accept={{
-                                    'image/*': acceptedFileTypes.images,
-                                    'video/*': acceptedFileTypes.videos,
-                                }}
-                                onFileDropped={addMedia}
-                            >
-                                <CodeMirrorEditor
-                                    ref={codeEditorRef}
-                                    className="h-full"
-                                    onUpdateCurrentSlide={showSlide}
+                        <Allotment.Pane minSize={300} className="border-r-[1px] border-r-border" snap>
+                            <div className="flex flex-col h-full">
+                                <MarkdownToolbar
+                                    templateConfig={templateConfig}
+                                    editorRef={
+                                        codeEditorRef.current
+                                            ? {
+                                                  ...codeEditorRef.current,
+                                                  onAddMedia: addMedia,
+                                              }
+                                            : undefined
+                                    }
                                 />
-                            </Dropzone>
+                                <Dropzone
+                                    className="flex-grow overflow-hidden"
+                                    accept={{
+                                        'image/*': acceptedFileTypes.images,
+                                        'video/*': acceptedFileTypes.videos,
+                                    }}
+                                    onFileDropped={addMedia}
+                                >
+                                    <CodeMirrorEditor
+                                        ref={codeEditorRef}
+                                        className="h-full"
+                                        onUpdateCurrentSlide={showSlide}
+                                    />
+                                </Dropzone>
+                            </div>
                         </Allotment.Pane>
-                        <Allotment.Pane minSize={300} className="border-l-[1px]" snap>
+                        <Allotment.Pane minSize={300} className="border-l-[1px] border-l-border" snap>
                             <PreviewSlides
                                 ref={previewSlidesRef}
                                 clickOnSlide={num => codeEditorRef.current?.onScrollToSlide(num)}
@@ -85,7 +89,7 @@ function App() {
                 </div>
             </div>
             <ErrorAlert />
-            <StatusBar leadingText={editingFile.path} />
+            <StatusBar leadingText={`Editing File: ${editingFile.path}`} />
         </div>
     )
 }

@@ -44,15 +44,15 @@ export const PreviewSlides = forwardRef((props: PreviewSlidesProps, ref: Ref<Pre
     }
 
     return (
-        <div ref={slidesDivRef} className="space-y-2 p-4 h-full overflow-y-auto bg-white" key={lastFullUpdate}>
+        <div ref={slidesDivRef} className="space-y-2 p-4 h-full overflow-y-auto bg-background" key={lastFullUpdate}>
             {slides &&
                 slides.map((slide, idx) => (
                     <button
                         className={
                             'flex w-full focus:outline-none rounded-lg  ' +
                             (idx === selectedSlide
-                                ? 'bg-violet-200'
-                                : 'bg-gray-100 focus-visible:bg-violet-100 hover:bg-violet-100')
+                                ? 'bg-highlight-200'
+                                : 'bg-gray-100 focus-visible:bg-highlight-100 hover:bg-highlight-100')
                         }
                         onClick={() => clickOnSlide(idx)}
                     >
@@ -61,7 +61,7 @@ export const PreviewSlides = forwardRef((props: PreviewSlidesProps, ref: Ref<Pre
                                 <span
                                     className={
                                         'text-sm font-bold ' +
-                                        (idx === selectedSlide ? 'text-violet-500' : 'text-gray-500')
+                                        (idx === selectedSlide ? 'text-highlight-500' : 'text-gray-500')
                                     }
                                 >
                                     {idx + 1}
