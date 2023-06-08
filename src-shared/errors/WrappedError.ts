@@ -56,6 +56,8 @@ function extractUnderlyingErrorMessage(error: unknown): string | undefined {
         return message + error.issues.map(issue => `- ${formatPath(issue.path)}: ${issue.message}`).join('\n')
     } else if (error instanceof Error) {
         return error.message
+    } else if (typeof error === 'string') {
+        return error
     } else {
         return 'An unknown error occurred.'
     }
@@ -86,6 +88,44 @@ export class TemplateNotFoundError extends WrappedError {
     constructor(templatePath: string, underlyingError: unknown) {
         super('Template Not Found', `The requested template '${templatePath}' was not found.`, underlyingError)
         this.templatePath = templatePath
+    }
+}
+
+export class InvalidThemeError extends WrappedError {
+    readonly requestedTheme: string
+    readonly availableThemes: string[]
+
+    constructor(requestedTheme: string, avaialbleThemes: string[]) {
+        const highLevelMessage = `The requested theme '${requestedTheme}' does not exist on this template.`
+        const detailedMessage =
+            avaialbleThemes.length > 0
+                ? `The following themes are available on the template: ${avaialbleThemes
+                      .map(theme => `'${theme}'`)
+                      .join(', ')}.`
+                : 'There are no available themes on this template.'
+
+        super('Invalid Theme', highLevelMessage, detailedMessage)
+        this.requestedTheme = requestedTheme
+        this.availableThemes = avaialbleThemes
+    }
+}
+
+export class InvalidLayoutError extends WrappedError {
+    readonly requestedLayout: string
+    readonly availableLayouts: string[]
+
+    constructor(requestedLayout: string, availableLayouts: string[]) {
+        const highLevelMessage = `The requested layout '${requestedLayout}' does not exist on this template.`
+        const detailedMessage =
+            availableLayouts.length > 0
+                ? `The following layouts are available on the template: ${availableLayouts
+                      .map(layout => `'${layout}'`)
+                      .join(', ')}.`
+                : 'There are no available layouts on this template.'
+
+        super('Invalid Layout', highLevelMessage, detailedMessage)
+        this.requestedLayout = requestedLayout
+        this.availableLayouts = availableLayouts
     }
 }
 

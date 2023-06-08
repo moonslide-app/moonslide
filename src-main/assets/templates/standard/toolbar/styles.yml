@@ -1,13 +1,14 @@
 - name: Text Alignment
-  description: Changes the horizontal alignment of a text.
+  description: Adjusts the horizontal alignment of the text.
   items: 
-  - name: Text Left
+  - name: Left
     key: .text-left
-  - name: Text Center
+  - name: Center
     key: .text-center
-  - name: Text Right
+  - name: Right
     key: .text-right
 - name: Font Size
+  description: Adjusts the font size of the text.
   items: 
   - name: Extra Small
     key: .text-xs
@@ -25,29 +26,40 @@
     values: ['2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl']
     shownValues: ['2xl']
 - name: Font Color
+  description: Adjusts the font color of the text.
   items: 
+  - name: Main
+    key: .text-main
+    description: The main color ensures a good contrast with the default background of the template. 
   - name: ${{value}}
     key: .text-${{value}}
     hidden: true
-    values: [main, white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
-    shownValues: [main, white, black, red, green, blue]
-- name: Block Image
+    values: [white, black, slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, violet, purple, fuchsia, pink, rose]
+    shownValues: [white, black, red, green, blue]
+- name: Image Size
+  description: Adjusts the displayed size of an image. **The property only works on block images** (when there is a empty line before and after the image). For inline images you can use `Width` and `Height` to adjust the size.
   items: 
-  - name: Image Cover 
+  - name: Cover 
     key: .image-cover
-  - name: Image Contain
+    description: The image fills the entire space of the container and is cropped to fit inside it.
+  - name: Contain
     key: .image-contain
-  - name: Image Center
+    description: The image fills out as much of the container as possible, but is not cropped.
+- name: Image Position 
+  description: Adjusts the position of an image. **The property only works on block images** (when there is a empty line before and after the image).
+  items:
+  - name: Center
     key: .image-center
-  - name: Image Top
+  - name: Top
     key: .image-top
-  - name: Image Bottom
+  - name: Bottom
     key: .image-bottom
-  - name: Image Left
+  - name: Left
     key: .image-left
-  - name: Image Right
+  - name: Right
     key: .image-right
 - name: Width
+  description: Adjusts the width of an element. 
   items: 
   - name: Width ${{value}}
     key: .w-${{value}}
@@ -56,10 +68,13 @@
     shownValues: [12, 20, 32, 40]
   - name: Half Width
     key: .w-half
+    description: The element's width is set to 50% of its container's width.
     hidden: true
   - name: Full Width
     key: .w-full
+    description: The element's width is set to 100% of its container's width.
 - name: Height
+  description: Adjusts the height of an element. 
   items: 
   - name: Height ${{value}}
     key: .h-${{value}}
@@ -68,10 +83,13 @@
     shownValues: [12, 20, 32, 40]
   - name: Half Height
     key: .h-half
+    description: The element's height is set to 50% of its container's height.
     hidden: true
   - name: Full Height
     key: .h-full
+    description: The element's height is set to 100% of its container's height.
 - name: Top Margin
+  description: Adds a spacing to the top of the element.
   items:
   - key: .mt-${{value}}
     name: Top Margin ${{value}}
@@ -79,6 +97,7 @@
     values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
     shownValues: [2, 4, 8, 16]
 - name: Bottom Margin
+  description: Adds a spacing to the bottom of the element.
   items:
   - key: .mb-${{value}}
     name: Bottom Margin ${{value}}
@@ -86,6 +105,7 @@
     values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
     shownValues: [2, 4, 8, 16]
 - name: Left Margin
+  description: Adds a spacing to the left of the element.
   items:
   - key: .ml-${{value}}
     name: Left Margin ${{value}}
@@ -93,27 +113,31 @@
     values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
     shownValues: [2, 4, 8, 16]
 - name: Right Margin
+  description: Adds a spacing to the right of the element.
   items:
   - key: .mr-${{value}}
     name: Right Margin ${{value}}
     hidden: true
     values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
     shownValues: [2, 4, 8, 16]
-- name: Horizontal Margin
-  items:
-  - key: .mx-${{value}}
-    name: Horizontal Margin ${{value}}
-    hidden: true
-    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
-    shownValues: [2, 4, 8, 16]
 - name: Vertical Margin
+  description: Adds a spacing to the top and the bottom of the element.
   items:
   - key: .my-${{value}}
     name: Vertical Margin ${{value}}
     hidden: true
     values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
     shownValues: [2, 4, 8, 16]
+- name: Horizontal Margin
+  description: Adds a spacing to the left and the right of the element.
+  items:
+  - key: .mx-${{value}}
+    name: Horizontal Margin ${{value}}
+    hidden: true
+    values: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96]
+    shownValues: [2, 4, 8, 16]
 - name: Margin (All Directions)
+  description: Adds a spacing in all directions of the element.
   items:
   - key: .m-${{value}}
     name: Margin ${{value}}
