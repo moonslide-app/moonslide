@@ -23,7 +23,6 @@ function enforceConfigOptions() {
     const alreadyInitialized = Reveal.isReady()
     Object.assign(Reveal, {
         initialize(config, ...args) {
-            console.debug(`Moonslide trapped the call to 'Reveal.initialize' and enforced some options.`)
             return revealInitialize({ ...config, ...overrideConfig }, ...args).then(() => {
                 if (!alreadyInitialized) enforceConfigOptions()
             })
