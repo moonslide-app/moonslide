@@ -17,9 +17,9 @@ export function registerProtocols() {
     })
 
     protocol.registerFileProtocol(FILE_PROTOCOL_NAME, (request, callback) => {
-        const requestedPath = parse(request.url).pathname
+        const requestedPath = request.url.slice(`${FILE_PROTOCOL_NAME}://`.length).match(/.+?(?=\?|$)/)
         if (requestedPath !== null) {
-            const decoded = decodeURI(requestedPath)
+            const decoded = decodeURI(requestedPath[0])
             callback({ path: decoded })
         } else callback({ error: 404 })
     })
