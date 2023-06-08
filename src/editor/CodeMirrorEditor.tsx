@@ -19,26 +19,6 @@ export type CodeMirrorEditorProps = {
     onUpdateCurrentSlide?: (slideNumber: number) => void
 }
 
-const myHighlightStyle = HighlightStyle.define([
-    { tag: tags.keyword, class: 'text-highlight-500 font-bold' },
-    { tag: tags.heading1, class: 'font-bold text-2xl' },
-    { tag: tags.heading2, class: 'font-bold text-xl' },
-    { tag: tags.heading3, class: 'font-bold text-lg' },
-    { tag: tags.heading4, class: 'font-bold' },
-    { tag: tags.heading5, class: 'font-bold' },
-    { tag: tags.heading6, class: 'font-bold' },
-    { tag: tags.url, class: 'text-highlight-300' },
-    { tag: tags.contentSeparator, class: 'font-bold text-highlight-400' },
-    { tag: tags.emphasis, class: 'italic' },
-    { tag: tags.strong, class: 'font-bold' },
-    { tag: tags.strikethrough, class: 'line-through' },
-    { tag: tags.monospace, class: 'text-slate-500' },
-    { tag: tags.angleBracket, class: 'text-highlight-300' },
-    { tag: tags.tagName, class: 'text-highlight-700 font-bold' },
-    { tag: tags.attributeName, class: 'text-highlight-500' },
-    { tag: tags.attributeValue, class: 'text-rose-500' },
-])
-
 const myTheme = EditorView.baseTheme({
     '&': {
         fontSize: '12pt',
@@ -56,7 +36,7 @@ const myTheme = EditorView.baseTheme({
     '.cm-line': {
         padding: '0 1rem',
     },
-    '.cm-scroller': { overflow: 'auto', height: '100%', backgroundColor: 'hsl(var(--background))' },
+    '.cm-scroller': { overflow: 'auto', height: '100%', backgroundColor: 'hsl(var(--background-primary))' },
 })
 
 const markdownParser = mdParser.configure([
@@ -79,6 +59,31 @@ const mixedParser = parser.configure({
 })
 
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
+
+const myHighlightStyle = HighlightStyle.define(
+    [
+        { tag: tags.keyword, class: 'font-bold' },
+        { tag: tags.heading1, class: 'font-bold text-2xl' },
+        { tag: tags.heading2, class: 'font-bold text-xl' },
+        { tag: tags.heading3, class: 'font-bold text-lg' },
+        { tag: tags.heading4, class: 'font-bold' },
+        { tag: tags.heading5, class: 'font-bold' },
+        { tag: tags.heading6, class: 'font-bold' },
+        { tag: tags.url, class: 'text-foreground-tertiary' },
+        { tag: tags.contentSeparator, class: 'font-bold text-foreground-quaternary' },
+        { tag: tags.emphasis, class: 'italic' },
+        { tag: tags.strong, class: 'font-bold' },
+        { tag: tags.strikethrough, class: 'line-through' },
+        { tag: tags.monospace, class: 'text-foreground-quaternary' },
+        { tag: tags.angleBracket, class: 'text-foreground-tertiary' },
+        { tag: tags.tagName, class: 'text-foreground-tertiary font-bold' },
+        { tag: tags.attributeName, class: 'text-highlight-500' },
+        { tag: tags.attributeValue, class: 'text-foreground-secondary' },
+    ],
+    {
+        scope: mixedPlugin,
+    }
+)
 
 export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?: Ref<CodeMirrorEditorRef>) => {
     const editorView = useRef<EditorView | undefined>()

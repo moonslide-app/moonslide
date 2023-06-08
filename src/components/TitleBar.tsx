@@ -14,7 +14,7 @@ export type TitleBarProps = {
 
 export function TitleBar(props: TitleBarProps) {
     return (
-        <div className="flex flex-row justify-between items-center space-b bg-secondary h-9 text-sm text-secondary-foreground draggable">
+        <div className="flex flex-row justify-between items-center space-b bg-background-secondary h-9 text-sm text-foreground-secondary draggable">
             <div className="flex flex-row w-[20%] min-w-min h-full items-center justify-start">
                 <div className="window-controls-container" />
                 <div className="flex flex-row flex-grow w-[20%] justify-start px-2 space-x-1">
@@ -60,7 +60,10 @@ export type TitleBarIconProps = {
 
 export function TitleBarIcon(props: TitleBarIconProps) {
     return (
-        <button className="non-draggable text-gray-400 h-6 w-6 rounded-sm hover:bg-gray-200 p-1" onClick={props.action}>
+        <button
+            className="non-draggable text-foreground-tertiary h-6 w-6 rounded-sm hover:bg-background-tertiary p-1"
+            onClick={props.action}
+        >
             {props.children}
         </button>
     )

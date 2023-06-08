@@ -12,39 +12,34 @@ module.exports = {
         },
         extend: {
             colors: {
-                border: 'hsl(var(--border))',
-                input: 'hsl(var(--input))',
-                ring: 'hsl(var(--ring))',
-                background: 'hsl(var(--background))',
-                foreground: 'hsl(var(--foreground))',
-                primary: {
-                    DEFAULT: 'hsl(var(--primary))',
-                    foreground: 'hsl(var(--primary-foreground))',
+                background: {
+                    DEFAULT: 'hsl(var(--background))',
+                    primary: 'hsl(var(--background-primary))',
+                    secondary: 'hsl(var(--background-secondary))',
+                    tertiary: 'hsl(var(--background-tertiary))',
+                    quaternary: 'hsl(var(--background-quaternary))',
                 },
-                secondary: {
-                    DEFAULT: 'hsl(var(--secondary))',
-                    foreground: 'hsl(var(--secondary-foreground))',
+                foreground: {
+                    DEFAULT: 'hsl(var(--foreground))',
+                    primary: 'hsl(var(--foreground-primary))',
+                    secondary: 'hsl(var(--foreground-secondary))',
+                    tertiary: 'hsl(var(--foreground-tertiary))',
+                    quaternary: 'hsl(var(--foreground-quaternary))',
                 },
                 destructive: {
                     DEFAULT: 'hsl(var(--destructive))',
+                    border: 'hsl(var(--destructive-border))',
                     foreground: 'hsl(var(--destructive-foreground))',
-                },
-                muted: {
-                    DEFAULT: 'hsl(var(--muted))',
-                    foreground: 'hsl(var(--muted-foreground))',
                 },
                 accent: {
                     DEFAULT: 'hsl(var(--accent))',
+                    primary: 'hsl(var(--accent-primary))',
+                    secondary: 'hsl(var(--accent-secondary))',
+                    tertiary: 'hsl(var(--accent-tertiary))',
+                    quaternary: 'hsl(var(--accent-quaternary))',
                     foreground: 'hsl(var(--accent-foreground))',
                 },
-                popover: {
-                    DEFAULT: 'hsl(var(--popover))',
-                    foreground: 'hsl(var(--popover-foreground))',
-                },
-                card: {
-                    DEFAULT: 'hsl(var(--card))',
-                    foreground: 'hsl(var(--card-foreground))',
-                },
+
                 highlight: {
                     DEFAULT: 'hsl(var(--hightlight))',
                     50: 'hsl(var(--highlight-50))',

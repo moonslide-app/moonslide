@@ -21,7 +21,7 @@ export function PreviewSlide(props: { presentationHtml: string; slideHtml: strin
 
     const className =
         'w-full aspect-[16/9] pointer-events-none min-w-0 rounded-lg ' +
-        (props.selected ? 'border-4 border-highlight-400' : 'p-1')
+        (props.selected ? 'border-4 border-accent-primary' : 'p-1')
 
     return <iframe ref={iframeRef} tabIndex={-1} srcDoc={props.presentationHtml} className={className}></iframe>
 }

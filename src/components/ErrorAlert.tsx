@@ -15,7 +15,7 @@ export function ErrorAlert() {
     const [showDetails, setShowDetails] = useState(false)
 
     return isDisplayed ? (
-        <div className="bg-red-900 text-red-100 text-xs border-t border-border">
+        <div className="bg-destructive text-destructive-foreground text-xs border-t border-background-tertiary">
             <div className="flex justify-between items-baseline space-x-4 px-3 py-1">
                 <p>{`${highLevelMessage}`}</p>
                 {hasDetails && (
@@ -30,7 +30,7 @@ export function ErrorAlert() {
             </div>
 
             {hasDetails && showDetails && (
-                <div className="border-t border-red-950">
+                <div className="border-t border-destructive-border">
                     <p className="px-3 py-1 whitespace-pre-line leading-tight">{`${detailedMessage ?? ''}`}</p>
                 </div>
             )}

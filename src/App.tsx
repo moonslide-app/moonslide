@@ -83,7 +83,7 @@ function App() {
                     <Allotment ref={allotmentRef} separator={false} className="flex-grow">
                         <Allotment.Pane
                             minSize={100}
-                            className="border-r-[1px] border-r-border"
+                            className="border-r-[1px] border-background-tertiary"
                             visible={editorPaneVisible}
                         >
                             <div className="flex flex-col h-full">
@@ -105,7 +105,7 @@ function App() {
                         </Allotment.Pane>
                         <Allotment.Pane
                             minSize={150}
-                            className="border-l-[1px] border-l-border"
+                            className="border-l-[1px] border-background-tertiary"
                             visible={previewPaneVisible}
                         >
                             <PreviewSlides
