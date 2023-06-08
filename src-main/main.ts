@@ -11,11 +11,12 @@ if (require('electron-squirrel-startup')) {
 }
 
 const createWindow = () => {
+    const isMac = process.platform === 'darwin'
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         width: 1200,
         height: 900,
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: isMac ? 'hiddenInset' : 'default',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
         },

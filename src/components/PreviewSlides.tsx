@@ -44,7 +44,7 @@ export const PreviewSlides = forwardRef((props: PreviewSlidesProps, ref: Ref<Pre
     }
 
     return (
-        <div ref={slidesDivRef} className="space-y-2 p-4 h-full overflow-y-auto bg-background" key={lastFullUpdate}>
+        <div ref={slidesDivRef} className="space-y-3 p-3 h-full overflow-y-auto bg-background" key={lastFullUpdate}>
             {slides &&
                 slides.map((slide, idx) => (
                     <button

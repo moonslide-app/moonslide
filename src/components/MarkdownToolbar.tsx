@@ -357,7 +357,7 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
     const toolbar = props.templateConfig?.toolbar
     const editorRef = props.editorRef
     return (
-        <Toolbar className="m-4">
+        <Toolbar>
             {toolbar?.layouts && (
                 <ItemsTemplateConfigurable<ToolbarLayoutItem, ToolbarLayoutEntry>
                     layoutsConfig={toolbar.layouts}

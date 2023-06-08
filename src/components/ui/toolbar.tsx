@@ -19,10 +19,7 @@ const Toolbar = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <ToolbarPrimitive.Root
         ref={ref}
-        className={cn(
-            'flex flex-wrap items-center space-x-1 rounded-md border border-border bg-secondary p-1',
-            className
-        )}
+        className={cn('flex flex-wrap items-center space-x-1 border-b border-border bg-secondary p-1', className)}
         {...props}
     />
 ))

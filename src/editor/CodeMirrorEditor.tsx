@@ -1,4 +1,4 @@
-import { history, indentWithTab, redo, undo } from '@codemirror/commands'
+import { history, indentWithTab } from '@codemirror/commands'
 import { StreamLanguage, LRLanguage, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
 import { tags } from '@lezer/highlight'
 import { GFM, parser as mdParser, parseCode } from '@lezer/markdown'
@@ -86,7 +86,7 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
     const editingFile = useEditorStore(state => state.editingFile)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
 
-    useCodeMirrorEditorRef(ref, editorView)
+    const { undo, redo } = useCodeMirrorEditorRef(ref, editorView)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
 
@@ -132,8 +132,8 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
 
         const view = editorView.current
 
-        window.ipc.menu.onUndo(() => view && undo(view))
-        window.ipc.menu.onRedo(() => view && redo(view))
+        window.ipc.menu.onUndo(undo)
+        window.ipc.menu.onRedo(redo)
 
         return () => view?.destroy()
     }, [editingFile.openedAt])

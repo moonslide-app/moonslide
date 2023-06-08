@@ -4,23 +4,25 @@ import { PreviewSlides, PreviewSlidesRef } from './components/PreviewSlides'
 import { MenuCallbacks } from './components/MenuCallbacks'
 import { useEditorStore } from './store'
 import { useEffectOnce } from 'usehooks-ts'
-import { Allotment } from 'allotment'
+import { Allotment, AllotmentHandle } from 'allotment'
 import 'allotment/dist/style.css'
-import { PreviewWindow, PreviewWindowRef } from './components/PreviewWindow'
+import { PreviewWindow, PreviewWindowRef, openPreviewWindow } from './components/PreviewWindow'
 import { ErrorAlert } from './components/ErrorAlert'
 import { MarkdownToolbar } from './components/MarkdownToolbar'
-import { useRef } from 'react'
 import { Toaster } from './components/ui/toaster'
 import { GlobalErrors } from './components/GlobalErrors'
 import { Dropzone } from './components/Dropzone'
 import { acceptedFileTypes } from '../src-shared/constants/fileTypes'
 import { StatusBar } from './components/StatusBar'
 import { TitleBar } from './components/TitleBar'
+import { useRef } from 'react'
 
 function App() {
     const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
     const templateConfig = useEditorStore(state => state.parsedPresentation?.templateConfig)
     const getMediaPath = useEditorStore(state => state.getMediaPath)
+
+    const allotmentRef = useRef<AllotmentHandle>(null)
 
     useEffectOnce(() => {
         reloadAllPreviews()
@@ -46,23 +48,29 @@ function App() {
             <GlobalErrors />
             <MenuCallbacks />
             <PreviewWindow ref={previewWindowRef} />
-            <TitleBar />
+            <TitleBar
+                onUndo={codeEditorRef.current?.onUndo}
+                onRedo={codeEditorRef.current?.onRedo}
+                onRestorePanes={allotmentRef.current?.reset}
+                onReload={reloadAllPreviews}
+                onPresent={openPreviewWindow}
+            />
+            <MarkdownToolbar
+                templateConfig={templateConfig}
+                editorRef={
+                    codeEditorRef.current
+                        ? {
+                              ...codeEditorRef.current,
+                              onAddMedia: addMedia,
+                          }
+                        : undefined
+                }
+            />
             <div className="flex-grow">
                 <div className="flex flex-col h-full">
-                    <Allotment separator={false} className="flex-grow">
+                    <Allotment ref={allotmentRef} separator={false} className="flex-grow">
                         <Allotment.Pane minSize={300} className="border-r-[1px] border-r-border" snap>
                             <div className="flex flex-col h-full">
-                                <MarkdownToolbar
-                                    templateConfig={templateConfig}
-                                    editorRef={
-                                        codeEditorRef.current
-                                            ? {
-                                                  ...codeEditorRef.current,
-                                                  onAddMedia: addMedia,
-                                              }
-                                            : undefined
-                                    }
-                                />
                                 <Dropzone
                                     className="flex-grow overflow-hidden"
                                     accept={{
@@ -89,7 +97,7 @@ function App() {
                 </div>
             </div>
             <ErrorAlert />
-            <StatusBar leadingText={`Editing File: ${editingFile.path}`} />
+            <StatusBar leadingText={editingFile.path} />
         </div>
     )
 }

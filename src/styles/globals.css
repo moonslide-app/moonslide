@@ -109,12 +109,19 @@
 }
 
 @layer utilities {
-    .window-draggable {
+    .draggable {
         -webkit-app-region: drag;
+    }
+    .non-draggable {
+        -webkit-app-region: no-drag;
     }
 }
 
-.window-controls-container {
-    height: 100%;
-    width: 70px;
+@layer components {
+    .window-controls-container {
+        @apply hidden;
+    }
+    .macos .window-controls-container {
+        @apply block w-[70px] h-full;
+    }
 }
