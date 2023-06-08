@@ -20,6 +20,9 @@ const files = {
     existsFile(filePath: string): Promise<boolean> {
         return ipcRenderer.invoke('file:exists', filePath)
     },
+    basename(filePath: string): Promise<string> {
+        return ipcRenderer.invoke('file:basename', filePath)
+    },
     async getFileContent(filePath: string): Promise<string> {
         return await unwrapPromise(ipcRenderer.invoke('file:getContent', filePath))
     },

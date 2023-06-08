@@ -15,7 +15,7 @@ import { Dropzone } from './components/Dropzone'
 import { acceptedFileTypes } from '../src-shared/constants/fileTypes'
 import { StatusBar } from './components/StatusBar'
 import { TitleBar } from './components/TitleBar'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 function App() {
     const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
@@ -23,6 +23,9 @@ function App() {
     const getMediaPath = useEditorStore(state => state.getMediaPath)
 
     const allotmentRef = useRef<AllotmentHandle>(null)
+
+    const [editorPaneVisible, setEditorPaneVisible] = useState(true)
+    const [previewPaneVisible, setPreviewPaneVisible] = useState(true)
 
     useEffectOnce(() => {
         reloadAllPreviews()
@@ -42,6 +45,12 @@ function App() {
         codeEditorRef.current?.onAddMedia(mediaPath)
     }
 
+    function restorePanes() {
+        setEditorPaneVisible(true)
+        setPreviewPaneVisible(true)
+        allotmentRef.current?.reset()
+    }
+
     return (
         <div className="flex flex-col h-screen m-auto">
             <Toaster />
@@ -49,9 +58,12 @@ function App() {
             <MenuCallbacks />
             <PreviewWindow ref={previewWindowRef} />
             <TitleBar
+                documentTitle={editingFile.filename}
                 onUndo={codeEditorRef.current?.onUndo}
                 onRedo={codeEditorRef.current?.onRedo}
-                onRestorePanes={allotmentRef.current?.reset}
+                onRestorePanes={restorePanes}
+                onPanelLeftToggle={() => setEditorPaneVisible(!editorPaneVisible)}
+                onPanelRightToggle={() => setPreviewPaneVisible(!previewPaneVisible)}
                 onReload={reloadAllPreviews}
                 onPresent={openPreviewWindow}
             />
@@ -69,7 +81,11 @@ function App() {
             <div className="flex-grow">
                 <div className="flex flex-col h-full">
                     <Allotment ref={allotmentRef} separator={false} className="flex-grow">
-                        <Allotment.Pane minSize={300} className="border-r-[1px] border-r-border" snap>
+                        <Allotment.Pane
+                            minSize={100}
+                            className="border-r-[1px] border-r-border"
+                            visible={editorPaneVisible}
+                        >
                             <div className="flex flex-col h-full">
                                 <Dropzone
                                     className="flex-grow overflow-hidden"
@@ -87,7 +103,11 @@ function App() {
                                 </Dropzone>
                             </div>
                         </Allotment.Pane>
-                        <Allotment.Pane minSize={300} className="border-l-[1px] border-l-border" snap>
+                        <Allotment.Pane
+                            minSize={150}
+                            className="border-l-[1px] border-l-border"
+                            visible={previewPaneVisible}
+                        >
                             <PreviewSlides
                                 ref={previewSlidesRef}
                                 clickOnSlide={num => codeEditorRef.current?.onScrollToSlide(num)}

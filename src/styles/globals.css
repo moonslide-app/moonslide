@@ -115,6 +115,9 @@
     .non-draggable {
         -webkit-app-region: no-drag;
     }
+    .macos .hidden.show-mac {
+        display: unset;
+    }
 }
 
 @layer components {
