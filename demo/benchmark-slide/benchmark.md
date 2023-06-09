@@ -2,7 +2,6 @@
 template: standard
 theme: white
 title: Beispielfolie
-author: Timo Siegenthaler
 layout: cols-2
 class: text-left
 ---
