@@ -12,6 +12,7 @@ export function MenuCallbacks() {
         saveOrDiscardChanges,
         exportHTMLPresentation,
         reloadAllPreviews,
+        parsedPresentation,
         editingFile,
         content,
         getContent,
@@ -128,7 +129,7 @@ export function MenuCallbacks() {
     }
 
     async function openPreview() {
-        openPreviewWindow()
+        openPreviewWindow(parsedPresentation?.config.title ?? editingFile.filename)
     }
 
     // it has to be this ugly, so we can capture the errors

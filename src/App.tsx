@@ -15,11 +15,16 @@ import { Dropzone } from './components/Dropzone'
 import { acceptedFileTypes } from '../src-shared/constants/fileTypes'
 import { StatusBar } from './components/StatusBar'
 import { TitleBar } from './components/TitleBar'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 function App() {
-    const [editingFile, reloadAllPreviews] = useEditorStore(state => [state.editingFile, state.reloadAllPreviews])
-    const templateConfig = useEditorStore(state => state.parsedPresentation?.templateConfig)
+    const [editingFile, reloadAllPreviews, templateConfig, presentationConfig] = useEditorStore(state => [
+        state.editingFile,
+        state.reloadAllPreviews,
+        state.parsedPresentation?.templateConfig,
+        state.parsedPresentation?.config,
+    ])
+    const [windowTitle, setWindowTitle] = useState('Moonslide')
     const getMediaPath = useEditorStore(state => state.getMediaPath)
 
     const allotmentRef = useRef<AllotmentHandle>(null)
@@ -30,6 +35,14 @@ function App() {
     useEffectOnce(() => {
         reloadAllPreviews()
     })
+
+    useEffect(() => {
+        setWindowTitle(`${editingFile.filename ? editingFile.filename + ' — ' : ''}Moonslide`)
+    }, [editingFile.filename])
+
+    useEffect(() => {
+        document.title = windowTitle
+    }, [windowTitle])
 
     const codeEditorRef = useRef<CodeMirrorEditorRef>(null)
     const previewSlidesRef = useRef<PreviewSlidesRef>(null)
@@ -58,14 +71,14 @@ function App() {
             <MenuCallbacks />
             <PreviewWindow ref={previewWindowRef} />
             <TitleBar
-                documentTitle={editingFile.filename}
+                windowTitle={windowTitle}
                 onUndo={codeEditorRef.current?.onUndo}
                 onRedo={codeEditorRef.current?.onRedo}
                 onRestorePanes={restorePanes}
                 onPanelLeftToggle={() => setEditorPaneVisible(!editorPaneVisible)}
                 onPanelRightToggle={() => setPreviewPaneVisible(!previewPaneVisible)}
                 onReload={reloadAllPreviews}
-                onPresent={openPreviewWindow}
+                onPresent={() => openPreviewWindow(presentationConfig?.title ?? editingFile.filename)}
             />
             <MarkdownToolbar
                 templateConfig={templateConfig}

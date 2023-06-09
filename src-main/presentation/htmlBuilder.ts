@@ -47,7 +47,7 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
         buildingFile = buildingFile.replace(token, content ?? '')
     }
 
-    replaceToken(TITLE_TOKEN, escapeHtml(presentationConfig.title))
+    replaceToken(TITLE_TOKEN, presentationConfig.title ? escapeHtml(presentationConfig.title) : '')
     replaceToken(AUTHOR_TOKEN, escapeHtml(presentationConfig.author))
     replaceToken(SLIDES_TOKEN, slidesHtml)
 
