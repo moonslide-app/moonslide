@@ -4,9 +4,12 @@ import { FILE_PROTOCOL_NAME, REVEAL_PROTOCOL_NAME, getFileSchemeUrlFromFileProto
 export function setupWindowOpenHandlers(mainWindow: BrowserWindow) {
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         if (url.startsWith(REVEAL_PROTOCOL_NAME)) {
-            return { action: 'allow', overrideBrowserWindowOptions: {
-                autoHideMenuBar: true
-            } }
+            return {
+                action: 'allow',
+                overrideBrowserWindowOptions: {
+                    autoHideMenuBar: true,
+                },
+            }
         }
 
         if (url.startsWith(FILE_PROTOCOL_NAME)) {
@@ -21,7 +24,13 @@ export function setupWindowOpenHandlers(mainWindow: BrowserWindow) {
         // This is the handler for the opened preview-window
         window.webContents.setWindowOpenHandler(({ url }) => {
             // Allow RevealNotes plugin, which opens a new window at about:blank
-            if (url === 'about:blank') return { action: 'allow' }
+            if (url === 'about:blank')
+                return {
+                    action: 'allow',
+                    overrideBrowserWindowOptions: {
+                        autoHideMenuBar: true,
+                    },
+                }
 
             if (url.startsWith(FILE_PROTOCOL_NAME)) shell.openExternal(getFileSchemeUrlFromFileProtocol(url))
             else shell.openExternal(url)
