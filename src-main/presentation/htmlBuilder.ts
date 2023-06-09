@@ -1,7 +1,7 @@
 import { SlideConfig } from '../../src-shared/entities/SlideConfig'
 import {
     BASE_FILE_NAME,
-    PRESENTATION_SCRIPT_FILENAME,
+    EXPORT_SCRIPT_FILE_NAME,
     PREVIEW_FULLSCREEN_SCRIPT_FILENAME,
     PREVIEW_SMALL_SCRIPT_FILENAME,
     loadAssetContent,
@@ -47,7 +47,7 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
         buildingFile = buildingFile.replace(token, content ?? '')
     }
 
-    replaceToken(TITLE_TOKEN, escapeHtml(presentationConfig.title))
+    replaceToken(TITLE_TOKEN, presentationConfig.title ? escapeHtml(presentationConfig.title) : '')
     replaceToken(AUTHOR_TOKEN, escapeHtml(presentationConfig.author))
     replaceToken(SLIDES_TOKEN, slidesHtml)
 
@@ -62,7 +62,7 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
 
 async function getRevealEditorScriptContent(type: HTMLPresentationBuildType): Promise<string> {
     let scriptName = ''
-    if (type === 'export') scriptName = PRESENTATION_SCRIPT_FILENAME
+    if (type === 'export') scriptName = EXPORT_SCRIPT_FILE_NAME
     else if (type === 'preview-fullscreen') scriptName = PREVIEW_FULLSCREEN_SCRIPT_FILENAME
     else if (type === 'preview-small') scriptName = PREVIEW_SMALL_SCRIPT_FILENAME
 

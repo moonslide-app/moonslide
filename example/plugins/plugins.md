@@ -1,9 +1,8 @@
 ---
+template: ../../src-main/assets/templates/standard
 theme: white
 layout: title-grid-4
-class: 
-  - text-left
-  - position-top
+class: m-0 sdcvsdv m-0 m-0 position-center
 ---
 # Code Blocks
 
@@ -24,9 +23,9 @@ function factorial(n) {
 
 ***
 
-## Python Code {.mb-8}
+## Python Code {.mb-8 .fragment }
 
-``` { data-line-numbers }
+``` { data-line-numbers .fragment }
 def factorial(n):
   if (n==1 or n==0):
     return 1
@@ -48,8 +47,10 @@ def factorial(n):
 - It is generally bad.
 { .text-sm }
 
+vfvfdv
 ---
-class: text-left
+class: text-center position-center
+
 ---
 # Math Equations
 
@@ -60,7 +61,6 @@ $$\nabla^2u-\frac{1}{v^2}\frac{\partial^2 u}{\partial t^2}=\frac{\partial^2 u}{\
 ### Other Fancy Equation {.mt-10}
 
 $$v_{\rm g}=\frac{d\omega}{dk}=v_{\rm ph}+k\frac{dv_{\rm ph}}{dk}= v_{\rm ph}\left(1-\frac{k}{n}\frac{dn}{dk}\right)$$
-
 ---
 layout: title-content
 ---
@@ -112,14 +112,40 @@ auto-animate: true
 ---
 
 # Hello
-
 ---
 class: text-red
 auto-animate: true
 ---
 
-# Hello {.mt-8}
+# Hello { .mt-8 }
 
 
 
+---
+layout: cols-2
+class:
+---
 
+Hallo Felix 
+
+***
+
+Zweite Spalte
+
+
+
+---
+layout: title-cols-3
+---
+
+# Michael
+
+***
+
+Test 
+
+***
+
+three
+
+***

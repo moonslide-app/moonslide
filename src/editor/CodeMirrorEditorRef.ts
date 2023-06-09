@@ -1,4 +1,5 @@
-import { EditorView } from 'codemirror'
+import { redo as codeMirrorRedo, undo as codeMirrorUndo } from '@codemirror/commands'
+import { EditorView } from '@codemirror/view'
 import { Ref, RefObject, useImperativeHandle } from 'react'
 import {
     SimpleRange,
@@ -37,6 +38,8 @@ export type CodeMirrorEditorRef = {
     onAddClass(item: ToolbarItem, group: ToolbarEntry): void
     onAddDataTag(dataTag: string, firstSlide?: boolean): void
     onAddMedia(path: string): void
+    onUndo(): void
+    onRedo(): void
 }
 
 export function useCodeMirrorEditorRef(
@@ -44,6 +47,14 @@ export function useCodeMirrorEditorRef(
     editorView: RefObject<EditorView | undefined>
 ) {
     const toolbarConfig = useEditorStore(state => state.parsedPresentation?.templateConfig.toolbar)
+
+    function undo() {
+        editorView.current && codeMirrorUndo(editorView.current)
+    }
+
+    function redo() {
+        editorView.current && codeMirrorRedo(editorView.current)
+    }
 
     useImperativeHandle(
         ref,
@@ -247,7 +258,15 @@ export function useCodeMirrorEditorRef(
 
                 setCursorPosition(editorView.current, position)
             },
+            onUndo() {
+                undo()
+            },
+            onRedo() {
+                redo()
+            },
         }),
         [toolbarConfig]
     )
+
+    return { undo, redo }
 }

@@ -1,13 +1,25 @@
-var RevealEditor = {
-    ...Reveal,
-    initialize(config, ...args) {
-        const newConfig = {
-            ...config,
-            hash: true,
-        }
-        Reveal.initialize(newConfig, ...args)
-    },
+var MOONSLIDE_ENV = 'preview-fullscreen'
+
+const overrideConfig = { hash: true }
+
+function enforceConfigOptions() {
+    const revealInitialize = Reveal.initialize
+    const revealConfigure = Reveal.configure
+    const alreadyInitialized = Reveal.isReady()
+    Object.assign(Reveal, {
+        initialize(config, ...args) {
+            console.debug(`Moonslide trapped the call to 'Reveal.initialize' and enforced some options.`)
+            return revealInitialize({ ...config, ...overrideConfig }, ...args).then(() => {
+                if (!alreadyInitialized) enforceConfigOptions()
+            })
+        },
+        configure(config, ...args) {
+            return revealConfigure({ ...config, ...overrideConfig }, ...args)
+        },
+    })
 }
+
+enforceConfigOptions()
 
 window.addEventListener('message', event => {
     if (event.data.name === 'reveal-editor:update') {

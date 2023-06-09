@@ -1,4 +1,5 @@
 import { shell, Menu, BrowserWindow } from 'electron'
+import { presentationStore } from '../store'
 
 const isMac = process.platform === 'darwin'
 
@@ -31,18 +32,20 @@ export function buildTemplate(window: BrowserWindow): Electron.MenuItemConstruct
                 { type: 'separator' },
                 {
                     label: 'Export',
-                    accelerator: isMac ? 'Cmd+E' : 'Ctrl+E',
                     submenu: [
                         {
                             label: 'PDF',
+                            accelerator: isMac ? 'Cmd+E' : 'Ctrl+E',
                             click: () => window.webContents.send('menu:export-pdf'),
                         },
                         {
                             label: 'HTML Presentation Bundle',
+                            accelerator: isMac ? 'Shift+Cmd+E' : 'Shift+Ctrl+E',
                             click: () => window.webContents.send('menu:export-presentation-bundle'),
                         },
                         {
                             label: 'HTML Presentation Only',
+                            accelerator: isMac ? 'Alt+Cmd+E' : 'Alt+Ctrl+E',
                             click: () => window.webContents.send('menu:export-presentation-only'),
                         },
                     ],
@@ -50,6 +53,22 @@ export function buildTemplate(window: BrowserWindow): Electron.MenuItemConstruct
                 {
                     label: 'Create Template',
                     click: () => window.webContents.send('menu:create-template'),
+                },
+                { type: 'separator' },
+                {
+                    label: isMac ? 'Reveal in Finder' : 'Reveal in File Explorer',
+                    accelerator: isMac ? 'Alt+Cmd+R' : 'Alt+Ctrl+R',
+                    click: () => {
+                        const markdownFile = presentationStore.parsedPresentation?.resolvedPaths.markdownFile
+                        if (markdownFile) shell.showItemInFolder(markdownFile)
+                    },
+                },
+                {
+                    label: isMac ? 'Reveal Template in Finder' : 'Reveal Template in File Explorer',
+                    click: () => {
+                        const templateFolder = presentationStore.parsedPresentation?.resolvedPaths.templateFolder
+                        if (templateFolder) shell.showItemInFolder(templateFolder)
+                    },
                 },
             ],
         },
