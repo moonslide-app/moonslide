@@ -1,4 +1,4 @@
-import { Ref, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { useEditorStore } from '../store'
 import { PreviewSlide } from './PreviewSlide'
 import { useScrollSlides } from './scrollSlides'
@@ -13,24 +13,13 @@ export type PreviewSlidesProps = {
 
 export const PreviewSlides = forwardRef((props: PreviewSlidesProps, ref: Ref<PreviewSlidesRef>) => {
     const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
-
     const slides = useEditorStore(state => state.parsedPresentation?.slides)
-    const currentPresentationsHtml = slides?.map(slide => slide.previewHtml)
-    const [cachedPresentationsHtml, setCachedPresentationsHtml] = useState(currentPresentationsHtml)
-
-    useEffect(() => {
-        setCachedPresentationsHtml(currentPresentationsHtml)
-    }, [lastFullUpdate])
-
-    useEffect(() => {
-        onSlidesChange()
-        if (currentPresentationsHtml?.length !== cachedPresentationsHtml?.length) {
-            setCachedPresentationsHtml(currentPresentationsHtml)
-        }
-    }, [slides])
 
     const slidesDivRef = useRef<HTMLDivElement>(null)
     const { selectedSlide, selectSlide, onSlidesChange } = useScrollSlides(slidesDivRef)
+
+    // We call this function, when the number of slides change, to correctly focus the new slide.
+    useEffect(() => onSlidesChange(), [slides?.length])
 
     useImperativeHandle(ref, () => ({
         scrollToSlide(slideNumber) {
@@ -73,9 +62,9 @@ export const PreviewSlides = forwardRef((props: PreviewSlidesProps, ref: Ref<Pre
                             </div>
                         </div>
                         <PreviewSlide
-                            presentationHtml={(cachedPresentationsHtml && cachedPresentationsHtml[idx]) ?? ''}
-                            slideHtml={slide.slideHtml ?? ''}
+                            slide={slide}
                             selected={idx === selectedSlide}
+                            lastFullUpdate={lastFullUpdate}
                         ></PreviewSlide>
                     </button>
                 ))}
