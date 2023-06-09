@@ -22,11 +22,11 @@ function enforceConfigOptions() {
 enforceConfigOptions()
 
 window.addEventListener('message', event => {
-    if (event.data.name === 'reveal-editor:update') {
+    if (event.data.name === 'moonslide:update') {
         updatePreview(event.data.newSlides)
-    } else if (event.data.name === 'reveal-editor:reload') {
+    } else if (event.data.name === 'moonslide:reload') {
         window.location.reload()
-    } else if (event.data.name === 'reveal-editor:show-slide') {
+    } else if (event.data.name === 'moonslide:show-slide') {
         Reveal.slide(event.data.slideNumber)
     }
 })

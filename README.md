@@ -386,7 +386,7 @@ At the top-level of your template-directory, there has to be a `config.yml` file
 Take a look at the standard templates `config.yml` file. Some entries are explained in more detail below.
 
 ```yaml
-# Entry point script which must call `RevealEditor.configure()`.
+# Entry point script which must call `Reveal.configure()`.
 entry: ./index.js
 # Entry point script and stylesheet(s) of the reveal.js distribution.
 reveal:

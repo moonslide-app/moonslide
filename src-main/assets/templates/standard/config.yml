@@ -1,4 +1,4 @@
-# Entry point script which must call `RevealEditor.configure()`.
+# Entry point script which must call `Reveal.configure()`.
 entry: ./index.js
 # Entry point script and stylesheet(s) of the reveal.js distribution.
 reveal:

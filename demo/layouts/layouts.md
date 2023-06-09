@@ -1,5 +1,4 @@
 ---
-template: ../../src-main/assets/templates/standard
 title: Layouts
 theme: white
 defaults:
@@ -24,6 +23,18 @@ layout: base
 ---
 layout: cols-3
 ---
+<style>
+.slot-box {
+  flex-grow: 1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: white; 
+  font-weight:600; 
+  padding: 20px;"
+}
+</style>
+
 
 <div class="slot-box" style="background-color: var(--color-indigo)">
   Slot 1
@@ -40,6 +51,17 @@ layout: cols-3
 ---
 layout: grid-3
 ---
+<style>
+.slot-box {
+  flex-grow: 1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: white; 
+  font-weight:600; 
+  padding: 20px;"
+}
+</style>
 
 <div class="slot-box" style="background-color: var(--color-indigo)">
   Slot 1
@@ -56,6 +78,17 @@ layout: grid-3
 ---
 layout: title-cols-2
 ---
+<style>
+.slot-box {
+  flex-grow: 1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: white; 
+  font-weight:600; 
+  padding: 20px;"
+}
+</style>
 
 <div class="slot-box" style="background-color: var(--color-indigo)">
   Slot 1
