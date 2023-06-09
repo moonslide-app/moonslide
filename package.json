@@ -1,6 +1,6 @@
 {
     "name": "moonslide",
-    "productName": "Moonslide",
+    "productName": "moonslide",
     "version": "0.1.0",
     "description": "Editor to create presentations with Markdown and Reveal.js",
     "main": ".vite/build/main.js",
