@@ -103,8 +103,8 @@ function App() {
                                 <Dropzone
                                     className="flex-grow overflow-hidden"
                                     accept={{
-                                        'image/*': acceptedFileTypes.images,
-                                        'video/*': acceptedFileTypes.videos,
+                                        'image/*': acceptedFileTypes.images.map(extension => `.${extension}`),
+                                        'video/*': acceptedFileTypes.videos.map(extension => `.${extension}`),
                                     }}
                                     onFileDropped={addMedia}
                                 >
