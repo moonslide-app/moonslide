@@ -29,6 +29,6 @@ export function getFileSchemeUrlFromFileProtocol(url: string): string {
     return 'file://' + parse(url).pathname
 }
 
-export function getLocalFileUrl(absolutePath: string): string {
-    return `${FILE_PROTOCOL_NAME}://${absolutePath}?cache=${Date.now()}`
+export function getLocalFileUrl(absolutePath: string, cacheBust = true): string {
+    return `${FILE_PROTOCOL_NAME}://${absolutePath}${cacheBust ? '?cache=' + Date.now() : ''}`
 }

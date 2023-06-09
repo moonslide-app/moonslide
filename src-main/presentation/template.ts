@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises'
 import { copy, existsSync } from 'fs-extra'
 import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from '../../src-shared/entities/TemplateConfig'
-import { resolve, dirname, relative } from 'path'
+import { resolve, dirname } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import { getLocalFileUrl } from '../helpers/protocol'
 import { TemplateNotFoundError, TemplatePathReferenceError } from '../../src-shared/errors/WrappedError'
