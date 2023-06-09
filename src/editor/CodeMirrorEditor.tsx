@@ -87,7 +87,7 @@ const myHighlightStyle = HighlightStyle.define(
         { tag: tags.monospace, class: 'text-foreground-quaternary' },
         { tag: tags.angleBracket, class: 'text-foreground-tertiary' },
         { tag: tags.tagName, class: 'text-foreground-tertiary font-bold' },
-        { tag: tags.attributeName, class: 'text-highlight-500' },
+        { tag: tags.attributeName, class: 'text-foreground-secondary' },
         { tag: tags.attributeValue, class: 'text-foreground-secondary' },
     ],
     {
