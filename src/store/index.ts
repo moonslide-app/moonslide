@@ -2,12 +2,17 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Presentation, comparePresentations } from '../../src-shared/entities/Presentation'
 import { markdownFilter } from './FileFilters'
+import { replaceBackwardSlash } from '../../src-shared/helpers/pathNormalizer'
 
 export type EditingFile = {
     /**
      * The absolute path of the file.
      */
     path: string | undefined
+    /**
+     * The name of the file.
+     */
+    filename: string | undefined
     /**
      * Time stamp when the editing file was opened.
      */
@@ -103,6 +108,7 @@ export const useEditorStore = create<EditorStore>()(
         (set, get) => ({
             editingFile: {
                 path: undefined,
+                filename: undefined,
                 lastSavedContent: '',
                 openedAt: Date.now(),
             },
@@ -147,12 +153,18 @@ export const useEditorStore = create<EditorStore>()(
                 set(state => ({ ...state, lastFullUpdate: Date.now() }))
             },
             async changeEditingFile(newFilePath) {
+                const filename = newFilePath !== undefined ? await window.ipc.files.basename(newFilePath) : undefined
                 const newContent = newFilePath !== undefined ? await window.ipc.files.getFileContent(newFilePath) : ''
                 get().updateParsedPresentation(undefined)
                 await get().updateContent(newContent)
                 set(state => ({
                     ...state,
-                    editingFile: { path: newFilePath, lastSavedContent: newContent, openedAt: Date.now() },
+                    editingFile: {
+                        path: newFilePath,
+                        filename,
+                        lastSavedContent: newContent,
+                        openedAt: Date.now(),
+                    },
                 }))
             },
             async saveContentToEditingFile() {
@@ -188,7 +200,7 @@ export const useEditorStore = create<EditorStore>()(
             },
             async getMediaPath(path) {
                 const markdownPath = get().editingFile.path
-                if (!markdownPath) return path
+                if (!markdownPath) return replaceBackwardSlash(path)
                 else return window.ipc.files.addMedia(path, markdownPath)
             },
         }),

@@ -17,16 +17,23 @@ const overrideConfig = {
     autoPlayMedia: false,
 }
 
-const RealReveal = Reveal
-var Reveal = {
-    ...RealReveal,
-    initialize(config, ...args) {
-        RealReveal.initialize({ ...config, ...overrideConfig }, ...args)
-    },
-    configure(config, ...args) {
-        RealReveal.configure({ ...config, ...overrideConfig }, ...args)
-    },
+function enforceConfigOptions() {
+    const revealInitialize = Reveal.initialize
+    const revealConfigure = Reveal.configure
+    const alreadyInitialized = Reveal.isReady()
+    Object.assign(Reveal, {
+        initialize(config, ...args) {
+            return revealInitialize({ ...config, ...overrideConfig }, ...args).then(() => {
+                if (!alreadyInitialized) enforceConfigOptions()
+            })
+        },
+        configure(config, ...args) {
+            return revealConfigure({ ...config, ...overrideConfig }, ...args)
+        },
+    })
 }
+
+enforceConfigOptions()
 
 window.addEventListener('message', event => {
     if (event.data.name === 'reveal-editor:update') {

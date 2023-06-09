@@ -11,7 +11,7 @@ export function HelpTooltip(props: HelpTooltipProps) {
         <TooltipProvider>
             <Tooltip delayDuration={0}>
                 <TooltipTrigger>
-                    <InfoIcon className="text-gray-300 w-4 -my-1" />
+                    <InfoIcon className="text-foreground-tertiary w-4 -my-1" />
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
                     <HelpTooltipText text={props.helpText} />
@@ -24,14 +24,20 @@ export function HelpTooltip(props: HelpTooltipProps) {
 function HelpTooltipText(props: { text: string }) {
     return (
         <ReactMarkdown
-            className="text-gray-700 font-normal text-sm"
+            className="text-foreground-secondary font-normal text-sm"
             components={{
                 code({ children }) {
-                    return <pre className="inline py-0.5 px-1 rounded-sm bg-gray-200 text-xs">{children}</pre>
+                    return (
+                        <pre className="inline py-0.5 px-1 rounded-sm bg-background-tertiary text-xs">{children}</pre>
+                    )
                 },
                 a({ href, children }) {
                     return (
-                        <a href={href} target="_blank" className="font-bold hover:underline hover:text-gray-600">
+                        <a
+                            href={href}
+                            target="_blank"
+                            className="font-bold hover:underline hover:text-foreground-tertiary"
+                        >
                             {children}
                             <ExternalLinkIcon className="inline h-3 -mx-1 mb-0.5" />
                         </a>

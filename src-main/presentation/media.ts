@@ -2,6 +2,7 @@ import { existsSync } from 'fs'
 import { LocalImage } from '../parse/imagePath'
 import { mkdir, cp } from 'fs/promises'
 import { resolve, basename, dirname, relative, isAbsolute, extname } from 'path'
+import { relativeWithForwardSlash } from '../helpers/pathNormalizer'
 
 export const MEDIA_FOLDER_NAME = 'media'
 export const USER_MEDIA_FOLDER_NAME = 'media'
@@ -34,7 +35,7 @@ function isInsideDirectory(parent: string, child: string): boolean {
 export async function addMedia(filePath: string, markdownFilePath: string): Promise<string> {
     const markdownDirectory = dirname(markdownFilePath)
     function getRelativePathFromMarkdownDir(path: string) {
-        const relativePath = relative(markdownDirectory, path)
+        const relativePath = relativeWithForwardSlash(markdownDirectory, path)
         if (relativePath.startsWith('.')) return relativePath
         else return './' + relativePath
     }

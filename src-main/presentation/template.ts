@@ -1,10 +1,12 @@
 import { readFile } from 'fs/promises'
 import { copy, existsSync } from 'fs-extra'
 import { TemplateConfig, mapTemplateConfigPaths, parseTemplateConfig } from '../../src-shared/entities/TemplateConfig'
-import { resolve, dirname, relative } from 'path'
+import { resolve, dirname } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import { getLocalFileUrl } from '../helpers/protocol'
 import { TemplateNotFoundError, TemplatePathReferenceError } from '../../src-shared/errors/WrappedError'
+import { relativeWithForwardSlash } from '../helpers/pathNormalizer'
+import { replaceBackwardSlash } from '../../src-shared/helpers/pathNormalizer'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
@@ -89,14 +91,16 @@ class TemplateImpl implements Template {
         this.config = mapTemplateConfigPaths(config, path => resolve(folderPath, path))
     }
 
-    getConfigAbsolute = () => this.config
+    getConfigAbsolute = () => {
+        return mapTemplateConfigPaths(this.config, replaceBackwardSlash)
+    }
 
     getConfig(relativeFromPath = this.folderPath) {
-        return mapTemplateConfigPaths(this.config, path => relative(relativeFromPath, path))
+        return mapTemplateConfigPaths(this.config, path => relativeWithForwardSlash(relativeFromPath, path))
     }
 
     getConfigLocalFile() {
-        return mapTemplateConfigPaths(this.config, getLocalFileUrl)
+        return mapTemplateConfigPaths(this.config, path => getLocalFileUrl(replaceBackwardSlash(path)))
     }
 
     async getSlideHtml() {
