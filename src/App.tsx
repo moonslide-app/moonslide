@@ -130,7 +130,12 @@ function App() {
                 </div>
             </div>
             <ErrorAlert />
-            <StatusBar leadingText={editingFile.path} />
+            <StatusBar
+                leadingText={editingFile.path}
+                action={() => {
+                    if (editingFile.path) window.ipc.files.showItemInFolder(editingFile.path)
+                }}
+            />
         </div>
     )
 }

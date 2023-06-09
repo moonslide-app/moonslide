@@ -32,6 +32,9 @@ const files = {
     async addMedia(filePath: string, markdownFilePath: string): Promise<string> {
         return await unwrapPromise(ipcRenderer.invoke('file:addMedia', filePath, markdownFilePath))
     },
+    showItemInFolder(filePath: string): Promise<void> {
+        return ipcRenderer.invoke('file:showItemInFolder', filePath)
+    },
 } as const
 
 export default files

@@ -1,4 +1,4 @@
-import { dialog } from 'electron'
+import { dialog, shell } from 'electron'
 import { existsSync } from 'fs-extra'
 import { readFile, writeFile } from 'fs/promises'
 import { basename as basenamePath } from 'path'
@@ -73,4 +73,8 @@ export function exists(filePath: string): boolean {
 
 export function basename(filePath: string): string {
     return basenamePath(filePath)
+}
+
+export function showItemInFolder(filePath: string): void {
+    shell.showItemInFolder(filePath)
 }
