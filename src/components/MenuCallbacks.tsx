@@ -2,6 +2,7 @@ import { doNotThrow } from '../../src-shared/entities/utils'
 import { useEditorStore } from '../store'
 import { htmlFilter, markdownFilter } from '../store/FileFilters'
 import { openPreviewWindow } from './PreviewWindow'
+import { ToastAction } from './ui/toast'
 import { toast } from './ui/use-toast'
 import { useEffectOnce } from 'usehooks-ts'
 
@@ -82,6 +83,11 @@ export function MenuCallbacks() {
             toast({
                 title: 'PDF Export successful',
                 description: `The presentation was exported to '${filePath}'.`,
+                action: (
+                    <ToastAction altText="Go to folder" onClick={() => window.ipc.files.showItemInFolder(filePath)}>
+                        Open
+                    </ToastAction>
+                ),
             })
         }
     }
@@ -95,6 +101,11 @@ export function MenuCallbacks() {
             toast({
                 title: 'HTML Bundle Export successful',
                 description: `The presentation was exported to '${folderPath}'.`,
+                action: (
+                    <ToastAction altText="Go to folder" onClick={() => window.ipc.files.showItemInFolder(folderPath)}>
+                        Open
+                    </ToastAction>
+                ),
             })
         }
     }
@@ -108,6 +119,11 @@ export function MenuCallbacks() {
             toast({
                 title: 'HTML Presentation Export successful',
                 description: `The presentation was exported to '${filePath}'.`,
+                action: (
+                    <ToastAction altText="Go to folder" onClick={() => window.ipc.files.showItemInFolder(filePath)}>
+                        Show
+                    </ToastAction>
+                ),
             })
         }
     }
@@ -120,6 +136,11 @@ export function MenuCallbacks() {
             toast({
                 title: 'Standard Template Export successful',
                 description: `The standard template was exported to '${folderPath}'. It can now be customized.`,
+                action: (
+                    <ToastAction altText="Go to folder" onClick={() => window.ipc.files.showItemInFolder(folderPath)}>
+                        Open
+                    </ToastAction>
+                ),
             })
         }
     }
