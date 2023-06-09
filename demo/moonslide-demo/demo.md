@@ -1,14 +1,47 @@
 ---
-template: ../../src-main/assets/templates/standard
 theme: white
-layout: title-grid-4
-class: m-0 sdcvsdv m-0 m-0 position-center
+class: position-center text-2xl
 ---
+
+# Moonslide 🌛🛝
+
+---
+background-image: ./image3.jpg
+class: position-center text-white
+---
+
+# Background Images
+
+
+---
+layout: grid-4
+class: position-center
+---
+
+![](./image1.jpg) { .image-cover }
+
+***
+
+![](./image3.jpg) { .image-cover }
+
+***
+
+![](./image2.jpg) { .image-cover }
+
+***
+
+### Mulitple Images
+
+---
+layout: title-grid-4
+class: text-left text-sm
+---
+
 # Code Blocks
 
 ***
 
-## JavaScript Code {.mb-8}
+## JavaScript Code 
 
 ``` { data-line-numbers }
 function factorial(n) {
@@ -23,9 +56,9 @@ function factorial(n) {
 
 ***
 
-## Python Code {.mb-8 .fragment }
+## Python Code 
 
-``` { data-line-numbers .fragment }
+``` { data-line-numbers }
 def factorial(n):
   if (n==1 or n==0):
     return 1
@@ -38,19 +71,14 @@ def factorial(n):
 - JavaScript Code is very beautiful and does the job well.
 - It handles recursion well.
 - It is generally good. 
-{ .text-sm }
 
 ***
 
 - Python Code is less beautiful and does the job less well.
 - It handles recursion less well.
 - It is generally bad.
-{ .text-sm }
-
-vfvfdv
 ---
-class: text-center position-center
-
+class: position-center
 ---
 # Math Equations
 
@@ -65,7 +93,6 @@ $$v_{\rm g}=\frac{d\omega}{dk}=v_{\rm ph}+k\frac{dv_{\rm ph}}{dk}= v_{\rm ph}\le
 layout: title-content
 ---
 # HTML
-
 ***
 
 <style>
@@ -91,61 +118,16 @@ layout: title-content
 </div>
 
 ---
----
-# Links
-[To slide number 5](#/5)
-
----
-class: position-center text-white
-background-image: ./image3.jpg
----
-
-# Beautiful
-
----
-background-video: ./video.mov
-background-size: contain
----
-
----
 auto-animate: true
 ---
 
-# Hello
+## And a lot more
+
 ---
-class: text-red
 auto-animate: true
+class: position-center
 ---
 
-# Hello { .mt-8 }
+## And a lot more { .text-red }
 
-
-
----
-layout: cols-2
-class:
----
-
-Hallo Felix 
-
-***
-
-Zweite Spalte
-
-
-
----
-layout: title-cols-3
----
-
-# Michael
-
-***
-
-Test 
-
-***
-
-three
-
-***
+**Thanks to the power of [Reveal.js](https://revealjs.com/)** { .fragment .fade-right }
