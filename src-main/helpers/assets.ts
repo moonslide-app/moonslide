@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { readFile } from 'fs/promises'
 import { loadTemplate } from '../presentation/template'
 
-export const PRESENTATION_SCRIPT_FILENAME = 'presentation.js'
+export const EXPORT_SCRIPT_FILE_NAME = 'export.js'
 export const PREVIEW_SMALL_SCRIPT_FILENAME = 'preview-small.js'
 export const PREVIEW_FULLSCREEN_SCRIPT_FILENAME = 'preview-fullscreen.js'
 export const BASE_FILE_NAME = 'base.html'

@@ -1,26 +1,39 @@
-var RevealEditor = {
-    ...Reveal,
-    initialize(config, ...args) {
-        const newConfig = {
-            ...config,
-            hash: false,
-            controls: false,
-            progress: false,
-            history: false,
-            keyboard: false,
-            overview: false,
-            touch: false,
-            shuffle: false,
-            fragments: false,
-            autoAnimate: false,
-            autoSlide: false,
-            transition: 'none',
-            slideNumber: false,
-            autoPlayMedia: false,
-        }
-        Reveal.initialize(newConfig, ...args)
-    },
+var MOONSLIDE_ENV = 'preview-small'
+
+const overrideConfig = {
+    hash: false,
+    controls: false,
+    progress: false,
+    history: false,
+    keyboard: false,
+    overview: false,
+    touch: false,
+    shuffle: false,
+    fragments: false,
+    autoAnimate: false,
+    autoSlide: false,
+    transition: 'none',
+    slideNumber: false,
+    autoPlayMedia: false,
 }
+
+function enforceConfigOptions() {
+    const revealInitialize = Reveal.initialize
+    const revealConfigure = Reveal.configure
+    const alreadyInitialized = Reveal.isReady()
+    Object.assign(Reveal, {
+        initialize(config, ...args) {
+            return revealInitialize({ ...config, ...overrideConfig }, ...args).then(() => {
+                if (!alreadyInitialized) enforceConfigOptions()
+            })
+        },
+        configure(config, ...args) {
+            return revealConfigure({ ...config, ...overrideConfig }, ...args)
+        },
+    })
+}
+
+enforceConfigOptions()
 
 window.addEventListener('message', event => {
     if (event.data.name === 'reveal-editor:update') {

@@ -3,10 +3,11 @@ import { useEditorStore } from '../store'
 
 let currentPreviewWindow: Window | undefined
 export function openPreviewWindow() {
-    if (currentPreviewWindow && !currentPreviewWindow.closed) return currentPreviewWindow
+    if (currentPreviewWindow && !currentPreviewWindow.closed) {
+        currentPreviewWindow.close()
+    }
 
     currentPreviewWindow = window.open('reveal://preview', undefined, 'width=1280,height=800') ?? undefined
-
     return currentPreviewWindow
 }
 

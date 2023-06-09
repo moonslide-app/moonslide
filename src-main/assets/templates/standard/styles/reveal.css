@@ -5,7 +5,7 @@ Configurable Variables of Reveal
 :root {
     /* --r-background-color: VALUE; */
     /* --r-main-font: VALUE ; */
-    --r-main-font-size: 2rem;
+    --r-main-font-size: 2.5rem;
     /* --r-main-color: VALUE; */
     --r-block-margin: 0.25rem;
     --r-heading-margin: 0 0 1rem 0;
@@ -29,11 +29,6 @@ Configurable Variables of Reveal
     /* --r-selection-color: VALUE; */
 }
 
-.reveal ul,
-.reveal ol {
+.reveal table {
     margin: 0;
-}
-
-.reveal p {
-    line-height: 1;
 }
