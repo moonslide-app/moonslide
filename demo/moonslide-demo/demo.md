@@ -1,4 +1,5 @@
 ---
+title: Moonslide
 theme: white
 class: position-center text-2xl
 ---
@@ -11,7 +12,6 @@ class: position-center text-white
 ---
 
 # Background Images
-
 
 ---
 layout: grid-4
