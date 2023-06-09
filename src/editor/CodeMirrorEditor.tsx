@@ -1,4 +1,4 @@
-import { history, indentWithTab, redo, undo } from '@codemirror/commands'
+import { history, indentWithTab } from '@codemirror/commands'
 import { StreamLanguage, LRLanguage, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
 import { tags } from '@lezer/highlight'
 import { GFM, parser as mdParser, parseCode } from '@lezer/markdown'
@@ -19,38 +19,34 @@ export type CodeMirrorEditorProps = {
     onUpdateCurrentSlide?: (slideNumber: number) => void
 }
 
-const myHighlightStyle = HighlightStyle.define([
-    { tag: tags.keyword, class: 'text-violet-700 font-bold' },
-    { tag: tags.heading1, class: 'font-bold text-2xl' },
-    { tag: tags.heading2, class: 'font-bold text-xl' },
-    { tag: tags.heading3, class: 'font-bold text-lg' },
-    { tag: tags.heading4, class: 'font-bold' },
-    { tag: tags.heading5, class: 'font-bold' },
-    { tag: tags.heading6, class: 'font-bold' },
-    { tag: tags.url, class: 'text-violet-300' },
-    { tag: tags.contentSeparator, class: 'font-bold text-violet-400' },
-    { tag: tags.emphasis, class: 'italic' },
-    { tag: tags.strong, class: 'font-bold' },
-    { tag: tags.strikethrough, class: 'line-through' },
-    { tag: tags.monospace, class: 'text-slate-500' },
-    { tag: tags.angleBracket, class: 'text-violet-300' },
-    { tag: tags.tagName, class: 'text-violet-700 font-bold' },
-    { tag: tags.attributeName, class: 'text-violet-500' },
-    { tag: tags.attributeValue, class: 'text-rose-500' },
-])
-
 const myTheme = EditorView.baseTheme({
     '&': {
         fontSize: '12pt',
         height: '100%',
     },
+    '&, .cm-scroller': {
+        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+    },
     '.active-slide-layer': {
         zIndex: '-4 !important',
     },
     '.active-slide': {
-        backgroundColor: '#f5f3ff',
+        backgroundColor: 'hsl(var(--accent-quaternary))',
     },
-    '.cm-scroller': { overflow: 'auto', height: '100%' },
+    '&.cm-focused .cm-scroller .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground': {
+        backgroundColor: 'hsl(var(--accent-tertiary))',
+    },
+    '.cm-cursor': {
+        borderColor: 'hsl(var(--accent-primary))',
+        borderLeftWidth: '2px',
+    },
+    '.cm-content': {
+        padding: '1rem 0',
+    },
+    '.cm-line': {
+        padding: '0 1rem',
+    },
+    '.cm-scroller': { overflow: 'auto', height: '100%', backgroundColor: 'hsl(var(--background-primary))' },
 })
 
 const markdownParser = mdParser.configure([
@@ -74,13 +70,38 @@ const mixedParser = parser.configure({
 
 const mixedPlugin = LRLanguage.define({ parser: mixedParser })
 
+const myHighlightStyle = HighlightStyle.define(
+    [
+        { tag: tags.keyword, class: 'font-bold' },
+        { tag: tags.heading1, class: 'font-bold text-2xl' },
+        { tag: tags.heading2, class: 'font-bold text-xl' },
+        { tag: tags.heading3, class: 'font-bold text-lg' },
+        { tag: tags.heading4, class: 'font-bold' },
+        { tag: tags.heading5, class: 'font-bold' },
+        { tag: tags.heading6, class: 'font-bold' },
+        { tag: tags.url, class: 'text-foreground-tertiary' },
+        { tag: tags.contentSeparator, class: 'font-bold text-foreground-quaternary' },
+        { tag: tags.emphasis, class: 'italic' },
+        { tag: tags.strong, class: 'font-bold' },
+        { tag: tags.strikethrough, class: 'line-through' },
+        { tag: tags.monospace, class: 'text-foreground-quaternary' },
+        { tag: tags.angleBracket, class: 'text-foreground-tertiary' },
+        { tag: tags.tagName, class: 'text-foreground-tertiary font-bold' },
+        { tag: tags.attributeName, class: 'text-foreground-secondary' },
+        { tag: tags.attributeValue, class: 'text-foreground-secondary' },
+    ],
+    {
+        scope: mixedPlugin,
+    }
+)
+
 export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?: Ref<CodeMirrorEditorRef>) => {
     const editorView = useRef<EditorView | undefined>()
 
     const editingFile = useEditorStore(state => state.editingFile)
     const [content, updateContent] = useEditorStore(state => [state.content, state.updateContent])
 
-    useCodeMirrorEditorRef(ref, editorView)
+    const { undo, redo } = useCodeMirrorEditorRef(ref, editorView)
 
     const editorDomNode = useRef<HTMLDivElement | null>(null)
 
@@ -126,8 +147,8 @@ export const CodeMirrorEditor = forwardRef((props?: CodeMirrorEditorProps, ref?:
 
         const view = editorView.current
 
-        window.ipc.menu.onUndo(() => view && undo(view))
-        window.ipc.menu.onRedo(() => view && redo(view))
+        window.ipc.menu.onUndo(undo)
+        window.ipc.menu.onRedo(redo)
 
         return () => view?.destroy()
     }, [editingFile.openedAt])

@@ -19,7 +19,10 @@ const Toolbar = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <ToolbarPrimitive.Root
         ref={ref}
-        className={cn('flex h-10 items-center space-x-1 rounded-md border bg-background p-1', className)}
+        className={cn(
+            'flex flex-wrap items-center space-x-1 border-b border-background-tertiary bg-background-secondary p-1',
+            className
+        )}
         {...props}
     />
 ))
@@ -32,7 +35,7 @@ const ToolbarButton = React.forwardRef<
     <ToolbarPrimitive.Button
         ref={ref}
         className={cn(
-            'flex cursor-default select-none items-center rounded-sm p-1.5 text-sm font-medium outline-none hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+            'flex cursor-default select-none items-center rounded-sm p-1.5 text-sm font-medium outline-none text-foreground-secondary hover:bg-background-tertiary hover:text-foreground-secondary data-[state=open]:bg-background-quaternary',
             className
         )}
         {...props}
@@ -91,14 +94,14 @@ const ToolbarItemsContent = React.forwardRef<
                 align={align}
                 sideOffset={sideOffset}
                 className={cn(
-                    'z-50 w-72 rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+                    'z-50 w-72 rounded-md border border-background-secondary bg-background-primary p-0 text-foreground-secondary shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
                     className
                 )}
                 {...props}
             >
                 <SearchValuesContext.Provider value={[searchValues, searchValueActions]}>
                     <CommandPrimitive
-                        className="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground"
+                        className="flex h-full w-full flex-col overflow-hidden rounded-md bg-background-primary text-foreground-secondary"
                         shouldFilter={true}
                         filter={filter}
                         children={children}
@@ -114,12 +117,12 @@ const ToolbarItemsSearch = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive.Input>,
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-    <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
+    <div className="flex items-center border-b border-background-secondary px-3" cmdk-input-wrapper="">
         <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
         <CommandPrimitive.Input
             ref={ref}
             className={cn(
-                'placeholder:text-foreground-muted flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50',
+                'placeholder:text-foreground-tertiary flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50',
                 className
             )}
             {...props}
@@ -158,7 +161,7 @@ const ToolbarItemGroup = React.forwardRef<
     <CommandPrimitive.Group
         ref={ref}
         className={cn(
-            'overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground',
+            'overflow-hidden p-1 text-foreground-secondary [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-foreground-quaternary',
             className
         )}
         {...props}
@@ -171,7 +174,7 @@ const ToolbarItemSeparator = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive.Separator>,
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-    <CommandPrimitive.Separator ref={ref} className={cn('-mx-1 h-px bg-border', className)} {...props} />
+    <CommandPrimitive.Separator ref={ref} className={cn('-mx-1 h-px bg-background-secondary', className)} {...props} />
 ))
 ToolbarItemSeparator.displayName = CommandPrimitive.Separator.displayName
 
@@ -208,7 +211,7 @@ const ToolbarItem: ToolbarItemForwarded = React.forwardRef<
         <CommandPrimitive.Item
             ref={ref}
             className={cn(
-                'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+                'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-background-secondary aria-selected:text-foreground-secondary data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
                 className
             )}
             onSelect={() => {
@@ -240,7 +243,7 @@ const ToolbarShortcut = ({ className, children, shift, cmdCtrl, alt, letter, ...
     }
 
     return (
-        <span className={cn('ml-auto text-xs tracking-widest text-muted-foreground', className)} {...props}>
+        <span className={cn('ml-auto text-xs tracking-widest text-foreground-tertiary', className)} {...props}>
             {children ?? getCommandName()}
         </span>
     )

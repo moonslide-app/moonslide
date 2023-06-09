@@ -42,6 +42,7 @@ import {
 import { HelpTooltip } from './HelpTooltip'
 import { CodeMirrorEditorRef } from '../editor/CodeMirrorEditorRef'
 import { useEventListener } from 'usehooks-ts'
+import { Plus } from 'lucide-react'
 
 function ItemsPresentation(props: { editorRef: CodeMirrorEditorRef }) {
     const items: ToolbarEntry[] = [
@@ -87,12 +88,13 @@ function ItemsPresentation(props: { editorRef: CodeMirrorEditorRef }) {
 
     return (
         <ItemsTemplateConfigurable
-            buttonTitle="Presentation"
             layoutsConfig={items}
             placeholder="Search presentation properties..."
             emptyText="No presentation properties found."
             onSelect={item => props.editorRef.onAddDataTag(item.key, true)}
-        />
+        >
+            Presentation
+        </ItemsTemplateConfigurable>
     )
 }
 
@@ -304,16 +306,16 @@ function ItemsTemplateConfigurable<
     Group extends { items: Item[] } & ToolbarEntry
 >(props: {
     layoutsConfig: Group[]
-    buttonTitle: string
+    children: React.ReactNode
     placeholder?: string
     emptyText?: string
     onSelect?: (value: Item, group: Group) => void
 }) {
-    const { layoutsConfig, buttonTitle, placeholder, emptyText, onSelect } = props
+    const { layoutsConfig, children, placeholder, emptyText, onSelect } = props
 
     return (
         <ToolbarItems>
-            <ToolbarItemsButton>{buttonTitle}</ToolbarItemsButton>
+            <ToolbarItemsButton>{children}</ToolbarItemsButton>
             <ToolbarItemsContent>
                 <ToolbarItemsSearch placeholder={placeholder} />
                 <ToolbarItemsList>
@@ -355,15 +357,16 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
     const toolbar = props.templateConfig?.toolbar
     const editorRef = props.editorRef
     return (
-        <Toolbar className="m-4">
+        <Toolbar>
             {toolbar?.layouts && (
                 <ItemsTemplateConfigurable<ToolbarLayoutItem, ToolbarLayoutEntry>
                     layoutsConfig={toolbar.layouts}
-                    buttonTitle="+"
                     placeholder="Search layouts..."
                     emptyText="No layout found."
                     onSelect={item => editorRef?.onAddSlide(item.key, item.slots)}
-                />
+                >
+                    <Plus strokeWidth={2.5} className="w-5 h-5 p-0.5" />
+                </ItemsTemplateConfigurable>
             )}
             {editorRef && <ItemsPresentation editorRef={editorRef} />}
             {editorRef && <ItemsHeadings editorRef={editorRef} />}
@@ -372,40 +375,44 @@ export function MarkdownToolbar(props: { templateConfig?: TemplateConfig; editor
             {toolbar?.styles && (
                 <ItemsTemplateConfigurable
                     layoutsConfig={toolbar.styles}
-                    buttonTitle="Styles"
                     placeholder="Search styles..."
                     emptyText="No style found."
                     onSelect={editorRef?.onAddAttribute}
-                />
+                >
+                    Styles
+                </ItemsTemplateConfigurable>
             )}
 
             {toolbar?.animation && (
                 <ItemsTemplateConfigurable
                     layoutsConfig={toolbar.animation}
-                    buttonTitle="Animation"
                     placeholder="Search animations..."
                     emptyText="No animation found."
                     onSelect={editorRef?.onAddAttribute}
-                />
+                >
+                    Animation
+                </ItemsTemplateConfigurable>
             )}
 
             {toolbar?.slide && (
                 <ItemsTemplateConfigurable
                     layoutsConfig={toolbar.slide}
-                    buttonTitle="Slide"
                     placeholder="Search slide properties..."
                     emptyText="No slide properties found."
                     onSelect={item => editorRef?.onAddDataTag(item.key)}
-                />
+                >
+                    Slide
+                </ItemsTemplateConfigurable>
             )}
             {toolbar?.slideStyles && (
                 <ItemsTemplateConfigurable
                     layoutsConfig={toolbar.slideStyles}
-                    buttonTitle="Slide Styles"
                     placeholder="Search slide styles..."
                     emptyText="No slide styles found."
                     onSelect={editorRef?.onAddClass}
-                />
+                >
+                    Slide Styles
+                </ItemsTemplateConfigurable>
             )}
             {editorRef && <ToolbarButton onClick={async () => await selectMedia(editorRef)}>Media</ToolbarButton>}
         </Toolbar>

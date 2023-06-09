@@ -23,7 +23,8 @@ export function PreviewSlide(props: { slide: Slide; lastFullUpdate?: number; sel
     }, [props.lastFullUpdate])
 
     const className =
-        'w-full aspect-[16/9] pointer-events-none rounded-lg ' + (props.selected ? 'border-4 border-violet-400' : 'p-1')
+        'w-full aspect-[16/9] pointer-events-none min-w-0 rounded-lg ' +
+        (props.selected ? 'border-4 border-accent-primary' : 'p-1')
 
     return <iframe ref={iframeRef} tabIndex={-1} srcDoc={previewHtml} className={className}></iframe>
 }

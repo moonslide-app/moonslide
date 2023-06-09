@@ -1,6 +1,7 @@
-import { dialog } from 'electron'
+import { dialog, shell } from 'electron'
 import { existsSync } from 'fs-extra'
 import { readFile, writeFile } from 'fs/promises'
+import { basename as basenamePath } from 'path'
 
 /**
  * Asks the user if they want to save the changes in the document.
@@ -68,4 +69,12 @@ export async function saveFile(filePath: string, content: string): Promise<void>
 
 export function exists(filePath: string): boolean {
     return existsSync(filePath)
+}
+
+export function basename(filePath: string): string {
+    return basenamePath(filePath)
+}
+
+export function showItemInFolder(filePath: string): void {
+    shell.showItemInFolder(filePath)
 }

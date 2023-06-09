@@ -15,22 +15,24 @@ export function ErrorAlert() {
     const [showDetails, setShowDetails] = useState(false)
 
     return isDisplayed ? (
-        <div className="bg-red-100 text-red-500">
-            <div className="flex justify-between items-baseline space-x-4 border-b border-red-200 p-2">
+        <div className="bg-destructive text-destructive-foreground text-xs border-t border-background-tertiary">
+            <div className="flex justify-between items-baseline space-x-4 px-3 py-1">
                 <p>{`${highLevelMessage}`}</p>
                 {hasDetails && (
                     <button
-                        className="text-sm font-medium flex items-center "
+                        className="font-medium flex items-center space-x-2"
                         onClick={() => setShowDetails(details => !details)}
                     >
                         <span>{showDetails ? 'Hide Details' : 'Show Details'}</span>
-                        {showDetails ? <ChevronDownIcon size={20} /> : <ChevronUpIcon size={20} />}
+                        {showDetails ? <ChevronDownIcon size={16} /> : <ChevronUpIcon size={16} />}
                     </button>
                 )}
             </div>
 
             {hasDetails && showDetails && (
-                <p className="p-2 whitespace-pre-line text-sm leading-tight">{`${detailedMessage ?? ''}`}</p>
+                <div className="border-t border-destructive-border">
+                    <p className="px-3 py-1 whitespace-pre-line leading-tight">{`${detailedMessage ?? ''}`}</p>
+                </div>
             )}
         </div>
     ) : (

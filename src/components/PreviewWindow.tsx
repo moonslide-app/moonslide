@@ -2,12 +2,17 @@ import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { useEditorStore } from '../store'
 
 let currentPreviewWindow: Window | undefined
-export function openPreviewWindow() {
+export function openPreviewWindow(title?: string) {
     if (currentPreviewWindow && !currentPreviewWindow.closed) {
         currentPreviewWindow.close()
     }
 
     currentPreviewWindow = window.open('reveal://preview', undefined, 'width=1280,height=800') ?? undefined
+
+    if (currentPreviewWindow) {
+        currentPreviewWindow.document.title = `${title ? title + ' — ' : ''}Moonslide Preview`
+    }
+
     return currentPreviewWindow
 }
 

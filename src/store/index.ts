@@ -9,6 +9,10 @@ export type EditingFile = {
      */
     path: string | undefined
     /**
+     * The name of the file.
+     */
+    filename: string | undefined
+    /**
      * Time stamp when the editing file was opened.
      */
     openedAt: number
@@ -103,6 +107,7 @@ export const useEditorStore = create<EditorStore>()(
         (set, get) => ({
             editingFile: {
                 path: undefined,
+                filename: undefined,
                 lastSavedContent: '',
                 openedAt: Date.now(),
             },
@@ -147,12 +152,18 @@ export const useEditorStore = create<EditorStore>()(
                 set(state => ({ ...state, lastFullUpdate: Date.now() }))
             },
             async changeEditingFile(newFilePath) {
+                const filename = newFilePath !== undefined ? await window.ipc.files.basename(newFilePath) : undefined
                 const newContent = newFilePath !== undefined ? await window.ipc.files.getFileContent(newFilePath) : ''
                 get().updateParsedPresentation(undefined)
                 await get().updateContent(newContent)
                 set(state => ({
                     ...state,
-                    editingFile: { path: newFilePath, lastSavedContent: newContent, openedAt: Date.now() },
+                    editingFile: {
+                        path: newFilePath,
+                        filename,
+                        lastSavedContent: newContent,
+                        openedAt: Date.now(),
+                    },
                 }))
             },
             async saveContentToEditingFile() {
