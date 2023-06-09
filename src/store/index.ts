@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Presentation, comparePresentations } from '../../src-shared/entities/Presentation'
 import { markdownFilter } from './FileFilters'
+import { replaceBackwardSlash } from '../../src-shared/helpers/pathNormalizer'
 
 export type EditingFile = {
     /**
@@ -199,7 +200,7 @@ export const useEditorStore = create<EditorStore>()(
             },
             async getMediaPath(path) {
                 const markdownPath = get().editingFile.path
-                if (!markdownPath) return path
+                if (!markdownPath) return replaceBackwardSlash(path)
                 else return window.ipc.files.addMedia(path, markdownPath)
             },
         }),

@@ -1,8 +1,10 @@
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
-import { isAbsolute, resolve, dirname, extname, relative, basename } from 'path'
+import { isAbsolute, resolve, dirname, extname, basename } from 'path'
 import { parse } from 'url'
 import { getLocalFileUrl } from '../helpers/protocol'
 import { MEDIA_FOLDER_NAME } from '../presentation/media'
+import { relativeWithForwardSlash } from '../helpers/pathNormalizer'
+import { replaceBackwardSlash } from '../../src-shared/helpers/pathNormalizer'
 
 export type LocalImage = {
     /**
@@ -53,7 +55,7 @@ export function transformImagePath(path: string, request: ParseRequest): LocalIm
     let transformedPath = ''
     let requiredCopyAction: RequiredCopyAction | undefined = undefined
     if (request.imageMode === 'preview') {
-        transformedPath = getLocalFileUrl(resolvedPath)
+        transformedPath = getLocalFileUrl(replaceBackwardSlash(resolvedPath))
     } else if (request.imageMode === 'export-standalone') {
         transformedPath = `./${MEDIA_FOLDER_NAME}/${simpleHash(resolvedPath)}${extname(resolvedPath)}`
         requiredCopyAction = {
@@ -63,8 +65,8 @@ export function transformImagePath(path: string, request: ParseRequest): LocalIm
     } else if (request.imageMode === 'export-relative') {
         if (!request.outputFolderPath)
             throw new Error(`Can not parse markdown in mode 'export-relative' when no outputFolderPath is specified.`)
-        if (isAbsolute(originalPath)) transformedPath = originalPath
-        else transformedPath = relative(request.outputFolderPath, resolvedPath)
+        if (isAbsolute(originalPath)) transformedPath = replaceBackwardSlash(resolvedPath)
+        else transformedPath = relativeWithForwardSlash(request.outputFolderPath, resolvedPath)
     }
 
     return { originalPath, resolvedPath, transformedPath, requiredCopyAction }

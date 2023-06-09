@@ -15,7 +15,7 @@ export function PreviewSlide(props: { slide: Slide; lastFullUpdate?: number; sel
 
             iframeRef.current.contentWindow.postMessage(message, '*')
         }
-    }, [props.slide.markdown])
+    }, [props.slide.markdown, props.slide.config])
 
     // Update src doc when lastFullUpdate changes.
     useEffect(() => {
