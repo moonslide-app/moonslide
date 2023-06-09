@@ -2,9 +2,9 @@
 <p align="center">A markdown based presentation editor</p>
 
 <p align="center">
-  <a href="https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml">
+  <a href="https://github.com/moonslide-app/moonslide/actions/workflows/ci.yml">
     <picture>
-      <img src="https://github.com/reveal-editor/reveal-editor/actions/workflows/ci.yml/badge.svg" alt="Run CI">
+      <img src="https://github.com/moonslide-app/moonslide/actions/workflows/ci.yml/badge.svg" alt="Run CI">
     </picture>
   </a>
 </p>
@@ -27,7 +27,7 @@
 
 ## Demos & Installation 🤝🏼
 
-Take a look at some [demos](./demo) and download the [latest release](https://github.com/reveal-editor/reveal-editor/releases).
+Take a look at some [demos](./demo) and download the [latest release](https://github.com/moonslide-app/moonslide/releases).
 
 ## Table of Contents 🔦
 
