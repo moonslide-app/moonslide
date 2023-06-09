@@ -28,7 +28,14 @@ const myTheme = EditorView.baseTheme({
         zIndex: '-4 !important',
     },
     '.active-slide': {
-        backgroundColor: 'hsla(250, 100%, 80%, 0.075)',
+        backgroundColor: 'hsl(var(--accent-quaternary))',
+    },
+    '&.cm-focused .cm-scroller .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground': {
+        backgroundColor: 'hsl(var(--accent-tertiary))',
+    },
+    '.cm-cursor': {
+        borderColor: 'hsl(var(--accent-primary))',
+        borderLeftWidth: '2px',
     },
     '.cm-content': {
         padding: '1rem 0',

@@ -7,9 +7,9 @@
         --radius: 0.5rem;
 
         --accent-primary: 260 77% 44%;
-        --accent-secondary: 260 77% 55%;
-        --accent-tertiary: 260 77% 77%;
-        --accent-quaternary: 260 77% 89%;
+        --accent-secondary: 260 66% 77%;
+        --accent-tertiary: 260 66% 88%;
+        --accent-quaternary: 260 40% 97%;
         --accent: var(--accent-primary);
         --accent-foreground: 0 0% 98%;
 
@@ -50,7 +50,7 @@
         --accent-primary: 260 77% 66%;
         --accent-secondary: 260 55% 44%;
         --accent-tertiary: 260 33% 22%;
-        --accent-quaternary: 260 18% 14%;
+        --accent-quaternary: 260 16% 12%;
         --accent: var(--accent-primary);
         --accent-foreground: 0 0% 98%;
 
