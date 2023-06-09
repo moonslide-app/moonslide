@@ -1,8 +1,5 @@
 import { resolve, relative, normalize } from 'path'
-
-export function replaceBackwardSlash(input: string): string {
-    return input.replace(/\\/g, '/')
-}
+import { replaceBackwardSlash } from '../../src-shared/helpers/pathNormalizer'
 
 /**
  * Resoslve paths and replace backward slashes with forward slashes.

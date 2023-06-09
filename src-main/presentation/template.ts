@@ -5,7 +5,8 @@ import { resolve, dirname, relative } from 'path'
 import { getTemplateFolder, isTemplate } from '../helpers/assets'
 import { getLocalFileUrl } from '../helpers/protocol'
 import { TemplateNotFoundError, TemplatePathReferenceError } from '../../src-shared/errors/WrappedError'
-import { normalizeWithForwardSlash, relativeWithForwardSlash, replaceBackwardSlash } from '../helpers/pathNormalizer'
+import { normalizeWithForwardSlash, relativeWithForwardSlash } from '../helpers/pathNormalizer'
+import { replaceBackwardSlash } from '../../src-shared/helpers/pathNormalizer'
 
 const CONFIG_FILE_NAME = 'config.yml'
 
