@@ -1,9 +1,9 @@
 import { ParseRequest } from '../../src-shared/entities/ParseRequest'
-import { isAbsolute, resolve, dirname, extname, relative, basename } from 'path'
+import { isAbsolute, resolve, dirname, extname, basename } from 'path'
 import { parse } from 'url'
 import { getLocalFileUrl } from '../helpers/protocol'
 import { MEDIA_FOLDER_NAME } from '../presentation/media'
-import { relativeWithForwardSlash, resolveWithForwardSlash } from '../helpers/pathNormalizer'
+import { relativeWithForwardSlash } from '../helpers/pathNormalizer'
 import { replaceBackwardSlash } from '../../src-shared/helpers/pathNormalizer'
 
 export type LocalImage = {
