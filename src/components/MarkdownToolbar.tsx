@@ -54,7 +54,7 @@ function ItemsPresentation(props: { editorRef: CodeMirrorEditorRef }) {
                     name: 'Template',
                     key: 'template',
                     description:
-                        'You can either use the default template `standard` or specify a path to your custom template folder. See [Create your own Template](https://github.com/reveal-editor/reveal-editor/tree/feature/improve-readme#create-your-own-template-).',
+                        'You can either use the default template `standard` or specify a path to your custom template folder. See [Create your own Template](https://github.com/moonslide-app/moonslide#create-your-own-template-).',
                 },
                 {
                     id: 'presentation:theme',

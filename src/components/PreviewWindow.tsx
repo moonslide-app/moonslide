@@ -27,7 +27,7 @@ export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
 
     function sendShowSlideMessage(slideNumber: number) {
         const message = {
-            name: 'reveal-editor:show-slide',
+            name: 'moonslide:show-slide',
             slideNumber: slideNumber,
         }
         currentPreviewWindow?.postMessage(message, '*')
@@ -43,7 +43,7 @@ export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
     useEffect(() => {
         if (currentPreviewWindow) {
             const message = {
-                name: 'reveal-editor:reload',
+                name: 'moonslide:reload',
             }
 
             currentPreviewWindow.postMessage(message, '*')
@@ -54,7 +54,7 @@ export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
     useEffect(() => {
         if (currentPreviewWindow) {
             const message = {
-                name: 'reveal-editor:update',
+                name: 'moonslide:update',
                 newSlides: currentSlidesHtml,
             }
 

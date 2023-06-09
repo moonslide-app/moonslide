@@ -37,7 +37,7 @@ function enforceConfigOptions() {
 enforceConfigOptions()
 
 window.addEventListener('message', event => {
-    if (event.data.name === 'reveal-editor:update') {
+    if (event.data.name === 'moonslide:update') {
         updatePreview(event.data.newSlides)
     }
 })
