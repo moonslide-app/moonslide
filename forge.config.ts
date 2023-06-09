@@ -13,8 +13,8 @@ import packageJSON from './package.json'
 
 const gitHubConfig: PublisherGitHubConfig = {
     repository: {
-        owner: 'reveal-editor',
-        name: 'reveal-editor',
+        owner: 'moonslide-app',
+        name: 'moonslide',
     },
     draft: false,
     prerelease: false,
@@ -67,7 +67,7 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
 
 const config: ForgeConfig = {
     packagerConfig: {
-        appBundleId: 'ch.simonschuhmacher.reveal-editor',
+        appBundleId: 'app.moonslide.desktop',
         ...macOSPackagerConfig(),
     },
     rebuildConfig: {},

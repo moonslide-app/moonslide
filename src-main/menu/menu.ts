@@ -125,8 +125,7 @@ export function buildTemplate(window: BrowserWindow): Electron.MenuItemConstruct
                 {
                     label: 'Learn More',
                     click: async () => {
-                        // TODO: Change to correct url
-                        await shell.openExternal('https://github.com/reveal-editor/reveal-editor')
+                        await shell.openExternal('https://github.com/moonslide-app/moonslide')
                     },
                 },
             ],

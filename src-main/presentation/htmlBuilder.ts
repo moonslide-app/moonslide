@@ -17,7 +17,7 @@ const AUTHOR_TOKEN = '@@author@@'
 const SLIDES_TOKEN = '@@slides@@'
 const REVEAL_TOKEN = '@@reveal@@'
 const PLUGINS_TOKEN = '@@plugins@@'
-const REVEAL_EDITOR_TOKEN = '@@reveal-editor@@'
+const MOONSLIDE_TOKEN = '@@moonslide@@'
 const ENTRY_TOKEN = '@@entry@@'
 
 // slide content
@@ -54,13 +54,13 @@ export async function buildHTMLPresentation(config: HTMLPresentationBulidConfig)
     replaceToken(STYLESHEETS_TOKEN, generateStylesheets(config))
     replaceToken(REVEAL_TOKEN, scriptWithSource(templateConfig.reveal.entry))
     replaceToken(PLUGINS_TOKEN, generatePluginScripts(templateConfig.scripts))
-    replaceToken(REVEAL_EDITOR_TOKEN, await getRevealEditorScriptContent(config.type))
+    replaceToken(MOONSLIDE_TOKEN, await getMoonslideScriptContent(config.type))
     replaceToken(ENTRY_TOKEN, scriptWithSource(templateConfig.entry))
 
     return buildingFile
 }
 
-async function getRevealEditorScriptContent(type: HTMLPresentationBuildType): Promise<string> {
+async function getMoonslideScriptContent(type: HTMLPresentationBuildType): Promise<string> {
     let scriptName = ''
     if (type === 'export') scriptName = EXPORT_SCRIPT_FILE_NAME
     else if (type === 'preview-fullscreen') scriptName = PREVIEW_FULLSCREEN_SCRIPT_FILENAME

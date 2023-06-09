@@ -9,7 +9,7 @@ export function PreviewSlide(props: { slide: Slide; lastFullUpdate?: number; sel
     useEffect(() => {
         if (iframeRef.current?.contentWindow) {
             const message = {
-                name: 'reveal-editor:update',
+                name: 'moonslide:update',
                 newSlides: props.slide.slideHtml,
             }
 
