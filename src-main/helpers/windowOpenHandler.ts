@@ -4,7 +4,9 @@ import { FILE_PROTOCOL_NAME, REVEAL_PROTOCOL_NAME, getFileSchemeUrlFromFileProto
 export function setupWindowOpenHandlers(mainWindow: BrowserWindow) {
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         if (url.startsWith(REVEAL_PROTOCOL_NAME)) {
-            return { action: 'allow' }
+            return { action: 'allow', overrideBrowserWindowOptions: {
+                autoHideMenuBar: true
+            } }
         }
 
         if (url.startsWith(FILE_PROTOCOL_NAME)) {
