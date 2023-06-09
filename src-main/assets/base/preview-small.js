@@ -15,6 +15,7 @@ const overrideConfig = {
     transition: 'none',
     slideNumber: false,
     autoPlayMedia: false,
+    minScale: 0.0,
 }
 
 function enforceConfigOptions() {
