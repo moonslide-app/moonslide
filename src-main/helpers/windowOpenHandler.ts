@@ -1,4 +1,5 @@
 import { BrowserWindow, shell } from 'electron'
+import path from 'path'
 import { FILE_PROTOCOL_NAME, REVEAL_PROTOCOL_NAME, getFileSchemeUrlFromFileProtocol } from './protocol'
 
 export function setupWindowOpenHandlers(mainWindow: BrowserWindow) {
@@ -8,6 +9,9 @@ export function setupWindowOpenHandlers(mainWindow: BrowserWindow) {
                 action: 'allow',
                 overrideBrowserWindowOptions: {
                     autoHideMenuBar: true,
+                    webPreferences: {
+                        preload: path.join(__dirname, 'preload.js'),
+                    },
                 },
             }
         }

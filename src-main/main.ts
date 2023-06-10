@@ -19,6 +19,7 @@ const createWindow = () => {
         titleBarStyle: isMac ? 'hiddenInset' : 'default',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true,
         },
     })
 

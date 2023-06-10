@@ -25,6 +25,7 @@ window.addEventListener('message', event => {
     if (event.data.name === 'moonslide:update') {
         updatePreview(event.data.newSlides)
     } else if (event.data.name === 'moonslide:reload') {
+        window.ipc.webFrameConnector.clearCache()
         window.location.reload()
     } else if (event.data.name === 'moonslide:show-slide') {
         Reveal.slide(event.data.slideNumber)

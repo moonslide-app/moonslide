@@ -37,7 +37,7 @@ export type EditorStore = {
      */
     parsedPresentation: Presentation | undefined
     /**
-     * Contains an error, if one occurred during parsing
+     * Contains an error, if one occurred during parsing.
      */
     parsingError: unknown | undefined
     /**
@@ -149,6 +149,7 @@ export const useEditorStore = create<EditorStore>()(
                 }, FULL_RELOAD_INTERVAL)
             },
             async reloadAllPreviews() {
+                window.ipc.webFrameConnector.clearCache()
                 await get().parsePresentation()
                 set(state => ({ ...state, lastFullUpdate: Date.now() }))
             },
