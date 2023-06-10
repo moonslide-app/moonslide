@@ -69,7 +69,7 @@ const config: ForgeConfig = {
     packagerConfig: {
         appBundleId: 'app.moonslide.desktop',
         name: packageJSON.productName,
-        executableName: packageJSON.productName,
+        executableName: packageJSON.name,
         ...macOSPackagerConfig(),
     },
     rebuildConfig: {},
