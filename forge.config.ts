@@ -102,7 +102,7 @@ const config: ForgeConfig = {
         new MakerDeb({
             options: {
                 name: packageJSON.name,
-                bin: packageJSON.productName,
+                bin: packageJSON.name,
                 productName: packageJSON.productName,
             },
         }),
