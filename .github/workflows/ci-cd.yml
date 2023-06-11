@@ -8,6 +8,7 @@ permissions:
 jobs:
   deploy:
     name: Run Deploy
+    timeout-minutes: 60
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
