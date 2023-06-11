@@ -42,27 +42,38 @@ const normalizeWindowsVersion = (version: string) => {
 }
 
 const macOSPackagerConfig = (): ForgePackagerOptions => {
-    if (!process.env.CI) return {}
     if (process.platform !== 'darwin') return {}
+
+    let packagerOptions: ForgePackagerOptions = {}
+
+    // electron-packager currently does not use name and executableName correctly,
+    // thus set executableName manually to package.json's productName
+    packagerOptions.executableName = packageJSON.productName
+
+    if (!process.env.CI) return packagerOptions
 
     if (!process.env.APPLE_ID || !process.env.APPLE_APP_SPECIFIC_PASSWORD || !process.env.APPLE_TEAM_ID) {
         console.warn(
             'Should be notarizing, but environment variables APPLE_ID, APPLE_ID_PASSWORD or APPLE_TEAM_ID are missing!'
         )
-        return {}
+        return packagerOptions
     }
 
-    return {
-        osxSign: {
-            identity: process.env.MACOS_CERT_IDENTITY,
-        },
-        osxNotarize: {
-            tool: 'notarytool',
-            appleId: process.env.APPLE_ID,
-            appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
-            teamId: process.env.APPLE_TEAM_ID,
+    packagerOptions = {
+        ...{
+            osxSign: {
+                identity: process.env.MACOS_CERT_IDENTITY,
+            },
+            osxNotarize: {
+                tool: 'notarytool',
+                appleId: process.env.APPLE_ID,
+                appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+                teamId: process.env.APPLE_TEAM_ID,
+            },
         },
     }
+
+    return packagerOptions
 }
 
 const config: ForgeConfig = {
@@ -74,14 +85,27 @@ const config: ForgeConfig = {
     },
     rebuildConfig: {},
     makers: [
-        new MakerSquirrel({ noMsi: true }),
+        new MakerSquirrel({ noMsi: true, name: packageJSON.name }),
         new MakerWix({
+            name: packageJSON.name,
             version: normalizeWindowsVersion(packageJSON.version),
         }),
         new MakerDMG({}),
         new MakerZIP({}, ['darwin']),
-        new MakerRpm({}),
-        new MakerDeb({}),
+        new MakerRpm({
+            options: {
+                name: packageJSON.name,
+                bin: packageJSON.name,
+                productName: packageJSON.productName,
+            },
+        }),
+        new MakerDeb({
+            options: {
+                name: packageJSON.name,
+                bin: packageJSON.productName,
+                productName: packageJSON.productName,
+            },
+        }),
     ],
     plugins: [
         new VitePlugin({
