@@ -1,6 +1,6 @@
 <p align="center">
   <picture>
-    <img src="./docs/icon-mac.png" alt="Moonslide" style="width: 200px; max-width: 100%;">
+    <img src="./docs/icon-mac.png" alt="Moonslide" width="200" style="max-width: 100%;">
   </picture>
 </p>
 <h1 align="center">Moonslide</h1>
