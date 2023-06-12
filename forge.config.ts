@@ -96,8 +96,7 @@ const config: ForgeConfig = {
             noMsi: true,
             name: packageJSON.name,
             setupIcon: './assets/icon.ico',
-            iconUrl:
-                'https://media.githubusercontent.com/media/moonslide-app/moonslide/feature/fix-caching/assets/icon.ico',
+            iconUrl: 'https://raw.githubusercontent.com/moonslide-app/moonslide/feature/fix-caching/assets/icon.ico',
         }),
         new MakerWix({
             name: packageJSON.productName,
