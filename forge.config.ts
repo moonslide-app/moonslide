@@ -44,7 +44,7 @@ const normalizeWindowsVersion = (version: string) => {
 const macOSPackagerConfig = (): ForgePackagerOptions => {
     if (process.platform !== 'darwin') return {}
 
-    let packagerOptions: ForgePackagerOptions = {}
+    const packagerOptions: ForgePackagerOptions = {}
 
     // electron-packager currently does not use name and executableName correctly,
     // thus set executableName manually to package.json's productName
@@ -59,18 +59,15 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
         return packagerOptions
     }
 
-    packagerOptions = {
-        ...{
-            osxSign: {
-                identity: process.env.MACOS_CERT_IDENTITY,
-            },
-            osxNotarize: {
-                tool: 'notarytool',
-                appleId: process.env.APPLE_ID,
-                appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
-                teamId: process.env.APPLE_TEAM_ID,
-            },
-        },
+    packagerOptions.osxSign = {
+        identity: process.env.MACOS_CERT_IDENTITY,
+    }
+
+    packagerOptions.osxNotarize = {
+        tool: 'notarytool',
+        appleId: process.env.APPLE_ID,
+        appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+        teamId: process.env.APPLE_TEAM_ID,
     }
 
     return packagerOptions
