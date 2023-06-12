@@ -1,4 +1,9 @@
-<h1 align="center">Moonslide 🌛🛝</h1>
+<p align="center">
+  <picture>
+    <img src="./docs/icon-mac.png" alt="Moonslide" style="width: 200px; max-width: 100%;">
+  </picture>
+</p>
+<h1 align="center">Moonslide</h1>
 <p align="center">A markdown based presentation editor</p>
 
 <p align="center">
