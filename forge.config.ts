@@ -76,27 +76,47 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
     return packagerOptions
 }
 
+const linuxPackagerConfig = (): ForgePackagerOptions => {
+    if (process.platform !== 'linux') return {}
+
+    return {
+        extraResource: ['./assets/icon.png'],
+    }
+}
+
 const config: ForgeConfig = {
     packagerConfig: {
         appBundleId: 'app.moonslide.desktop',
         name: packageJSON.productName,
         executableName: packageJSON.name,
+        icon: './assets/icon',
+        ...linuxPackagerConfig(),
         ...macOSPackagerConfig(),
     },
     rebuildConfig: {},
     makers: [
-        new MakerSquirrel({ noMsi: true, name: packageJSON.name }),
-        new MakerWix({
+        new MakerSquirrel({
+            noMsi: true,
             name: packageJSON.name,
-            version: normalizeWindowsVersion(packageJSON.version),
+            setupIcon: './assets/icon.ico',
+            iconUrl: 'https://media.githubusercontent.com/assets/icon.ico',
         }),
-        new MakerDMG({}),
+        new MakerWix({
+            name: packageJSON.productName,
+            shortName: packageJSON.name,
+            version: normalizeWindowsVersion(packageJSON.version),
+            icon: './assets/icon.ico',
+        }),
+        new MakerDMG({
+            icon: './assets/icon.icns',
+        }),
         new MakerZIP({}, ['darwin']),
         new MakerRpm({
             options: {
                 name: packageJSON.name,
                 bin: packageJSON.name,
                 productName: packageJSON.productName,
+                icon: './assets/icon.png',
             },
         }),
         new MakerDeb({
@@ -104,6 +124,7 @@ const config: ForgeConfig = {
                 name: packageJSON.name,
                 bin: packageJSON.name,
                 productName: packageJSON.productName,
+                icon: './assets/icon.png',
             },
         }),
     ],

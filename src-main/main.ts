@@ -17,6 +17,7 @@ const createWindow = () => {
         width: 1200,
         height: 900,
         titleBarStyle: isMac ? 'hiddenInset' : 'default',
+        icon: path.join(process.resourcesPath, 'icon.png'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
         },
