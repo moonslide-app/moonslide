@@ -69,11 +69,7 @@ runs:
     - name: Setup Windows specific dependencies
       if: inputs.os == 'windows-latest'
       shell: bash
-      env:
-        DEBUG: '@electron/get:*,electron-notarize*,electron-packager,get-package-info'
-      run: |
-        npm install --save-dev exe-icon-extractor
-        echo "${WIX}bin" >> $GITHUB_PATH
+      run: echo "${WIX}bin" >> $GITHUB_PATH
     - name: Publish Windows x64
       if: inputs.os == 'windows-latest'
       shell: bash
