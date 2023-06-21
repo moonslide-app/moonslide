@@ -44,7 +44,7 @@ const normalizeWindowsVersion = (version: string) => {
 const macOSPackagerConfig = (): ForgePackagerOptions => {
     if (process.platform !== 'darwin') return {}
 
-    let packagerOptions: ForgePackagerOptions = {}
+    const packagerOptions: ForgePackagerOptions = {}
 
     // electron-packager currently does not use name and executableName correctly,
     // thus set executableName manually to package.json's productName
@@ -59,21 +59,26 @@ const macOSPackagerConfig = (): ForgePackagerOptions => {
         return packagerOptions
     }
 
-    packagerOptions = {
-        ...{
-            osxSign: {
-                identity: process.env.MACOS_CERT_IDENTITY,
-            },
-            osxNotarize: {
-                tool: 'notarytool',
-                appleId: process.env.APPLE_ID,
-                appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
-                teamId: process.env.APPLE_TEAM_ID,
-            },
-        },
+    packagerOptions.osxSign = {
+        identity: process.env.MACOS_CERT_IDENTITY,
+    }
+
+    packagerOptions.osxNotarize = {
+        tool: 'notarytool',
+        appleId: process.env.APPLE_ID,
+        appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+        teamId: process.env.APPLE_TEAM_ID,
     }
 
     return packagerOptions
+}
+
+const linuxPackagerConfig = (): ForgePackagerOptions => {
+    if (process.platform !== 'linux') return {}
+
+    return {
+        extraResource: ['./assets/icon.png'],
+    }
 }
 
 const config: ForgeConfig = {
@@ -81,22 +86,34 @@ const config: ForgeConfig = {
         appBundleId: 'app.moonslide.desktop',
         name: packageJSON.productName,
         executableName: packageJSON.name,
+        icon: './assets/icon',
+        ...linuxPackagerConfig(),
         ...macOSPackagerConfig(),
     },
     rebuildConfig: {},
     makers: [
-        new MakerSquirrel({ noMsi: true, name: packageJSON.name }),
-        new MakerWix({
+        new MakerSquirrel({
+            noMsi: true,
             name: packageJSON.name,
-            version: normalizeWindowsVersion(packageJSON.version),
+            setupIcon: './assets/icon.ico',
+            iconUrl: 'https://raw.githubusercontent.com/moonslide-app/moonslide/main/assets/icon.ico',
         }),
-        new MakerDMG({}),
+        new MakerWix({
+            name: packageJSON.productName,
+            shortName: packageJSON.name,
+            version: normalizeWindowsVersion(packageJSON.version),
+            icon: './assets/icon.ico',
+        }),
+        new MakerDMG({
+            icon: './assets/icon.icns',
+        }),
         new MakerZIP({}, ['darwin']),
         new MakerRpm({
             options: {
                 name: packageJSON.name,
                 bin: packageJSON.name,
                 productName: packageJSON.productName,
+                icon: './assets/icon.png',
             },
         }),
         new MakerDeb({
@@ -104,6 +121,7 @@ const config: ForgeConfig = {
                 name: packageJSON.name,
                 bin: packageJSON.name,
                 productName: packageJSON.productName,
+                icon: './assets/icon.png',
             },
         }),
     ],

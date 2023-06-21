@@ -6,8 +6,11 @@ MACOS_CERT_P12_FILE=certificate.p12
 # Recreate the certificate from the secure environment variable
 echo $MACOS_CERT_P12 | base64 --decode > $MACOS_CERT_P12_FILE
 
-#create a keychain
+# Create a keychain
 security create-keychain -p actions $KEY_CHAIN
+
+# Prevent locking the keychain after timeout
+security set-keychain-settings $KEY_CHAIN
 
 # Make the keychain the default so identities are found
 security default-keychain -s $KEY_CHAIN

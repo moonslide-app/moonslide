@@ -1,7 +1,7 @@
 {
     "name": "moonslide",
     "productName": "Moonslide",
-    "version": "0.1.1-beta.4",
+    "version": "0.1.1-beta.8",
     "description": "Editor to create presentations with Markdown and Reveal.js",
     "main": ".vite/build/main.js",
     "scripts": {
@@ -17,7 +17,7 @@
     },
     "keywords": [],
     "author": {
-        "name": "Simon Schuhmacher, Timo Siegenthaler"
+        "name": "Moonslide"
     },
     "license": "MIT",
     "devDependencies": {
