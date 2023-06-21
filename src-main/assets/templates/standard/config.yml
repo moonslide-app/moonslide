@@ -5,18 +5,7 @@ reveal:
   entry: ./reveal_js/dist/reveal.js
   stylesheets: ./reveal_js/dist/reveal.css
 # Additional stylesheets which are loaded after reveal and theme stylesheets.
-stylesheets: 
-  - ./styles/reveal.css
-  - ./styles/layouts.css
-  - ./styles/image.css
-  - ./styles/text.css
-  - ./styles/background.css
-  - ./styles/margin.css
-  - ./styles/size.css
-  - ./styles/code.css
-  - ./styles/space.css
-  - ./styles/fragment.css
-  - ./styles/print.css
+stylesheets: ./styles/index.css
 # Additional scripts which are loaded after the reveal entry script, but before the entry script
 # This property is suitable to specify additional (reveal.js) plugins.
 scripts:
