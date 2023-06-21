@@ -55,7 +55,7 @@ export function transformImagePath(path: string, request: ParseRequest): LocalIm
     let transformedPath = ''
     let requiredCopyAction: RequiredCopyAction | undefined = undefined
     if (request.imageMode === 'preview') {
-        transformedPath = getLocalFileUrl(replaceBackwardSlash(resolvedPath), false)
+        transformedPath = getLocalFileUrl(replaceBackwardSlash(resolvedPath))
     } else if (request.imageMode === 'export-standalone') {
         transformedPath = `./${MEDIA_FOLDER_NAME}/${simpleHash(resolvedPath)}${extname(resolvedPath)}`
         requiredCopyAction = {

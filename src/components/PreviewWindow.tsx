@@ -1,13 +1,15 @@
-import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { Ref, forwardRef, useEffect, useImperativeHandle } from 'react'
 import { useEditorStore } from '../store'
 
 let currentPreviewWindow: Window | undefined
+let currentSlideNumber: number | undefined
 export function openPreviewWindow(title?: string) {
     if (currentPreviewWindow && !currentPreviewWindow.closed) {
         currentPreviewWindow.close()
     }
 
-    currentPreviewWindow = window.open('reveal://preview', undefined, 'width=1280,height=800') ?? undefined
+    const url = `reveal://preview/${currentSlideNumber !== undefined ? '#/' + currentSlideNumber : ''}`
+    currentPreviewWindow = window.open(url, undefined, 'width=1280,height=800') ?? undefined
 
     if (currentPreviewWindow) {
         currentPreviewWindow.document.title = `${title ? title + ' — ' : ''}Moonslide Preview`
@@ -23,7 +25,6 @@ export type PreviewWindowRef = {
 export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
     const lastFullUpdate = useEditorStore(state => state.lastFullUpdate)
     const currentSlidesHtml = useEditorStore(state => state.parsedPresentation?.slidesHtml)
-    const currentSlideNumber = useRef(0)
 
     function sendShowSlideMessage(slideNumber: number) {
         const message = {
@@ -35,7 +36,7 @@ export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
 
     useImperativeHandle(ref, () => ({
         showSlide(slideNumber) {
-            currentSlideNumber.current = slideNumber
+            currentSlideNumber = slideNumber
             sendShowSlideMessage(slideNumber)
         },
     }))
@@ -47,7 +48,7 @@ export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
             }
 
             currentPreviewWindow.postMessage(message, '*')
-            sendShowSlideMessage(currentSlideNumber.current)
+            if (currentSlideNumber !== undefined) sendShowSlideMessage(currentSlideNumber)
         }
     }, [lastFullUpdate])
 
@@ -59,7 +60,7 @@ export const PreviewWindow = forwardRef((props, ref: Ref<PreviewWindowRef>) => {
             }
 
             currentPreviewWindow.postMessage(message, '*')
-            sendShowSlideMessage(currentSlideNumber.current)
+            if (currentSlideNumber !== undefined) sendShowSlideMessage(currentSlideNumber)
         }
     }, [currentSlidesHtml])
 

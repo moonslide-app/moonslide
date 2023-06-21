@@ -17,9 +17,9 @@ export function registerProtocols() {
     })
 
     protocol.registerFileProtocol(FILE_PROTOCOL_NAME, (request, callback) => {
-        const requestedPath = request.url.slice(`${FILE_PROTOCOL_NAME}://`.length).match(/.+?(?=\?|$)/)
-        if (requestedPath !== null) {
-            const decoded = decodeURI(requestedPath[0])
+        const requestedPath = request.url.slice(`${FILE_PROTOCOL_NAME}://`.length)
+        if (requestedPath.length > 0) {
+            const decoded = decodeURI(requestedPath)
             callback({ path: decoded })
         } else callback({ error: 404 })
     })
@@ -29,6 +29,6 @@ export function getFileSchemeUrlFromFileProtocol(url: string): string {
     return 'file://' + parse(url).pathname
 }
 
-export function getLocalFileUrl(absolutePath: string, cacheBust = true): string {
-    return `${FILE_PROTOCOL_NAME}://${absolutePath}${cacheBust ? '?cache=' + Date.now() : ''}`
+export function getLocalFileUrl(absolutePath: string): string {
+    return `${FILE_PROTOCOL_NAME}://${absolutePath}`
 }
