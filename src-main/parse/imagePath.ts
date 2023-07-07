@@ -50,7 +50,7 @@ export function transformImagePath(path: string, request: ParseRequest): LocalIm
     const originalPath = parsedUrl.path
     const resolvedPath = isAbsolute(originalPath)
         ? originalPath
-        : resolve(dirname(request.markdownFilePath), originalPath)
+        : resolve(dirname(request.markdownFilePath), decodeURI(originalPath))
 
     let transformedPath = ''
     let requiredCopyAction: RequiredCopyAction | undefined = undefined
@@ -69,6 +69,7 @@ export function transformImagePath(path: string, request: ParseRequest): LocalIm
         else transformedPath = relativeWithForwardSlash(request.outputFolderPath, resolvedPath)
     }
 
+    transformedPath = encodeURI(transformedPath)
     return { originalPath, resolvedPath, transformedPath, requiredCopyAction }
 }
 
